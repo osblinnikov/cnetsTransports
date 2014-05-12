@@ -31,6 +31,8 @@ public class protocolToBuffer implements RunnableStoppable{
 
   private void initialize(){
     
+    onKernels();
+    
   }
   public runnablesContainer getRunnables(){
     
@@ -38,10 +40,14 @@ public class protocolToBuffer implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 797defe7e3f689d2dcb846b18f44f3be)  */
+/*[[[end]]] (checksum: 89d99953fd8d92b800367a0b0c0a0d2e)  */
 
   private bufferOfNode[] nodes = null;
   private Lock[] locks = null;
+
+  private void onKernels() {
+
+  }
 
   private void onCreate(){
     if(nodesCount>0 && writers!=null && r0 != null){

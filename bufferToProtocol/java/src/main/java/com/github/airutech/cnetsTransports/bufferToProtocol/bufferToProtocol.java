@@ -29,6 +29,8 @@ public class bufferToProtocol implements RunnableStoppable{
 
   private void initialize(){
     
+    onKernels();
+    
   }
   public runnablesContainer getRunnables(){
     
@@ -36,7 +38,7 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 7d6df14fb2a8978dda7eaf658b6e8d20) */
+/*[[[end]]] (checksum: 69f01d7ec58ae714345e6a2b8aadbc35) */
   private final static long timeStart = System.currentTimeMillis()/1000;
   private bufferReadData readData = null;
   cnetsProtocol currentlySendingProtocol = new cnetsProtocol();
@@ -47,6 +49,10 @@ public class bufferToProtocol implements RunnableStoppable{
 
   selector readersSelectorFromArr;
   reader rSelectFromArr;
+
+  private void onKernels() {
+
+  }
 
   private void onCreate(){
     if(readers!=null && callbacks!=null){

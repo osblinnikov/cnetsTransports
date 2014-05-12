@@ -54,6 +54,8 @@ public class webSocket implements RunnableStoppable{
 
   private void initialize(){
     
+    onKernels();
+    
   }
   public runnablesContainer getRunnables(){
     
@@ -61,7 +63,7 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 84bc11412a8fea18432e2e92cf133ce6) */
+/*[[[end]]] (checksum: 6f3331cf6328cafacef3f386e011087a) */
   private connectionsRegistry conManager = null;
   private Lock connectionsLock = new ReentrantLock();
 
@@ -69,6 +71,10 @@ public class webSocket implements RunnableStoppable{
   private WSServer server = null;
   private volatile WSClient client = null;
 
+  private void onKernels() {
+
+  }
+  
   private void onCreate(){
     conManager = new connectionsRegistry(maxNodesCount,maxBuffersCount);
   }
@@ -168,11 +174,7 @@ public class webSocket implements RunnableStoppable{
       server.start();
     }
     if(client!=null){
-      try {
-        client.connectBlocking();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      client.connect();
     }
   }
 

@@ -17,8 +17,14 @@ public class types{
 
   private void initialize(){
     
+    onKernels();
+    
   }
-/*[[[end]]] (checksum: a660cce4b9b7209b21a33c56d070aa69) */
+/*[[[end]]] (checksum: 4b7cc7563e521f3b3333436a3386ca9e) */
+
+  private void onKernels() {
+
+  }
 
   private void onCreate(){
 
