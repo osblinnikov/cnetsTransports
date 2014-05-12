@@ -1,0 +1,41 @@
+{
+"path":"com.github.airutech.cnetsTransports.protocolToBuffer",
+"ver":"0.0.0",
+"args": [{
+  "name": "nodesCount",
+  "type": "int"
+},{
+  "name": "writers",
+  "type": "writer[]"
+},{
+  "name": "callbacks",
+  "type": "deserializeCallback[]"
+}],
+"depends":[{
+  "path":"com.github.airutech.cnetsTransports.types",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.readerWriter",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.queue",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.runnablesContainer",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.selector",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.mapBuffer",
+  "ver": "[0.0.0,)"
+}],
+"blocks":[],
+"connection":{
+  "writeTo": [],
+  "readFrom": [{
+    "name":"input",
+    "type":"cnetsProtocolBinary"
+  }]
+}
+}

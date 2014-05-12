@@ -1,0 +1,12 @@
+{
+"path":"com.github.airutech.cnetsTransports.types",
+"ver":"0.0.0",
+"type":"library",
+"args": [],
+"blocks":[],
+"depends":[],
+"connection":{
+  "writeTo": [],
+  "readFrom": []
+}
+}
