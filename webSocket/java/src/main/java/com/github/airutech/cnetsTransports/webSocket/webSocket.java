@@ -86,6 +86,7 @@ public class webSocket implements RunnableStoppable{
 
   @Override
   public void run(){
+    Thread.currentThread().setName("webSocket");
     bufferReadData r = rSelect.readNextWithMeta(true);
     if(r.getData()!=null){
       switch ((int) r.getNested_buffer_id()){
@@ -130,7 +131,13 @@ public class webSocket implements RunnableStoppable{
     }
     if (client != null) {
       try {
-        client.closeBlocking();
+        connectionsLock.lock();
+        if(conManager.getCountOfConnections() > 0) {
+          connectionsLock.unlock();
+          client.closeBlocking();
+        }else {
+          connectionsLock.unlock();
+        }
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

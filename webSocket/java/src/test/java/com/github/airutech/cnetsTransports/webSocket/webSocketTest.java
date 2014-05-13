@@ -131,7 +131,7 @@ public class webSocketTest {
 /*waiting*/
     try {
       Thread.sleep(3000);
-      runnables.stop(true);
+      runnables.stop();
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

@@ -81,6 +81,7 @@ public class protocolToBuffer implements RunnableStoppable{
   cnetsProtocolBinary cBin = null;
   @Override
   public void run() {
+    Thread.currentThread().setName("protocolToBuffer");
     if(nodes==null){return;}
     if(cBin == null) {
       cBin = (cnetsProtocolBinary) r0.readNext(true);

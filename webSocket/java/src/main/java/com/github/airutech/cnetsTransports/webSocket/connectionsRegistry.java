@@ -111,6 +111,16 @@ public class connectionsRegistry {
     return -1;
   }
 
+  public int getCountOfConnections() {
+    int countOfCounnections = 0;
+    for(int i=0; i<arrContainers.length; i++){
+      if(arrContainers[i].keyCode!=null){
+        countOfCounnections++;
+      }
+    }
+    return countOfCounnections;
+  }
+
   public boolean setBuffers(String hashKey, Long[] ids) {
     int id = findConnectionId(hashKey);
     if(id<0){return false;}

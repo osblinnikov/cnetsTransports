@@ -69,6 +69,7 @@ public class bufferToProtocol implements RunnableStoppable{
 
   @Override
   public void run(){
+    Thread.currentThread().setName("bufferToProtocol");
     if(writeProtocol == null) {
       writeProtocol = (cnetsProtocolBinary) w0.writeNext(true);
       if(writeProtocol == null) {return;}
