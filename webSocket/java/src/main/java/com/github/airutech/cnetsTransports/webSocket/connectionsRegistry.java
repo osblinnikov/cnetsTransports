@@ -81,6 +81,11 @@ public class connectionsRegistry {
     }
     arrContainers[id].keyCode = null;
     arrContainers[id].connection = null;
+    try {
+      connectionsIdsQueue.enqueue(id);
+    } catch (QueueFullException e) {
+      e.printStackTrace();
+    }
     return true;
   }
 

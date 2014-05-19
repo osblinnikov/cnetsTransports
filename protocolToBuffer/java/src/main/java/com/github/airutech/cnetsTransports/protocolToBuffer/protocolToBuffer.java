@@ -97,7 +97,7 @@ public class protocolToBuffer implements RunnableStoppable{
     /*check the node in the nodes hash*/
     if (nodesCount <= cBin.getNodeId() || null == buf || bufferIndx < 0 ) {
       System.err.printf("protocolToBuffer: wrong protocol parameters\n");
-      System.err.printf("nodesCount: %d, nodeId: %d\n", nodesCount, cBin.getNodeId());
+      System.err.printf("protocolToBuffer: nodesCount: %d, nodeId: %d\n", nodesCount, cBin.getNodeId());
       finishRead();
       return;
     }

@@ -13,6 +13,7 @@ public class cnetsProtocol {
   long bunchId;
   int packet;
   int packets_grid_size;
+
   private int nodeId = -1;/*not used for binarization*/
 
   public void setBufferId(long bufferId) {
@@ -50,8 +51,12 @@ public class cnetsProtocol {
       return packets_grid_size;
   }
 
+  public static int prefixSize(){
+    return 6*4;
+  }
+
   public ByteBuffer getByteBuffer(byte[] data){
-    if(data.length < 28){
+    if(data.length < prefixSize()){
       System.err.println("getByteBuffer: data_size is too small");
       return null;
     }
@@ -71,7 +76,7 @@ public class cnetsProtocol {
   }
 
   public ByteBuffer setFromBytes(byte[] data, int data_size) {
-    if(data_size < 28){
+    if(data_size < prefixSize()){
       System.err.println("setFromBytes: data_size is too small");
       return null;
     }
