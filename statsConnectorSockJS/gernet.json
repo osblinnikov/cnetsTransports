@@ -1,0 +1,126 @@
+{
+"path":"com.github.airutech.cnetsTransports.statsConnectorSockJS",
+"ver":"0.1.0",
+"langs":["java","javascript"],
+"description":"using sockjs library, thus there is NO support for javascript server and Java client: only JAVA server - javascript client (possible to add nodejs server and client though)",
+"type":"connector",
+"args": [{
+  "name":"args",
+  "type":"string[]"
+}],
+"props":[{
+  "name":"readers",
+  "type":"reader[]",
+  "size":1 
+},{
+  "name":"writers",
+  "type":"writer[]",
+  "size":1 
+},{
+  "name":"readersCallbacks",
+  "type":"serializeCallback[]",
+  "size":1  
+},{
+  "name":"writersCallbacks",
+  "type":"deserializeCallback[]",
+  "size":1  
+}],
+"depends":[{
+  "path":"com.github.airutech.cnets.runnablesContainer",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.readerWriter",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.types",
+  "ver": "[0.0.0,)"
+}],
+"connection":{
+  "writeTo": [{
+    "name":"output",
+    "type":"cnetsProtocolStats",
+    "notrequired":"true"
+  }],
+  "readFrom": [{
+    "name":"input",
+    "type":"cnetsProtocolStats",
+    "notrequired":"true"
+  }]
+},
+"blocks":[{
+  "id":0,
+  "name": "statsToProtocol",
+  "path":"com.github.airutech.cnetsTransports.bufferToProtocol",
+  "ver":"[0.0.0,)",
+  "args": [{
+    "name": "readers",
+    "type": "reader[]"
+  },{
+    "name": "readersCallbacks",
+    "type": "serializeCallback[]"
+  }],
+  "connection":{
+    "writeTo": [{
+      "name":"output",
+      "type":"cnetsProtocolBinary"
+    }],
+    "readFrom": []
+  }
+},{
+  "id":1,
+  "name": "protocolToStats",
+  "path":"com.github.airutech.cnetsTransports.protocolToBuffer",
+  "ver":"[0.0.0,)",
+  "args": [{
+    "name": "writers",
+    "type": "writer[]"
+  },{
+    "name": "writersCallbacks",
+    "type": "deserializeCallback[]"
+  }],
+  "connection":{
+    "writeTo": [],
+    "readFrom": [{
+      "name":"input",
+      "type":"cnetsProtocolBinary"
+    }]
+  }
+},{
+  "id":2,
+  "name": "sockJsChannel",
+  "path":"com.github.airutech.cnetsTransports.sockJS",
+  "ver":"[0.0.0,)",
+  "args": [{
+    "name": "inBuffersIds",
+    "type": "long[]"
+  },{
+    "name": "maxNodesCount",
+    "type": "int"
+  },{
+    "name": "maxBuffersCount",
+    "type": "int"
+  },{
+    "name": "initialConnection",
+    "type": "String"
+  },{
+    "name": "bindPort",
+    "type": "int"
+  },{
+    "name": "connectionStatus",
+    "type": "connectionStatusCallback"
+  }],
+  "connection":{
+    "writeTo": [{
+      "name":"fromSocket",
+      "type":"cnetsProtocolBinary"
+    }],
+    "readFrom": [{
+      "name":"toSocket",
+      "type":"cnetsProtocolBinary"
+    },{
+      "name":"connections",
+      "type":"cnetsConnections"
+    }]
+  }
+}]
+}
