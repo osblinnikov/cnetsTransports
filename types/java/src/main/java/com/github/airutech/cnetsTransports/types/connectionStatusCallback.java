@@ -1,4 +1,4 @@
-package com.github.airutech.cnetsTransports.webSocket;
+package com.github.airutech.cnetsTransports.types;
 
 /**
  * Created by oleg on 5/8/14.

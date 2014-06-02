@@ -13,6 +13,7 @@
     <module>protocolToBuffer/java</module>
     <module>bufferToProtocol/java</module>
     <module>webSocket/java</module>
+    <module>sockJS/java</module>
     <module>types/java</module>
   </modules>
 </project>
