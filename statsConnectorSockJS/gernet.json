@@ -11,19 +11,38 @@
 "props":[{
   "name":"readers",
   "type":"reader[]",
-  "size":1 
+  "size":1
 },{
   "name":"writers",
   "type":"writer[]",
-  "size":1 
+  "size":1
 },{
   "name":"readersCallbacks",
   "type":"serializeCallback[]",
-  "size":1  
+  "size":1
 },{
   "name":"writersCallbacks",
   "type":"deserializeCallback[]",
-  "size":1  
+  "size":1
+},{
+  "name": "inBuffersIds",
+  "type": "long[]",
+  "size": 2
+},{
+  "name": "maxNodesCount",
+  "type": "int"
+},{
+  "name": "maxBuffersCount",
+  "type": "int"
+},{
+  "name": "initialConnection",
+  "type": "String"
+},{
+  "name": "bindPort",
+  "type": "int"
+},{
+  "name": "connectionStatus",
+  "type": "connectionStatusCallback"
 }],
 "depends":[{
   "path":"com.github.airutech.cnets.runnablesContainer",
@@ -36,16 +55,8 @@
   "ver": "[0.0.0,)"
 }],
 "connection":{
-  "writeTo": [{
-    "name":"output",
-    "type":"cnetsProtocolStats",
-    "notrequired":"true"
-  }],
-  "readFrom": [{
-    "name":"input",
-    "type":"cnetsProtocolStats",
-    "notrequired":"true"
-  }]
+  "writeTo": [],
+  "readFrom": []
 },
 "blocks":[{
   "id":0,
@@ -54,13 +65,16 @@
   "ver":"[0.0.0,)",
   "args": [{
     "name": "readers",
-    "type": "reader[]"
+    "type": "reader[]",
+    "value":"readers"
   },{
     "name": "readersCallbacks",
-    "type": "serializeCallback[]"
+    "type": "serializeCallback[]",
+    "value":"readersCallbacks"
   }],
   "connection":{
-    "writeTo": [{
+    "writeTo": [],
+    "writeToBcp": [{
       "name":"output",
       "type":"cnetsProtocolBinary"
     }],
@@ -73,14 +87,17 @@
   "ver":"[0.0.0,)",
   "args": [{
     "name": "writers",
-    "type": "writer[]"
+    "type": "writer[]",
+    "value": "writers"
   },{
     "name": "writersCallbacks",
-    "type": "deserializeCallback[]"
+    "type": "deserializeCallback[]",
+    "value": "writersCallbacks"
   }],
   "connection":{
     "writeTo": [],
-    "readFrom": [{
+    "readFrom":[],
+    "readFromBcp": [{
       "name":"input",
       "type":"cnetsProtocolBinary"
     }]
@@ -92,29 +109,37 @@
   "ver":"[0.0.0,)",
   "args": [{
     "name": "inBuffersIds",
-    "type": "long[]"
+    "type": "long[]",
+    "value":"inBuffersIds"
   },{
     "name": "maxNodesCount",
-    "type": "int"
+    "type": "int",
+    "value":"maxNodesCount"
   },{
     "name": "maxBuffersCount",
-    "type": "int"
+    "type": "int",
+    "value":"maxBuffersCount"
   },{
     "name": "initialConnection",
-    "type": "String"
+    "type": "String",
+    "value":"initialConnection"
   },{
     "name": "bindPort",
-    "type": "int"
+    "type": "int",
+    "value":"bindPort"
   },{
     "name": "connectionStatus",
-    "type": "connectionStatusCallback"
+    "type": "connectionStatusCallback",
+    "value":"connectionStatus"
   }],
   "connection":{
-    "writeTo": [{
+    "writeTo": [],
+    "readFrom": [],
+    "writeToBcp": [{
       "name":"fromSocket",
       "type":"cnetsProtocolBinary"
     }],
-    "readFrom": [{
+    "readFromBcp": [{
       "name":"toSocket",
       "type":"cnetsProtocolBinary"
     },{

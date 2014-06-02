@@ -40,7 +40,7 @@ public class connectionsRegistry {
 
   public webSocketConnection nextNewConnection(){
     try {
-      Integer id = (Integer) newConnections.dequeue();
+      int id = (int)newConnections.dequeue();
       return arrContainers[id].connection;
     } catch (QueueEmptyException e) {
       return null;
@@ -48,10 +48,10 @@ public class connectionsRegistry {
   }
 
   public boolean addConnection(String keyCode, webSocketConnection connection){
-    Integer id = findConnectionId(keyCode);
+    int id = findConnectionId(keyCode);
     if(id <0) {
       try {
-        id = (Integer) connectionsIdsQueue.dequeue();
+        id = (int) connectionsIdsQueue.dequeue();
       } catch (QueueEmptyException e) {
         e.printStackTrace();
         return false;
