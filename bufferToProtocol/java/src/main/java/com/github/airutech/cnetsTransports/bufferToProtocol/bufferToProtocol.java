@@ -2,13 +2,16 @@
 package com.github.airutech.cnetsTransports.bufferToProtocol;
 
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import com.github.airutech.cnetsTransports.types.types;
 
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
+import com.github.airutech.cnets.nodesRepository.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnets.readerWriter.*;
@@ -17,11 +20,12 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class bufferToProtocol implements RunnableStoppable{
-  reader[] readers;serializeCallback[] callbacks;writer w0;
+  reader[] readers;serializeCallback[] callbacks;nodesRepository nodesBuffers;writer w0;
   
-  public bufferToProtocol(reader[] readers,serializeCallback[] callbacks,writer w0){
+  public bufferToProtocol(reader[] readers,serializeCallback[] callbacks,nodesRepository nodesBuffers,writer w0){
     this.readers = readers;
     this.callbacks = callbacks;
+    this.nodesBuffers = nodesBuffers;
     this.w0 = w0;
     onCreate();
     initialize();
@@ -38,7 +42,7 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 69f01d7ec58ae714345e6a2b8aadbc35) */
+/*[[[end]]] (checksum: 322ea343840b50f111fe396e0905d733) */
   private final static long timeStart = System.currentTimeMillis()/1000;
   private bufferReadData readData = null;
   cnetsProtocol currentlySendingProtocol = new cnetsProtocol();
@@ -79,23 +83,33 @@ public class bufferToProtocol implements RunnableStoppable{
       if (readData == null || readData.getData() == null) {return;}
       synchronized (bunchId) {
         currentlySendingProtocol.setBunchId(bunchId++);
+        currentlySendingProtocol.setBufferIndex(readData.getNested_buffer_id());
         if(bunchId<0){bunchId = 0L;}
       }
       packet_grid_id = packet_grid_size = 0;
-      currentlySendingProtocol.setBufferId(readers[(int)readData.getNested_buffer_id()].uniqueId());
       currentlySendingProtocol.setTimeStart(timeStart);
     }
-    currentlySendingProtocol.setNodeId(-1);
     currentlySendingProtocol.setPacket(packet_grid_id++);
 
-    int data_size = callbacks[(int) readData.getNested_buffer_id()].serialize(writeProtocol.getData(), readData.getData(), currentlySendingProtocol);
-    if(data_size>0) {
-      writeProtocol.setData_size(data_size);
-      writeProtocol.setBufferId(currentlySendingProtocol.getBufferId());
-      writeProtocol.setNodeId(currentlySendingProtocol.getNodeId());
-      w0.writeFinished();
-      writeProtocol = null;
-    }else{
+    writeProtocol.getData().clear();
+    cnetsProtocol.reserve(writeProtocol.getData());
+
+    writeProtocol.setNodeIdsSize(readData.fillNodes(writeProtocol.getNodeIds()));
+    if(nodesBuffers!=null) {
+      writeProtocol.setNodeIdsSize(nodesBuffers.getNodesIdsForBuffer(writeProtocol.getNodeIds(), readData.getNested_buffer_id()));
+    }
+
+    boolean isLastPacket = callbacks[(int) readData.getNested_buffer_id()].serialize(
+        readData.getData(),
+        writeProtocol.getData(),
+        currentlySendingProtocol
+    );
+
+    currentlySendingProtocol.serialize(writeProtocol.getData());
+
+    w0.writeFinished(0,null);
+    writeProtocol = null;
+    if(isLastPacket){
       rSelectFromArr.readFinished();
       readData = null;
     }

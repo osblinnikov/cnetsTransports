@@ -1,50 +1,38 @@
 package com.github.airutech.cnetsTransports.types;
 
-/**
- * Created by oleg on 4/29/14.
- */
+import java.nio.ByteBuffer;
+
 public class cnetsProtocolBinary {
-  private byte[] data = null;
-  private int data_size = 0;
-  private long bufferId = -1;
-  private int nodeId = -1;
+  ByteBuffer bb = null;
+  private int[] nodeIds;
+  private int nodeIdsSize;
 
   public cnetsProtocolBinary(){}
   public cnetsProtocolBinary(int dataSize){
-    data = new byte[dataSize];
+    bb = ByteBuffer.wrap(new byte[(1 + dataSize)*4]);
   }
 
-  public void setBufferId(long bufferId) {
-      this.bufferId = bufferId;
+  public void setData(ByteBuffer bb) {
+    this.bb = bb;
   }
 
-  public long getBufferId() {
-      return bufferId;
+  public ByteBuffer getData() {
+    return bb;
   }
 
-  public void setData(byte[] array, int data_size) {
-    this.data = array;
-    this.data_size = data_size;
+  public int[] getNodeIds() {
+    return nodeIds;
   }
 
-  public void setData_size(int data_size){
-     this.data_size = data_size;
+  public void setNodeIds(int[]  nodeIds) {
+    this.nodeIds = nodeIds;
   }
 
-  public int getData_size(){
-    return data_size;
+  public void setNodeIdsSize(int nodeIdsSize) {
+    this.nodeIdsSize = nodeIdsSize;
   }
 
-  public byte[] getData() {
-    return data;
-  }
-
-
-  public int getNodeId() {
-    return nodeId;
-  }
-
-  public void setNodeId(int nodeId) {
-    this.nodeId = nodeId;
+  public int getNodeIdsSize() {
+    return nodeIdsSize;
   }
 }

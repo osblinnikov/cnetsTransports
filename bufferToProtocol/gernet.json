@@ -7,8 +7,14 @@
 },{
   "name": "callbacks",
   "type": "serializeCallback[]"
+},{
+  "name": "nodesBuffers",
+  "type": "nodesRepository"
 }],
 "depends":[{
+  "path":"com.github.airutech.cnets.nodesRepository",
+  "ver": "[0.0.0,)"
+},{
   "path":"com.github.airutech.cnetsTransports.types",
   "ver": "[0.0.0,)"
 },{

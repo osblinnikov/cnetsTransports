@@ -6,9 +6,6 @@ import org.java_websocket.framing.Framedata;
 
 import java.nio.ByteBuffer;
 
-/**
- * Created by oleg on 5/8/14.
- */
 public class webSocketConnection {
   WebSocket server = null;
   WebSocketClient client = null;
@@ -18,13 +15,14 @@ public class webSocketConnection {
   public webSocketConnection(WebSocketClient client){
     this.client = client;
   }
-  public void send(byte[] data, int data_size){
+  public void send(ByteBuffer bb){
+    bb.position(0);
     if(client!=null){
       client.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(new byte[1]),false);/*necessary because websockets implementation has bug with binary data receiving*/
-      client.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(data,0,data_size), true);
+      client.sendFragmentedFrame(Framedata.Opcode.BINARY, bb, true);
     }else if(server!=null){
       server.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(new byte[1]),false);/*necessary because websockets implementation has bug with binary data receiving*/
-      server.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(data,0,data_size),true);
+      server.sendFragmentedFrame(Framedata.Opcode.BINARY, bb,true);
     }
   }
 }

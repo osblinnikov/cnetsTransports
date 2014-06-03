@@ -2,13 +2,7 @@
 "path":"com.github.airutech.cnetsTransports.webSocket",
 "ver":"0.0.0",
 "args": [{
-  "name": "inBuffersIds",
-  "type": "long[]"
-},{
   "name": "maxNodesCount",
-  "type": "int"
-},{
-  "name": "maxBuffersCount",
   "type": "int"
 },{
   "name": "initialConnection",

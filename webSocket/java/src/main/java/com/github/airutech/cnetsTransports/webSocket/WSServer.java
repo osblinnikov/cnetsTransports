@@ -7,9 +7,6 @@ import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-/**
- * Created by oleg on 5/7/14.
- */
 public class WSServer extends WebSocketServer {
   webSocket parent;
 

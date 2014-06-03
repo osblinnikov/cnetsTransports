@@ -4,22 +4,18 @@ import com.github.airutech.cnets.queue.queue;
 import com.github.airutech.cnets.types.QueueEmptyException;
 import com.github.airutech.cnets.types.QueueFullException;
 
-/**
- * Created by oleg on 5/8/14.
- */
+import java.nio.ByteBuffer;
+
 public class connectionsRegistry {
   class conContainer{
     public webSocketConnection connection = null;
     public String keyCode = null;
-    public long[] buffers = null;
     public int uniqueId;
   }
   private queue connectionsIdsQueue = null;
   private queue newConnections = null;
   private conContainer[] arrContainers = null;
-  private int buffersCapacity;
-  public connectionsRegistry(int capacity, int buffersCapacity){
-    this.buffersCapacity = buffersCapacity;
+  public connectionsRegistry(int capacity){
     connectionsIdsQueue = new queue(capacity);
     newConnections = new queue(capacity);
     arrContainers = new conContainer[capacity];
@@ -31,10 +27,6 @@ public class connectionsRegistry {
       }
       arrContainers[i] = new conContainer();
       arrContainers[i].uniqueId = i-arrContainers.length;
-      arrContainers[i].buffers = new long[buffersCapacity];
-      for(int j=0;j<buffersCapacity;j++){
-        arrContainers[i].buffers[j] = -1;
-      }
     }
   }
 
@@ -126,20 +118,7 @@ public class connectionsRegistry {
     return countOfCounnections;
   }
 
-  public boolean setBuffers(String hashKey, Long[] ids) {
-    int id = findConnectionId(hashKey);
-    if(id<0){return false;}
-    for(int i=0; i<buffersCapacity;i++){
-      if(ids.length > i) {
-        arrContainers[id].buffers[i] = ids[i];
-      }else{
-        arrContainers[id].buffers[i] = -1;
-      }
-    }
-    return true;
-  }
-
-  public void sendToNode(int nodeId, long bufferId, byte[] data, int data_size){
+  public void sendToNode(int nodeId, ByteBuffer bb){
     if(nodeId>=0){
       int nodeIndx = nodeId;
       if(nodeId > arrContainers.length){
@@ -149,20 +128,10 @@ public class connectionsRegistry {
         System.err.printf("sendToNode: node unique %d id do not match %d\n",arrContainers[nodeIndx].uniqueId,nodeId);
         return;
       }
-      sendForBufferId(nodeIndx, bufferId,data, data_size);
+      arrContainers[nodeIndx].connection.send(bb);
     }else {
       for (int i = 0; i < arrContainers.length; i++) {
-        sendForBufferId(i, bufferId, data, data_size);
-      }
-    }
-  }
-
-  private void sendForBufferId(int nodeIndx, long bufferId,byte[] data, int data_size){
-    for(int j=0; j<buffersCapacity; j++){
-      if(arrContainers[nodeIndx].buffers[j] == -1){return;}
-      if(arrContainers[nodeIndx].buffers[j] == bufferId){
-        arrContainers[nodeIndx].connection.send(data, data_size);
-        break;
+        arrContainers[i].connection.send(bb);
       }
     }
   }

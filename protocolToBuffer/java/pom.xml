@@ -54,6 +54,12 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 <dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>nodesRepository</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
@@ -89,7 +95,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: bc340ec8acc06c84823af4facc38ed6d)-->
+<!--[[[end]]] (checksum: 1436aaff10543c4333c5c985cdd4ee2f)-->
     </dependencies>
 
     <build>

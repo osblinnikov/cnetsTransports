@@ -5,9 +5,6 @@ import com.github.airutech.cnets.readerWriter.writer;
 import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
 import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
 
-/**
- * Created by oleg on 5/6/14.
- */
 class intBoxerWriter implements RunnableStoppable {
   writer w0;
   intBoxerWriter(writer w0){
@@ -34,7 +31,7 @@ class intBoxerWriter implements RunnableStoppable {
     IntBoxer d = (IntBoxer) w0.writeNext(true);
     if (d != null) {
       d.value = packIterator;
-      w0.writeFinished();
+      w0.writeFinished(0,null);
       packIterator++;
       curtime = System.currentTimeMillis();
       if (endtime_sec <= curtime) {

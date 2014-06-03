@@ -6,16 +6,12 @@ import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
 import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
 import com.github.airutech.cnetsTransports.types.*;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
- * Created by oleg on 5/6/14.
- */
 public class protocolWriter implements RunnableStoppable {
   writer w0;
-  long uniqueId;
-  public protocolWriter(long uniqueId, writer w0) {
+  String uniqueId;
+  public protocolWriter(String uniqueId, writer w0) {
     this.uniqueId = uniqueId;
     this.w0 = w0;
   }
@@ -43,20 +39,20 @@ public class protocolWriter implements RunnableStoppable {
     cnetsProtocolBinary d = (cnetsProtocolBinary) w0.writeNext(true);
     if (d != null) {
       /*TODO: serialize data here*/
-      d.setNodeId(0);
+      d.getNodeIds()[0] = 0;
+      d.setNodeIdsSize(1);
       protocol.setTimeStart(timeStart);
-      protocol.setBufferId(uniqueId);
+      protocol.setBufferIndex(0);
       protocol.setBunchId(packIterator/2);
       protocol.setPacket(packIterator%2);
       protocol.setPackets_grid_size(2);
       if(d.getData() == null) {
-        d.setData(new byte[bufSize], 0);
+        d.setData(ByteBuffer.wrap(new byte[bufSize]));
       }
-      ByteBuffer out = protocol.getByteBuffer(d.getData());
+      protocol.serialize(d.getData());
       IntBoxer boxer = new IntBoxer(packIterator);
-      boxer.serialize(out);
-      d.setData(out.array(),out.position());
-      w0.writeFinished();
+      boxer.serialize(d.getData());
+      w0.writeFinished(0, null);
       packIterator++;
       curtime = System.currentTimeMillis();
       if (endtime_sec <= curtime) {

@@ -6,9 +6,6 @@ import org.omg.CORBA.INTERNAL;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
- * Created by oleg on 5/7/14.
- */
 public class bufferUtils {
   public final static Long bufPrefix = (long)Integer.MAX_VALUE;
   public final static Long dataPrefix = 0L;

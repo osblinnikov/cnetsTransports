@@ -5,9 +5,6 @@ import com.github.airutech.cnets.readerWriter.reader;
 import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
 import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
 
-/**
- * Created by oleg on 5/6/14.
- */
 public class intBoxerReader implements RunnableStoppable {
   reader r0;
   public intBoxerReader(reader r0) {

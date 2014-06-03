@@ -3,25 +3,13 @@ package com.github.airutech.cnetsTransports.types;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
-* Created by oleg on 4/29/14.
-*/
 public class cnetsProtocol {
-  long prefix = bufferUtils.dataPrefix;
-  long bufferId;
-  long timeStart;
-  long bunchId;
-  int packet;
-  int packets_grid_size;
+  private long bufferIndex;
+  private long timeStart;
+  private long bunchId;
+  private int packet;
+  private int packets_grid_size;
 
-  private int nodeId = -1;/*not used for binarization*/
-
-  public void setBufferId(long bufferId) {
-    this.bufferId = bufferId;
-  }
-  public long getBufferId() {
-    return bufferId;
-  }
 
   public void setTimeStart(long timeStart) {
     this.timeStart = timeStart;
@@ -51,55 +39,60 @@ public class cnetsProtocol {
       return packets_grid_size;
   }
 
-  public static int prefixSize(){
-    return 6*4;
+  public static int fullSize(){
+    return 5*4;
   }
 
-  public ByteBuffer getByteBuffer(byte[] data){
-    if(data.length < prefixSize()){
-      System.err.println("getByteBuffer: data_size is too small");
-      return null;
-    }
-    ByteBuffer output = ByteBuffer.wrap(data);
+
+  /*
+  * ByteBuffer structure
+  *
+  * prefixSize() bytes: for cnetsProtocol
+  * rest bytes: for data payload
+  *
+  * */
+  public boolean serialize(ByteBuffer bb){
+    int oldLimit = bb.limit();
+    bb.position(0);
     try {
-      types.writeUInt32(prefix,output);
-      types.writeUInt32(bufferId,output);
-      types.writeUInt32(timeStart,output);
-      types.writeUInt32(bunchId,output);
-      types.writeUInt32(packet,output);
-      types.writeUInt32(packets_grid_size,output);
+      types.writeUInt32(getBufferIndex(),bb);
+      types.writeUInt32(timeStart,bb);
+      types.writeUInt32(bunchId,bb);
+      types.writeUInt32(packet,bb);
+      types.writeUInt32(packets_grid_size,bb);
+      bb.limit(oldLimit);
     } catch (IOException e) {
       e.printStackTrace();
-      return null;
+      return false;
     }
-    return output;
+    return true;
   }
 
-  public ByteBuffer setFromBytes(byte[] data, int data_size) {
-    if(data_size < prefixSize()){
-      System.err.println("setFromBytes: data_size is too small");
-      return null;
-    }
-    ByteBuffer input = ByteBuffer.wrap(data);
+  public boolean deserialize(ByteBuffer input) {
     try {
-      prefix = types.readUInt32(input);
-      bufferId = types.readUInt32(input);
+      input.position(0);
+      setBufferIndex(types.readUInt32(input));
       timeStart = types.readUInt32(input);
       bunchId = types.readUInt32(input);
       packet = (int)types.readUInt32(input);
       packets_grid_size = (int)types.readUInt32(input);
     } catch (IOException e) {
       e.printStackTrace();
-      return null;
+      return false;
     }
-    return input;
+    return true;
   }
 
-  public int getNodeId() {
-    return nodeId;
+  public static void reserve(ByteBuffer data) {
+    data.limit(cnetsProtocol.fullSize());
+    data.position(cnetsProtocol.fullSize());
   }
 
-  public void setNodeId(int nodeId) {
-    this.nodeId = nodeId;
+  public long getBufferIndex() {
+    return bufferIndex;
+  }
+
+  public void setBufferIndex(long bufferIndex) {
+    this.bufferIndex = bufferIndex;
   }
 }

@@ -56,7 +56,7 @@ public class webSocketTest {
     for(int i=0; i<buffersProtocolOutgoing.length; i++){
       buffersProtocolOutgoing[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mOut = new mapBuffer(buffersProtocolOutgoing, 1000, 1, 1);
+    mapBuffer mOut = new mapBuffer(buffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader outpr0 = mOut.getReader(0);
     final writer outpw0 = mOut.getWriter(0);
 
@@ -65,7 +65,7 @@ public class webSocketTest {
     for(int i=0; i<buffersProtocolIncoming.length; i++){
       buffersProtocolIncoming[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mIn = new mapBuffer(buffersProtocolIncoming, 1000, 2, 1);
+    mapBuffer mIn = new mapBuffer(buffersProtocolIncoming, 1000, "2", 1, 1000);
     reader inpr0 = mIn.getReader(0);
     final writer inpw0 = mIn.getWriter(0);
 
@@ -74,7 +74,7 @@ public class webSocketTest {
     for(int i=0; i<buffersConfig.length; i++){
       buffersConfig[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mConfig = new mapBuffer(buffersConfig, 1000, 3, 1);
+    mapBuffer mConfig = new mapBuffer(buffersConfig, 1000, "3", 1, 1000);
     reader cr0 = mConfig.getReader(0);
     final writer cw0 = mConfig.getWriter(0);
 
@@ -87,7 +87,7 @@ public class webSocketTest {
     for(int i=0; i<clientbuffersProtocolOutgoing.length; i++){
       clientbuffersProtocolOutgoing[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmOut = new mapBuffer(clientbuffersProtocolOutgoing, 1000, 1, 1);
+    mapBuffer clientmOut = new mapBuffer(clientbuffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader clientoutpr0 = clientmOut.getReader(0);
     final writer clientoutpw0 = clientmOut.getWriter(0);
 
@@ -96,7 +96,7 @@ public class webSocketTest {
     for(int i=0; i<clientbuffersProtocolIncoming.length; i++){
       clientbuffersProtocolIncoming[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmIn = new mapBuffer(clientbuffersProtocolIncoming, 1000, 2, 1);
+    mapBuffer clientmIn = new mapBuffer(clientbuffersProtocolIncoming, 1000, "2", 1, 1000);
     reader clientinpr0 = clientmIn.getReader(0);
     final writer clientinpw0 = clientmIn.getWriter(0);
 
@@ -105,7 +105,7 @@ public class webSocketTest {
     for(int i=0; i<clientbuffersConfig.length; i++){
       clientbuffersConfig[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmConfig = new mapBuffer(clientbuffersConfig, 1000, 3, 1);
+    mapBuffer clientmConfig = new mapBuffer(clientbuffersConfig, 1000, "3", 1, 1000);
     reader clientcr0 = clientmConfig.getReader(0);
     final writer clientcw0 = clientmConfig.getWriter(0);
 
@@ -117,8 +117,8 @@ public class webSocketTest {
     Long[] clientInBufferIds = new Long[]{5L};
 
 //    WebSocketImpl.DEBUG = true;
-    webSocket serverObj = new webSocket(clientOutBufferIds,100,10,null,10001,new conState(), sslContext, inpw0,outpr0,cr0);
-    webSocket clientObj = new webSocket(clientInBufferIds,1,10,"ws://127.0.0.1:10001",-1, new conState(), sslContext, clientinpw0,clientoutpr0,clientcr0);
+    webSocket serverObj = new webSocket(100,null,10001,new conState(), sslContext, inpw0,outpr0,cr0);
+    webSocket clientObj = new webSocket(1,"ws://127.0.0.1:10001",-1, new conState(), sslContext, clientinpw0,clientoutpr0,clientcr0);
 
 /*running kernels*/
     runnablesContainer runnables = new runnablesContainer();

@@ -6,9 +6,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-/**
- * Created by oleg on 5/7/14.
- */
 public class WSClient extends WebSocketClient {
   private webSocket parent;
 

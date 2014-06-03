@@ -27,12 +27,10 @@ import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class webSocket implements RunnableStoppable{
-  Long[] inBuffersIds;int maxNodesCount;int maxBuffersCount;String initialConnection;int bindPort;connectionStatusCallback connectionStatus;SSLContext sslContext;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
+  int maxNodesCount;String initialConnection;int bindPort;connectionStatusCallback connectionStatus;SSLContext sslContext;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public webSocket(Long[] inBuffersIds,int maxNodesCount,int maxBuffersCount,String initialConnection,int bindPort,connectionStatusCallback connectionStatus,SSLContext sslContext,writer w0,reader r0,reader r1){
-    this.inBuffersIds = inBuffersIds;
+  public webSocket(int maxNodesCount,String initialConnection,int bindPort,connectionStatusCallback connectionStatus,SSLContext sslContext,writer w0,reader r0,reader r1){
     this.maxNodesCount = maxNodesCount;
-    this.maxBuffersCount = maxBuffersCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
     this.connectionStatus = connectionStatus;
@@ -60,7 +58,7 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 6f3331cf6328cafacef3f386e011087a) */
+/*[[[end]]] (checksum: 4716bf1ab5fdb52388204f7ce44d5481)  */
   private connectionsRegistry conManager = null;
   private Lock connectionsLock = new ReentrantLock();
 
@@ -73,7 +71,7 @@ public class webSocket implements RunnableStoppable{
   }
   
   private void onCreate(){
-    conManager = new connectionsRegistry(maxNodesCount,maxBuffersCount);
+    conManager = new connectionsRegistry(maxNodesCount);
   }
 
   @Override
@@ -90,7 +88,11 @@ public class webSocket implements RunnableStoppable{
         case 0:
           cnetsProtocolBinary binary = (cnetsProtocolBinary) r.getData();
           connectionsLock.lock();
-          conManager.sendToNode(binary.getNodeId(), binary.getBufferId(), binary.getData(), binary.getData_size());
+          int[] ids = binary.getNodeIds();
+          int len = (ids.length > binary.getNodeIdsSize())? binary.getNodeIdsSize() : ids.length;
+          for(int i=0;i<len;i++) {
+            conManager.sendToNode(ids[i], binary.getData());
+          }
           connectionsLock.unlock();
           break;
         case 1:
@@ -185,27 +187,27 @@ public class webSocket implements RunnableStoppable{
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     connectionsLock.lock();
     conManager.addConnection(hashKey,webSocket);
-
-    if(inBuffersIds!=null) {
-      /*necessary to create a new thread because webSockets implementation has bugs*/
-      final byte[] bytes = bufferUtils.serializeBuffers(inBuffersIds);
-      if (bytes != null) {
-        new Thread() {
-          @Override
-          public void run() {
-            connectionsLock.lock();
-            webSocketConnection c = null;
-            while ((c = conManager.nextNewConnection()) != null) {
-              c.send(bytes, bytes.length);
-            }
-            connectionsLock.unlock();
-          }
-        }.start();
-      }
-    }
+// After, will send meta data only to the new connections
+//    if(inBuffersIds!=null) {
+//      /*necessary to create a new thread because webSockets implementation has bugs*/
+//      final byte[] bytes = bufferUtils.serializeBuffers(inBuffersIds);
+//      if (bytes != null) {
+//        new Thread() {
+//          @Override
+//          public void run() {
+//            connectionsLock.lock();
+//            webSocketConnection c = null;
+//            while ((c = conManager.nextNewConnection()) != null) {
+//              c.send(bytes, bytes.length);
+//            }
+//            connectionsLock.unlock();
+//          }
+//        }.start();
+//      }
+//    }
     if(connectionStatus != null) {
       int id = conManager.findUniqueConnectionId(hashKey);
-      connectionStatus.onConnect(id, null);
+      connectionStatus.onConnect(id);
     }
     connectionsLock.unlock();
   }
@@ -225,20 +227,20 @@ public class webSocket implements RunnableStoppable{
   }
 
   public void onMessage(String hashKey, ByteBuffer msg) {
-    if(inBuffersIds!=null) {
-      Long[] ids = bufferUtils.deserializeBuffers(msg);
-      if (ids != null) {
-        connectionsLock.lock();
-        if(connectionStatus!=null) {
-          int id = conManager.findUniqueConnectionId(hashKey);
-          connectionStatus.onConnect(id, ids);
-        }
-        conManager.setBuffers(hashKey, ids);
-        connectionsLock.unlock();
-        return;
-      }
-      msg.position(0);
-    }
+//    if(inBuffersIds!=null) {
+//      Long[] ids = bufferUtils.deserializeBuffers(msg);
+//      if (ids != null) {
+//        connectionsLock.lock();
+//        if(connectionStatus!=null) {
+//          int id = conManager.findUniqueConnectionId(hashKey);
+//          connectionStatus.onConnect(id, ids);
+//        }
+//        conManager.setBuffers(hashKey, ids);
+//        connectionsLock.unlock();
+//        return;
+//      }
+//      msg.position(0);
+//    }
     connectionsLock.lock();
     int nodeId = conManager.findUniqueConnectionId(hashKey);
     connectionsLock.unlock();
@@ -253,10 +255,11 @@ public class webSocket implements RunnableStoppable{
         System.err.println("webSocket: onMessage: timeout on writeNext cnetsProtocolBinary exceed, I will try again");
       }
     }
-    bProtocol.setData(msg.array(),msg.limit());
-    bProtocol.setNodeId(nodeId);
-    bProtocol.setBufferId(-1);/*we don't know it here yet*/
-    w0.writeFinished();
+    ByteBuffer bb = ByteBuffer.wrap(msg.array());
+    bProtocol.setData(bb);
+    bProtocol.getNodeIds()[0] = nodeId;
+    bProtocol.setNodeIdsSize(1);
+    w0.writeFinished(0, null);
   }
 }
 

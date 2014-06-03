@@ -1,16 +1,13 @@
 
 package com.github.airutech.cnetsTransports.protocolToBuffer;
 
-import java.nio.ByteBuffer;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
+import com.github.airutech.cnets.nodesRepository.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.queue.*;
@@ -18,12 +15,12 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class protocolToBuffer implements RunnableStoppable{
-  int nodesCount;writer[] writers;deserializeCallback[] callbacks;reader r0;
+  writer[] writers;deserializeCallback[] callbacks;nodesRepository nodesBuffers;reader r0;
   
-  public protocolToBuffer(int nodesCount,writer[] writers,deserializeCallback[] callbacks,reader r0){
-    this.nodesCount = nodesCount;
+  public protocolToBuffer(writer[] writers,deserializeCallback[] callbacks,nodesRepository nodesBuffers,reader r0){
     this.writers = writers;
     this.callbacks = callbacks;
+    this.nodesBuffers = nodesBuffers;
     this.r0 = r0;
     onCreate();
     initialize();
@@ -40,36 +37,14 @@ public class protocolToBuffer implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 89d99953fd8d92b800367a0b0c0a0d2e)  */
-
-  private bufferOfNode[] nodes = null;
-  private Lock[] locks = null;
+/*[[[end]]] (checksum: 8a74a3dc328d009209021776e2252988)  */
 
   private void onKernels() {
 
   }
 
   private void onCreate(){
-    if(nodesCount>0 && writers!=null && r0 != null){
-      locks = new Lock[writers.length];
-      nodes = new bufferOfNode[nodesCount*writers.length];
 
-      for(int i=0;i<writers.length;i++){
-        locks[i] = new ReentrantLock();
-      }
-
-      for (int i = 0; i < nodesCount; i++) {
-        for(int bufferIndx=0;bufferIndx<writers.length; bufferIndx++) {
-          int nodeIndx = i * writers.length + bufferIndx;
-          nodes[nodeIndx] = new bufferOfNode();
-          nodes[nodeIndx].setInit(false);
-          nodes[nodeIndx].setW0(writers[bufferIndx]);
-          nodes[nodeIndx].setLock(locks[bufferIndx]);
-          nodes[nodeIndx].setCallback(callbacks[bufferIndx]);
-        }
-      }
-
-    }
   }
 
   @Override
@@ -82,7 +57,6 @@ public class protocolToBuffer implements RunnableStoppable{
   @Override
   public void run() {
     Thread.currentThread().setName("protocolToBuffer");
-    if(nodes==null){return;}
     if(cBin == null) {
       cBin = (cnetsProtocolBinary) r0.readNext(true);
       if (cBin == null || cBin.getData() == null) {
@@ -91,18 +65,14 @@ public class protocolToBuffer implements RunnableStoppable{
       }
     }
 
-    ByteBuffer buf = currentlyReceivedProtocol.setFromBytes(cBin.getData(), cBin.getData_size());
-    int bufferIndx = findBufferIndx(currentlyReceivedProtocol.getBufferId());
-
-    /*check the node in the nodes hash*/
-    if (nodesCount <= cBin.getNodeId() || null == buf || bufferIndx < 0 ) {
-      System.err.printf("protocolToBuffer: wrong protocol parameters\n");
-      System.err.printf("protocolToBuffer: nodesCount: %d, nodeId: %d\n", nodesCount, cBin.getNodeId());
-      finishRead();
-      return;
+    if(!currentlyReceivedProtocol.deserialize(cBin.getData())){
+      System.err.printf("protocolToBuffer: currentlyReceivedProtocol.deserialize failed\n");
     }
+    if(cBin.getNodeIdsSize() <= 0){
+      System.err.printf("protocolToBuffer: cBin.getNodeIdsSize() <= 0 \n");
+    }
+    bufferOfNode node = nodesBuffers.getNode(currentlyReceivedProtocol.getBufferIndex(), cBin.getNodeIds()[0]);
 
-    bufferOfNode node = nodes[cBin.getNodeId() * writers.length + bufferIndx];
     node.getLock().lock();
     /*check the node reboot*/
     if (!node.isInit()
@@ -110,7 +80,7 @@ public class protocolToBuffer implements RunnableStoppable{
         || Math.abs(node.getTimeStart() - currentlyReceivedProtocol.getTimeStart()) > Long.MAX_VALUE / 2
         ) {
       /*reboot detected*/
-      finishWrite(node);
+      finishWrite(node,cBin.getNodeIds()[0]);
       node.setInit(true);
       node.setTimeStart(currentlyReceivedProtocol.getTimeStart());
       node.setBunchId(currentlyReceivedProtocol.getBunchId());
@@ -124,7 +94,7 @@ public class protocolToBuffer implements RunnableStoppable{
     }
     /*check if the new bunch received*/
     if(node.getBunchId()<currentlyReceivedProtocol.getBunchId()){
-      if(finishWrite(node)){
+      if(finishWrite(node,cBin.getNodeIds()[0])){
         System.out.printf("protocolToBuffer: bunch %d was not fully received, new bunch is %d\n",node.getBunchId(),currentlyReceivedProtocol.getBunchId());
       }
       node.setBunchId(currentlyReceivedProtocol.getBunchId());
@@ -140,17 +110,17 @@ public class protocolToBuffer implements RunnableStoppable{
       }
       isNewBunch = true;
     }
-    node.getCallback().deserialize(buf,node.getBufObj(),currentlyReceivedProtocol.getPacket(),currentlyReceivedProtocol.getPackets_grid_size(),isNewBunch, cBin.getNodeId());
+    callbacks[node.nodeId()].deserialize(cBin.getData(), node.getBufObj(), currentlyReceivedProtocol.getPacket(), currentlyReceivedProtocol.getPackets_grid_size(), isNewBunch);
     if(currentlyReceivedProtocol.getPacket() == currentlyReceivedProtocol.getPackets_grid_size() - 1){
-      finishWrite(node);
+      finishWrite(node,cBin.getNodeIds()[0]);
     }
     finishRead();
     node.getLock().unlock();
   }
 
-  private boolean finishWrite(bufferOfNode node) {
+  private boolean finishWrite(bufferOfNode node, int sourceNode) {
     if(node.getBufObj() != null){
-      node.getW0().writeFinished();
+      node.getW0().writeFinished(sourceNode,null);
       node.setBufObj(null);
       return true;
     }
@@ -165,16 +135,8 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   @Override
-  public void onStop(){
+  public void onStop() {
 
-  }
-
-  private int findBufferIndx(long uniqueId){
-    if(writers==null || uniqueId < 0){return -1;}
-    for(int i=0; i<writers.length;i++ ){
-      if(writers[i].uniqueId() == uniqueId){return i;}
-    }
-    return -1;
   }
 
 }

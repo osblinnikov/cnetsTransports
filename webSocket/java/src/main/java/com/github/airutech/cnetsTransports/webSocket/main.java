@@ -16,7 +16,7 @@ import com.github.airutech.cnets.mapBuffer.*;
 /*[[[end]]] (checksum: 2efeebb03bb75b35280c2db6e0fdfea7)*/
 public class main{
   public static void main(String[] args){
-    webSocket classObj = new webSocket(new Long[1],0,0,null,0,null,null,null,null,null);
+    webSocket classObj = new webSocket(0,null,0,null,null,null,null,null);
     runnablesContainer runnables = classObj.getRunnables();
     runnables.launch(true);
     

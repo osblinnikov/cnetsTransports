@@ -3,9 +3,6 @@ package com.github.airutech.cnetsTransports.types;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-/**
- * Created by oleg on 5/7/14.
- */
 public class IntBoxer {
   public IntBoxer() {}
   public IntBoxer(int startValue) {

@@ -5,9 +5,6 @@ import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
 import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
 import com.github.airutech.cnetsTransports.types.cnetsProtocolBinary;
 
-/**
- * Created by oleg on 5/6/14.
- */
 class protocolReader implements RunnableStoppable {
   reader r0;
   protocolReader(reader r0){
