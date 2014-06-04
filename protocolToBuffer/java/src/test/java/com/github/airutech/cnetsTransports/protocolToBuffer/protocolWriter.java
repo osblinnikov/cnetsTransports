@@ -52,7 +52,7 @@ public class protocolWriter implements RunnableStoppable {
       protocol.serialize(d.getData());
       IntBoxer boxer = new IntBoxer(packIterator);
       boxer.serialize(d.getData());
-      w0.writeFinished(0, null);
+      w0.writeFinished();
       packIterator++;
       curtime = System.currentTimeMillis();
       if (endtime_sec <= curtime) {

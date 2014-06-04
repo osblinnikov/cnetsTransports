@@ -259,7 +259,7 @@ public class webSocket implements RunnableStoppable{
     bProtocol.setData(bb);
     bProtocol.getNodeIds()[0] = nodeId;
     bProtocol.setNodeIdsSize(1);
-    w0.writeFinished(0, null);
+    w0.writeFinished();
   }
 }
 

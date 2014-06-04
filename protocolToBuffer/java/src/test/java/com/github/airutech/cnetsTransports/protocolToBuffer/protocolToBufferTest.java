@@ -30,7 +30,7 @@ public class protocolToBufferTest {
     String uniqueId = "1";
     int readers_grid_size = 1;
     int statsInterval = 1000;
-    mapBuffer m = new mapBuffer(buffers, timeout_milisec, uniqueId, readers_grid_size,statsInterval);
+    mapBuffer m = new mapBuffer(buffers, timeout_milisec, uniqueId, readers_grid_size,statsInterval, 0);
     reader r0 = m.getReader(0);
     final writer w0 = m.getWriter(0);
 
@@ -43,7 +43,7 @@ public class protocolToBufferTest {
     String uniqueIdProtocol = "2";
     int readers_grid_sizeProtocol = 1;
     int statsIntervalProtocol = 1000;
-    mapBuffer mProtocol = new mapBuffer(buffersProtocol, timeout_milisecProtocol, uniqueIdProtocol, readers_grid_sizeProtocol,statsIntervalProtocol);
+    mapBuffer mProtocol = new mapBuffer(buffersProtocol, timeout_milisecProtocol, uniqueIdProtocol, readers_grid_sizeProtocol,statsIntervalProtocol, 0);
     reader pr0 = mProtocol.getReader(0);
     final writer pw0 = mProtocol.getWriter(0);
 
