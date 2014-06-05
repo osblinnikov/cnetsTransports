@@ -6,15 +6,21 @@
   "type": "writer[]"
 },{
   "name": "callbacks",
-  "type": "deserializeCallback[]"
+  "type": "deserializeStreamCallback[]"
 },{
-   "name": "nodesBuffers",
-   "type": "nodesRepository"
- }],
+  "name": "protocolToBuffersGridSize",
+  "type": "int"
+},{
+  "name": "maxNodesCount",
+  "type": "int"
+},{
+  "name": "maxBuffersCount",
+  "type": "int"
+}],
 "depends":[{
-  "path":"com.github.airutech.cnets.nodesRepository",
-  "ver": "[0.0.0,)"
-},{
+   "path":"com.github.airutech.cnets.types",
+   "ver": "[0.0.0,)"
+ },{
   "path":"com.github.airutech.cnetsTransports.types",
   "ver": "[0.0.0,)"
 },{
@@ -35,10 +41,19 @@
 }],
 "blocks":[],
 "connection":{
-  "writeTo": [],
+  "writeTo": [{
+    "name":"sendRepositoryToDestionation",
+    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
+  }],
   "readFrom": [{
+    "name":"connectionStatus",
+    "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
+  },{
     "name":"input",
-    "type":"cnetsProtocolBinary"
+    "type":"cnetsProtocol"
+  },{
+    "name":"receiveRemoteRepository",
+    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
   }]
 }
 }

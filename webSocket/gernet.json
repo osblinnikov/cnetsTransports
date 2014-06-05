@@ -11,16 +11,16 @@
   "name": "bindPort",
   "type": "int"
 },{
-  "name": "connectionStatus",
-  "type": "connectionStatusCallback"
-},{
   "name": "sslContext",
   "type": "SSLContext"
+},{
+  "name": "nodesReceivers",
+  "type": "writer[]"
+},{
+  "name": "connectionStatusReceivers",
+  "type": "writer[]"
 }],
 "depends":[{
-  "path":"com.github.airutech.cnetsTransports.types",
-  "ver": "[0.0.0,)"
-},{
   "path":"com.github.airutech.cnets.readerWriter",
   "ver": "[0.0.0,)"
 },{
@@ -35,19 +35,19 @@
 },{
   "path":"com.github.airutech.cnets.mapBuffer",
   "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.types",
+  "ver": "[0.0.0,)"
 }],
 "blocks":[],
 "connection":{
-  "writeTo": [{
-    "name":"fromSocket",
-    "type":"cnetsProtocolBinary"
-  }],
+  "writeTo": [],
   "readFrom": [{
     "name":"toSocket",
-    "type":"cnetsProtocolBinary"
+    "type":"com.github.airutech.cnetsTransports.type.cnetsProtocol"
   },{
     "name":"connections",
-    "type":"cnetsConnections"
+    "type":"com.github.airutech.cnetsTransports.type.cnetsConnections"
   }]
 }
 }

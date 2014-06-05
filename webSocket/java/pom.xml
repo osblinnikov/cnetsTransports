@@ -59,12 +59,6 @@
 
 
       <dependency>
-          <groupId>com.github.airutech.cnetsTransports</groupId>
-          <artifactId>types</artifactId>
-          <version>[0.0.0,)</version>
-          <scope>compile</scope>
-      </dependency>
-      <dependency>
           <groupId>com.github.airutech.cnets</groupId>
           <artifactId>readerWriter</artifactId>
           <version>[0.0.0,)</version>
@@ -94,7 +88,13 @@
           <version>[0.0.0,)</version>
           <scope>compile</scope>
       </dependency>
-<!--[[[end]]] (checksum: 7116b423c34f258de063f980130aa6f3)-->
+      <dependency>
+          <groupId>com.github.airutech.cnetsTransports</groupId>
+          <artifactId>types</artifactId>
+          <version>[0.0.0,)</version>
+          <scope>compile</scope>
+      </dependency>
+<!--[[[end]]] (checksum: 15f01602aa0b7f80ea76c0ea2b0f8a93)-->
     </dependencies>
 
     <build>

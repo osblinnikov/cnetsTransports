@@ -6,15 +6,12 @@
   "type": "reader[]"
 },{
   "name": "callbacks",
-  "type": "serializeCallback[]"
+  "type": "serializeStreamCallback[]"
 },{
-  "name": "nodesBuffers",
-  "type": "nodesRepository"
+  "name": "bufferIndexOffset",
+  "type": "int"
 }],
 "depends":[{
-  "path":"com.github.airutech.cnets.nodesRepository",
-  "ver": "[0.0.0,)"
-},{
   "path":"com.github.airutech.cnetsTransports.types",
   "ver": "[0.0.0,)"
 },{
@@ -40,7 +37,7 @@
 "connection":{
   "writeTo": [{
     "name":"output",
-    "type":"cnetsProtocolBinary"
+    "type":"cnetsProtocol"
   }],
   "readFrom": []
 }

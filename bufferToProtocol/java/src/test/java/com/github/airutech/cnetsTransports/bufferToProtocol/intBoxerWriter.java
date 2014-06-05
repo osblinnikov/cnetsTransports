@@ -31,7 +31,7 @@ class intBoxerWriter implements RunnableStoppable {
     IntBoxer d = (IntBoxer) w0.writeNext(true);
     if (d != null) {
       d.value = packIterator;
-      w0.writeFinished(0,null);
+      w0.writeFinished();
       packIterator++;
       curtime = System.currentTimeMillis();
       if (endtime_sec <= curtime) {

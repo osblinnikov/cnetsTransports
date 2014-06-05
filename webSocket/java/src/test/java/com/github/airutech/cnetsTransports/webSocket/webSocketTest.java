@@ -11,13 +11,13 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 
-import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
-/*[[[end]]] (checksum: 2efeebb03bb75b35280c2db6e0fdfea7) */
+import com.github.airutech.cnetsTransports.types.*;
+/*[[[end]]] (checksum: 3fdebff6d5eb746dbf117f8b0f3ebaeb) */
 public class webSocketTest {
   @Test
   public void webSocketTest() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
@@ -49,7 +49,7 @@ public class webSocketTest {
     for(int i=0; i<buffersProtocolOutgoing.length; i++){
       buffersProtocolOutgoing[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mOut = new mapBuffer(buffersProtocolOutgoing, 1000, "1", 1, 1000, 0);
+    mapBuffer mOut = new mapBuffer(buffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader outpr0 = mOut.getReader(0);
     final writer outpw0 = mOut.getWriter(0);
 
@@ -58,7 +58,7 @@ public class webSocketTest {
     for(int i=0; i<buffersProtocolIncoming.length; i++){
       buffersProtocolIncoming[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mIn = new mapBuffer(buffersProtocolIncoming, 1000, "2", 1, 1000, 0);
+    mapBuffer mIn = new mapBuffer(buffersProtocolIncoming, 1000, "2", 1, 1000);
     reader inpr0 = mIn.getReader(0);
     final writer inpw0 = mIn.getWriter(0);
 
@@ -67,7 +67,7 @@ public class webSocketTest {
     for(int i=0; i<buffersConfig.length; i++){
       buffersConfig[i] = new cnetsProtocolBinary();
     }
-    mapBuffer mConfig = new mapBuffer(buffersConfig, 1000, "3", 1, 1000, 0);
+    mapBuffer mConfig = new mapBuffer(buffersConfig, 1000, "3", 1, 1000);
     reader cr0 = mConfig.getReader(0);
     final writer cw0 = mConfig.getWriter(0);
 
@@ -80,16 +80,26 @@ public class webSocketTest {
     for(int i=0; i<clientbuffersProtocolOutgoing.length; i++){
       clientbuffersProtocolOutgoing[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmOut = new mapBuffer(clientbuffersProtocolOutgoing, 1000, "1", 1, 1000, 0);
+    mapBuffer clientmOut = new mapBuffer(clientbuffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader clientoutpr0 = clientmOut.getReader(0);
     final writer clientoutpw0 = clientmOut.getWriter(0);
+
+
+/*connection status buffer**/
+    Object connStatus[] = new Object[bufSizes];
+    for(int i=0; i<connStatus.length; i++){
+      connStatus[i] = new connectionStatus();
+    }
+    mapBuffer clientmConn = new mapBuffer(connStatus, 1000, "2", 1, 1000);
+    reader clientConnr0 = clientmOut.getReader(0);
+    final writer clientConnw0 = clientmOut.getWriter(0);
 
 /*incoming protocol Buffer**/
     Object clientbuffersProtocolIncoming[] = new Object[bufSizes];
     for(int i=0; i<clientbuffersProtocolIncoming.length; i++){
       clientbuffersProtocolIncoming[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmIn = new mapBuffer(clientbuffersProtocolIncoming, 1000, "2", 1, 1000, 0);
+    mapBuffer clientmIn = new mapBuffer(clientbuffersProtocolIncoming, 1000, "3", 1, 1000);
     reader clientinpr0 = clientmIn.getReader(0);
     final writer clientinpw0 = clientmIn.getWriter(0);
 
@@ -98,20 +108,17 @@ public class webSocketTest {
     for(int i=0; i<clientbuffersConfig.length; i++){
       clientbuffersConfig[i] = new cnetsProtocolBinary();
     }
-    mapBuffer clientmConfig = new mapBuffer(clientbuffersConfig, 1000, "3", 1, 1000, 0);
+    mapBuffer clientmConfig = new mapBuffer(clientbuffersConfig, 1000, "4", 1, 1000);
     reader clientcr0 = clientmConfig.getReader(0);
     final writer clientcw0 = clientmConfig.getWriter(0);
-
-
-
 
 /*Initialize Kernels**/
     Long[] clientOutBufferIds = new Long[]{4L};
     Long[] clientInBufferIds = new Long[]{5L};
 
 //    WebSocketImpl.DEBUG = true;
-    webSocket serverObj = new webSocket(100,null,10001,new conState(), sslContext, inpw0,outpr0,cr0);
-    webSocket clientObj = new webSocket(1,"ws://127.0.0.1:10001",-1, new conState(), sslContext, clientinpw0,clientoutpr0,clientcr0);
+    webSocket serverObj = new webSocket(100, null, 10001, sslContext, inpw0, clientConnw0, outpr0, cr0);
+    webSocket clientObj = new webSocket(1, "ws://127.0.0.1:10001", -1, sslContext, clientinpw0, clientConnw0, clientoutpr0, clientcr0);
 
 /*running kernels*/
     runnablesContainer runnables = new runnablesContainer();

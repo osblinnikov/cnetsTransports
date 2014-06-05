@@ -5,6 +5,8 @@ import com.github.airutech.cnets.types.QueueEmptyException;
 import com.github.airutech.cnets.types.QueueFullException;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class connectionsRegistry {
   class conContainer{
@@ -12,6 +14,7 @@ public class connectionsRegistry {
     public String keyCode = null;
     public int uniqueId;
   }
+  private Lock connectionsLock = new ReentrantLock();
   private queue connectionsIdsQueue = null;
   private queue newConnections = null;
   private conContainer[] arrContainers = null;
@@ -40,13 +43,16 @@ public class connectionsRegistry {
   }
 
   public boolean addConnection(String keyCode, webSocketConnection connection){
+    connectionsLock.lock();
     int id = findConnectionId(keyCode);
+    boolean res = false;
     if(id <0) {
       try {
         id = (int) connectionsIdsQueue.dequeue();
       } catch (QueueEmptyException e) {
         e.printStackTrace();
-        return false;
+        connectionsLock.unlock();
+        return res;
       }
 
       arrContainers[id].connection = connection;
@@ -58,11 +64,13 @@ public class connectionsRegistry {
       } catch (QueueFullException e) {
         e.printStackTrace();
       }
-      return true;
+      res = true;
     }else{
       System.err.printf("addConnection: socket container already registered\n");
-      return false;
+      res = false;
     }
+    connectionsLock.unlock();
+    return res;
   }
 
   public boolean removeConnection(String keyCode){
@@ -71,6 +79,7 @@ public class connectionsRegistry {
       System.err.printf("removeConnection: socket container was not registered\n");
       return false;
     }
+    connectionsLock.lock();
     arrContainers[id].keyCode = null;
     arrContainers[id].connection = null;
     try {
@@ -78,6 +87,7 @@ public class connectionsRegistry {
     } catch (QueueFullException e) {
       e.printStackTrace();
     }
+    connectionsLock.unlock();
     return true;
   }
 
@@ -92,48 +102,57 @@ public class connectionsRegistry {
 
   public int findUniqueConnectionId(String hashKey) {
     int id = findConnectionId(hashKey);
-    if(id<0){return -1;}
-    return arrContainers[id].uniqueId;
+    connectionsLock.lock();
+    if(id<0){connectionsLock.unlock();return -1;}
+    int uid = arrContainers[id].uniqueId;
+    connectionsLock.unlock();
+    return uid;
   }
 
-  private int findConnectionId(String keyCode){
+  public int findConnectionId(String keyCode){
     if(keyCode==null){
       return -1;
     }
+    connectionsLock.lock();
     for(int i=0; i<arrContainers.length; i++){
       if(arrContainers[i].keyCode!=null && arrContainers[i].keyCode.equals(keyCode)){
+        connectionsLock.unlock();
         return i;
       }
     }
+    connectionsLock.unlock();
     return -1;
   }
 
   public int getCountOfConnections() {
     int countOfCounnections = 0;
+    connectionsLock.lock();
     for(int i=0; i<arrContainers.length; i++){
       if(arrContainers[i].keyCode!=null){
         countOfCounnections++;
       }
     }
+    connectionsLock.unlock();
     return countOfCounnections;
   }
 
   public void sendToNode(int nodeId, ByteBuffer bb){
+    connectionsLock.lock();
     if(nodeId>=0){
-      int nodeIndx = nodeId;
-      if(nodeId > arrContainers.length){
-        nodeIndx = nodeId%arrContainers.length;
-      }
+      int nodeIndx = nodeId%arrContainers.length;
       if(arrContainers[nodeIndx].uniqueId != nodeId){
         System.err.printf("sendToNode: node unique %d id do not match %d\n",arrContainers[nodeIndx].uniqueId,nodeId);
         return;
       }
-      arrContainers[nodeIndx].connection.send(bb);
+      if(arrContainers[nodeIndx].connection != null) {
+        arrContainers[nodeIndx].connection.send(bb);
+      }
     }else {
       for (int i = 0; i < arrContainers.length; i++) {
         arrContainers[i].connection.send(bb);
       }
     }
+    connectionsLock.unlock();
   }
 
 }

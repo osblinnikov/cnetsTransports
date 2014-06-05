@@ -38,9 +38,7 @@ public class protocolWriter implements RunnableStoppable {
   public void run() {
     cnetsProtocolBinary d = (cnetsProtocolBinary) w0.writeNext(true);
     if (d != null) {
-      /*TODO: serialize data here*/
-      d.getNodeIds()[0] = 0;
-      d.setNodeIdsSize(1);
+      /*TODO: serializeTo data here*/
       protocol.setTimeStart(timeStart);
       protocol.setBufferIndex(0);
       protocol.setBunchId(packIterator/2);
@@ -49,7 +47,7 @@ public class protocolWriter implements RunnableStoppable {
       if(d.getData() == null) {
         d.setData(ByteBuffer.wrap(new byte[bufSize]));
       }
-      protocol.serialize(d.getData());
+      protocol.serializeTo(d.getData());
       IntBoxer boxer = new IntBoxer(packIterator);
       boxer.serialize(d.getData());
       w0.writeFinished();

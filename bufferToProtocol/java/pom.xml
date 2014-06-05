@@ -54,12 +54,6 @@
 
 
         <dependency>
-            <groupId>com.github.airutech.cnets</groupId>
-            <artifactId>nodesRepository</artifactId>
-            <version>[0.0.0,)</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.airutech.cnetsTransports</groupId>
             <artifactId>types</artifactId>
             <version>[0.0.0,)</version>
@@ -101,7 +95,7 @@
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
-<!--[[[end]]] (checksum: 5576e7164103f3019d89937d5b2ce50f)-->
+<!--[[[end]]] (checksum: 9001f901019c2568bafb6b26af8e3067)-->
     </dependencies>
 
     <build>

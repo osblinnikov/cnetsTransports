@@ -4,12 +4,50 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class cnetsProtocol {
+  ByteBuffer bb = null;
   private long bufferIndex;
   private long timeStart;
   private long bunchId;
-  private int packet;
-  private int packets_grid_size;
+  private long packet;
+  private long packets_grid_size;
+  private int nodeUniqueId; /*it's not going to be serialized*/
 
+  private cnetsProtocol(){}
+
+  public cnetsProtocol(ByteBuffer bb){
+    this.bb = bb;
+  }
+
+  public cnetsProtocol(int dataSize){
+    bb = ByteBuffer.wrap(new byte[(1 + dataSize)*4]);
+  }
+
+
+  public void setFrom(cnetsProtocol in) {
+    bb = in.bb;
+    timeStart = in.timeStart;
+    bunchId = in.bunchId;
+    packet = in.packet;
+    packets_grid_size = in.packets_grid_size;
+    bufferIndex = in.bufferIndex;
+    nodeUniqueId = in.nodeUniqueId;
+  }
+
+  public void setData(ByteBuffer bb) {
+    this.bb = bb;
+  }
+
+  public ByteBuffer getData() {
+    return bb;
+  }
+
+  public int getNodeUniqueId() {
+    return nodeUniqueId;
+  }
+
+  public void setNodeUniqueId(int nodeUniqueId) {
+    this.nodeUniqueId = nodeUniqueId;
+  }
 
   public void setTimeStart(long timeStart) {
     this.timeStart = timeStart;
@@ -25,17 +63,17 @@ public class cnetsProtocol {
       return bunchId;
   }
 
-  public void setPacket(int packet) {
+  public void setPacket(long packet) {
       this.packet = packet;
   }
-  public int getPacket() {
+  public long getPacket() {
       return packet;
   }
 
-  public void setPackets_grid_size(int packets_grid_size) {
+  public void setPackets_grid_size(long packets_grid_size) {
       this.packets_grid_size = packets_grid_size;
   }
-  public int getPackets_grid_size() {
+  public long getPackets_grid_size() {
       return packets_grid_size;
   }
 
@@ -51,11 +89,11 @@ public class cnetsProtocol {
   * rest bytes: for data payload
   *
   * */
-  public boolean serialize(ByteBuffer bb){
+  public boolean serialize(){
     int oldLimit = bb.limit();
     bb.position(0);
     try {
-      types.writeUInt32(getBufferIndex(),bb);
+      types.writeUInt32(bufferIndex,bb);
       types.writeUInt32(timeStart,bb);
       types.writeUInt32(bunchId,bb);
       types.writeUInt32(packet,bb);
@@ -68,14 +106,14 @@ public class cnetsProtocol {
     return true;
   }
 
-  public boolean deserialize(ByteBuffer input) {
+  public boolean deserialize() {
     try {
-      input.position(0);
-      setBufferIndex(types.readUInt32(input));
-      timeStart = types.readUInt32(input);
-      bunchId = types.readUInt32(input);
-      packet = (int)types.readUInt32(input);
-      packets_grid_size = (int)types.readUInt32(input);
+      bb.position(0);
+      bufferIndex = types.readUInt32(bb);
+      timeStart = types.readUInt32(bb);
+      bunchId = types.readUInt32(bb);
+      packet = types.readUInt32(bb);
+      packets_grid_size = types.readUInt32(bb);
     } catch (IOException e) {
       e.printStackTrace();
       return false;
@@ -83,9 +121,10 @@ public class cnetsProtocol {
     return true;
   }
 
-  public static void reserve(ByteBuffer data) {
-    data.limit(cnetsProtocol.fullSize());
-    data.position(cnetsProtocol.fullSize());
+  public void reserveForHeader() {
+    getData().clear();
+    getData().limit(cnetsProtocol.fullSize());
+    getData().position(cnetsProtocol.fullSize());
   }
 
   public long getBufferIndex() {
@@ -94,5 +133,9 @@ public class cnetsProtocol {
 
   public void setBufferIndex(long bufferIndex) {
     this.bufferIndex = bufferIndex;
+  }
+
+  public void incrementPacket() {
+    this.packet++;
   }
 }
