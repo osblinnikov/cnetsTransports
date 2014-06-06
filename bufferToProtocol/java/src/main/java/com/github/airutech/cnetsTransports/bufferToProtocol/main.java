@@ -1,5 +1,6 @@
 
 package com.github.airutech.cnetsTransports.bufferToProtocol;
+import com.github.airutech.cnetsTransports.bufferToProtocol.bufferToProtocol;
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
@@ -16,7 +17,7 @@ import com.github.airutech.cnets.mapBuffer.*;
 /*[[[end]]] (checksum: a792ebfae3564bd0cebb788d5f307ed9)*/
 public class main{
   public static void main(String[] args){
-    bufferToProtocol classObj = new bufferToProtocol(new reader[1],new serializeStreamCallback[1],0,null);
+    bufferToProtocol classObj = new bufferToProtocol(new reader[1],new serializeStreamCallback[1],0,0,null,null,null);
     runnablesContainer runnables = classObj.getRunnables();
     runnables.launch(true);
     

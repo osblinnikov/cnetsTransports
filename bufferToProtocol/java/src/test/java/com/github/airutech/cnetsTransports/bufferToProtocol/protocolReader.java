@@ -3,7 +3,7 @@ package com.github.airutech.cnetsTransports.bufferToProtocol;
 import com.github.airutech.cnets.readerWriter.reader;
 import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
 import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
-import com.github.airutech.cnetsTransports.types.cnetsProtocolBinary;
+import com.github.airutech.cnetsTransports.types.cnetsProtocol;
 
 class protocolReader implements RunnableStoppable {
   reader r0;
@@ -29,7 +29,7 @@ class protocolReader implements RunnableStoppable {
 
   @Override
   public void run(){
-    cnetsProtocolBinary d = (cnetsProtocolBinary) r0.readNext(true);
+    cnetsProtocol d = (cnetsProtocol) r0.readNext(true);
     if (d != null) {
       d.getData();
       r0.readFinished();

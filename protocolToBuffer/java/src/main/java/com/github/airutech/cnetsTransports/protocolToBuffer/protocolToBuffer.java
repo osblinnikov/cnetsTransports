@@ -60,6 +60,7 @@ public class protocolToBuffer implements RunnableStoppable{
   int nodesOnline = 0;
 
   private void onCreate(){
+    if(protocolToBuffersGridSize <= 0){return;}
     nodesStored = (int)Math.ceil(maxNodesCount/protocolToBuffersGridSize);
     nodes = new bufferOfNode[nodesStored * writers.length];
     for (int i = 0; i < nodesStored; i++) {
@@ -101,14 +102,14 @@ public class protocolToBuffer implements RunnableStoppable{
         processStatus((connectionStatus) r.getData());
         break;
       case 1:
+        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
+        break;
+      case 2:
         if(((cnetsProtocol) r.getData()).getBufferIndex() == 0){
           receiveRepositoryUpdate((cnetsProtocol) r.getData());
         }else{
           processData((cnetsProtocol) r.getData());
         }
-        break;
-      case 2:
-        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
         break;
     }
     rSelect.readFinished();

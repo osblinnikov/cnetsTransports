@@ -25,20 +25,23 @@ import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
 import com.github.airutech.cnetsTransports.types.*;
 public class webSocket implements RunnableStoppable{
-  int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader r0;reader r1;reader rSelect;selector readersSelector;
+  int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public webSocket(int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader r0,reader r1){
+  public webSocket(int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,reader r0,reader r1,reader r2){
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
     this.sslContext = sslContext;
     this.nodesReceivers = nodesReceivers;
     this.connectionStatusReceivers = connectionStatusReceivers;
+    this.buffersParameters = buffersParameters;
     this.r0 = r0;
     this.r1 = r1;
-    reader[] arrReaders = new reader[2];
+    this.r2 = r2;
+    reader[] arrReaders = new reader[3];
     arrReaders[0] = r0;
     arrReaders[1] = r1;
+    arrReaders[2] = r2;
     this.readersSelector = new selector(arrReaders);
     this.rSelect = readersSelector.getReader(0,-1);
     onCreate();
@@ -56,7 +59,9 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 079aa7d3375bebe1e26e9060c32f62e8) */
+/*[[[end]]] (checksum: 495b4910412a64e30235a528533b2fea) */
+
+  private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
 
   private AtomicBoolean makeReconnection = new AtomicBoolean(false);
@@ -69,6 +74,16 @@ public class webSocket implements RunnableStoppable{
   
   private void onCreate(){
     conManager = new connectionsRegistry(maxNodesCount);
+    if(buffersParameters == null){return;}
+    /*local storage for all nodes and all localBuffers*/
+    nodes = new nodeBufIndex[maxNodesCount*buffersParameters.length];
+    for(int i=0; i<maxNodesCount; i++){
+      for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++){
+        nodeBufIndex node = nodes[i * buffersParameters.length + bufferIndex];
+        node.setDstBufferIndex(-1);
+        node.setR0(buffersParameters[bufferIndex]);
+      }
+    }
   }
 
   @Override
@@ -92,16 +107,62 @@ public class webSocket implements RunnableStoppable{
 
     switch ((int) r.getNested_buffer_id()){
       case 0:
-        cnetsProtocol writeProtocol = (cnetsProtocol) r.getData();
-        writeProtocol.serialize();
-        conManager.sendToNode(writeProtocol.getNodeUniqueId(), writeProtocol.getData());
+        sendToNode((cnetsProtocol)r.getData());
         break;
       case 1:
-        cnetsConnections connectionsConfig = (cnetsConnections) r.getData();
+        processConnectionsConfig((cnetsConnections) r.getData());
+        break;
+      case 2:
+        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
         break;
     }
-
     rSelect.readFinished();
+  }
+
+  private void sendToNode(cnetsProtocol writeProtocol) {
+    writeProtocol.serialize();
+    if(writeProtocol.getNodeUniqueId() < 0) {
+      for (int i = 0; i < maxNodesCount; i++) {
+        nodeBufIndex node = nodes[i * buffersParameters.length + (int)writeProtocol.getBufferIndex()];
+        if(node.getDstBufferIndex()>=0){
+          conManager.sendToNode(node.getNodeUniqueId(), writeProtocol.getData());
+        }
+      }
+    }else{
+      int nodeIndex = writeProtocol.getNodeUniqueId()%maxNodesCount;
+      nodeBufIndex node = nodes[nodeIndex * buffersParameters.length + (int)writeProtocol.getBufferIndex()];
+      if(node.getDstBufferIndex() >= 0){
+        conManager.sendToNode(writeProtocol.getNodeUniqueId(), writeProtocol.getData());
+      }else{
+        System.err.printf("webSocket: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
+                "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
+                "bufferToProtocol module)\n",
+            writeProtocol.getNodeUniqueId(),
+            maxNodesCount,
+            writeProtocol.getBufferIndex()
+        );
+      }
+    }
+  }
+
+  private void processConnectionsConfig(cnetsConnections data) {
+
+  }
+
+  private void processRepositoryUpdate(nodeRepositoryProtocol update) {
+    int internalNodeIndex = (update.getDestinationUniqueNodeId()%maxNodesCount);
+    String[] names = update.getBufferNames();
+    /*searching locally names equal to remote buffer names*/
+    for(int i=0; i<names.length; i++){
+      for(int bufferIndx=0; bufferIndx<buffersParameters.length; bufferIndx++){
+        nodeBufIndex node = nodes[internalNodeIndex * buffersParameters.length + bufferIndx];
+        node.setDstBufferIndex(-1);
+        if(node.getR0().uniqueId().equals(names[i])){
+          node.setDstBufferIndex(i);
+          break;
+        }
+      }
+    }
   }
 
   @Override
@@ -191,6 +252,10 @@ public class webSocket implements RunnableStoppable{
       conStatus = (connectionStatus) w.writeNext(true);
     }
     conStatus.setId(id);
+    for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
+      nodes[id * buffersParameters.length + bufferIndex].setNodeUniqueId(id);
+      nodes[id * buffersParameters.length + bufferIndex].setDstBufferIndex(-1);
+    }
     conStatus.setOn(true);
     w.writeFinished();
   }
@@ -208,6 +273,9 @@ public class webSocket implements RunnableStoppable{
       conStatus = (connectionStatus) w.writeNext(true);
     }
     conStatus.setId(id);
+    for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
+      nodes[id * buffersParameters.length+bufferIndex].setDstBufferIndex(-1);
+    }
     conStatus.setOn(false);
     w.writeFinished();
   }

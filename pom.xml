@@ -10,7 +10,6 @@
   <url>http://maven.apache.org</url>
 
   <modules>
-    <module>nodesRepository/java</module>
     <module>protocolToBuffer/java</module>
     <module>bufferToProtocol/java</module>
     <module>Java-WebSocket</module>

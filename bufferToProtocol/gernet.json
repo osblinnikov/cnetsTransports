@@ -3,12 +3,16 @@
 "ver":"0.0.0",
 "args": [{
   "name": "readers",
-  "type": "reader[]"
+  "type": "reader[]",
+  "selectable": true
 },{
   "name": "callbacks",
   "type": "serializeStreamCallback[]"
 },{
   "name": "bufferIndexOffset",
+  "type": "int"
+},{
+  "name": "maxNodesCount",
   "type": "int"
 }],
 "depends":[{
@@ -39,6 +43,12 @@
     "name":"output",
     "type":"cnetsProtocol"
   }],
-  "readFrom": []
+  "readFrom": [{
+     "name":"connectionStatus",
+     "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
+   },{
+    "name":"receiveRemoteRepository",
+    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
+  }]
 }
 }

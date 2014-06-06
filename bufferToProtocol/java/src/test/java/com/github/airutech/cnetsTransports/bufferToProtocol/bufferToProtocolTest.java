@@ -1,10 +1,6 @@
 
 package com.github.airutech.cnetsTransports.bufferToProtocol;
-import com.github.airutech.cnetsTransports.types.IntBoxer;
 import org.junit.Test;
-
-
-
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
@@ -18,59 +14,14 @@ import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
-/*[[[end]]] (checksum: a792ebfae3564bd0cebb788d5f307ed9) */
-
+/*[[[end]]] (checksum: a792ebfae3564bd0cebb788d5f307ed9)*/
 public class bufferToProtocolTest {
   @Test
   public void bufferToProtocolTest(){
-    int bufSizes = 1000;
-/*Buffer for Data*/
-    Object buffers[] = new Object[bufSizes];
-    for(int i=0; i<buffers.length; i++){
-      buffers[i] = new IntBoxer(10);
-    }
-    long timeout_milisec = 1000;
-    String uniqueId = "1";
-    int readers_grid_size = 1;
-    int statsInterval = 1000;
-    mapBuffer m = new mapBuffer(buffers, timeout_milisec, uniqueId, readers_grid_size, statsInterval);
-    reader r0 = m.getReader(0);
-    final writer w0 = m.getWriter(0);
-
-/*Buffer for protocol**/
-    Object buffersProtocol[] = new Object[bufSizes];
-    for(int i=0; i<buffersProtocol.length; i++){
-      buffersProtocol[i] = new cnetsProtocol(100);
-    }
-    long timeout_milisecProtocol = 1000;
-    String uniqueIdProtocol = "2";
-    int readers_grid_sizeProtocol = 1;
-    int statsIntervalProtocol = 1000;
-    mapBuffer mProtocol = new mapBuffer(buffersProtocol, timeout_milisecProtocol, uniqueIdProtocol, readers_grid_sizeProtocol,statsIntervalProtocol);
-    reader pr0 = mProtocol.getReader(0);
-    final writer pw0 = mProtocol.getWriter(0);
-
-/*Initialize Kernels**/
-    intBoxerWriter writerKernel = new intBoxerWriter(w0);
-    bufferToProtocol classObj = new bufferToProtocol(new reader[]{r0},new serializeStreamCallback[]{new streamCallbackIntBoxer()},null,pw0);
-    protocolReader readerKernel = new protocolReader(pr0);
-
-/*running kernels*/
-    runnablesContainer runnables = new runnablesContainer();
-    runnablesContainer[] arrContainers = new runnablesContainer[3];
-    arrContainers[0] = writerKernel.getRunnables();
-    arrContainers[1] = classObj.getRunnables();
-    arrContainers[2] = readerKernel.getRunnables();
-    runnables.setContainers(arrContainers);
+    bufferToProtocol classObj = new bufferToProtocol(new reader[1],new serializeStreamCallback[1],0,0,null,null,null);
+    runnablesContainer runnables = classObj.getRunnables();
     runnables.launch(false);
-
-/*waiting*/
-    try {
-      Thread.sleep(3000);
-      runnables.stop();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    runnables.stop();
     
   }
 }

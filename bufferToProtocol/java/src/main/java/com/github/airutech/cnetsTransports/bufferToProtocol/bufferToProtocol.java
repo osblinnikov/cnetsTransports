@@ -14,13 +14,25 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class bufferToProtocol implements RunnableStoppable{
-  reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;writer w0;
+  reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public bufferToProtocol(reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,writer w0){
+  public bufferToProtocol(reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,int maxNodesCount,writer w0,reader r0,reader r1){
     this.readers = readers;
     this.callbacks = callbacks;
     this.bufferIndexOffset = bufferIndexOffset;
+    this.maxNodesCount = maxNodesCount;
     this.w0 = w0;
+    this.r0 = r0;
+    this.r1 = r1;
+    reader[] arrReaders = new reader[2 + readers.length];
+    arrReaders[0] = r0;
+    arrReaders[1] = r1;
+    int totalLength = 2;
+    for(int i=0;i<readers.length; i++){
+      arrReaders[totalLength + i] = readers[i];
+    }
+    this.readersSelector = new selector(arrReaders);
+    this.rSelect = readersSelector.getReader(0,-1);
     onCreate();
     initialize();
   }
@@ -36,30 +48,37 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 310516faac102f95fd829d3a8985afd6) */
-  private final static long timeStart = System.currentTimeMillis()/1000;
-  private bufferReadData readData = null;
+/*[[[end]]] (checksum: bcedebf4c428433031942f59ab454165) */
 
+  private long timeStart;
+  private bufferIndexOfNode[] nodes = null;
   cnetsProtocol writeProtocol = null;
   long[] bunchIds;
-
-  selector readersSelectorFromArr;
-  reader rSelectFromArr;
 
   private void onKernels() {
 
   }
 
   private void onCreate(){
+    timeStart = System.currentTimeMillis()/1000;
     if(readers != null && callbacks != null){
-      if(readers.length != callbacks.length){System.err.println("bufferToProtocol: length of callbacks and readers doesn't match");}
-      this.readersSelectorFromArr = new selector(readers);
-      this.rSelectFromArr = readersSelectorFromArr.getReader(0,-1);
+      if(readers.length != callbacks.length){
+        System.err.println("bufferToProtocol: length of callbacks and readers doesn't match");
+      }
       bunchIds = new long[readers.length];
       for(int i=0;i<bunchIds.length;i++){
         bunchIds[i] = 0;
       }
-
+      nodes = new bufferIndexOfNode[maxNodesCount*readers.length];
+      for(int i=0; i<nodes.length; i++){
+        for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++) {
+          nodes[i * readers.length + bufferIndx] = new bufferIndexOfNode();
+          bufferIndexOfNode node = nodes[i * readers.length + bufferIndx];
+          node.setR0(readers[bufferIndx]);
+          node.setDstBufferIndex(-1);
+          node.setConnected(false);
+        }
+      }
     }
   }
 
@@ -69,47 +88,101 @@ public class bufferToProtocol implements RunnableStoppable{
   }
 
   @Override
-  public void run(){
+  public void run() {
     Thread.currentThread().setName("bufferToProtocol");
 
-    if(writeProtocol == null) {
-      writeProtocol = (cnetsProtocol) w0.writeNext(true);
-      if (writeProtocol == null) {
-        return;
+    bufferReadData r = rSelect.readNextWithMeta(true);
+    if (r.getData() == null) {return;}
+
+    switch ((int) r.getNested_buffer_id()) {
+      case 0:
+        /*todo: make sure received status belongs to me, because it could be addressed to another instance, responsible for the node*/
+        processStatus((connectionStatus) r.getData());
+        break;
+      case 1:
+        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
+        break;
+      default:
+        processBufferObject(r.getData(), (int)r.getNested_buffer_id() - 2);/*shift -2 for compensation of first two readers items*/
+        break;
+    }
+    rSelect.readFinished();
+  }
+
+  private void processRepositoryUpdate(nodeRepositoryProtocol update) {
+    /*we store all nodes but not all buffers, only our own buffers*/
+    int internalNodeIndex = (update.getDestinationUniqueNodeId()%maxNodesCount);//%protocolToBuffersGridSize;
+    String[] names = update.getBufferNames();
+    /*searching locally names equal to remote buffer names*/
+    for(int i=0; i<names.length; i++){
+      for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++){
+        bufferIndexOfNode node = nodes[internalNodeIndex * readers.length + bufferIndx];
+        if(node.getR0().uniqueId().equals(names[i])){
+          //tryToFinishWriting(node);
+          node.setDstBufferIndex(i);
+          node.setConnected(true);
+          break;
+        }
       }
     }
+  }
 
-    readData = rSelectFromArr.readNextWithMeta(true);
-    if (readData.getData() == null) {return;}
+  private void processStatus(connectionStatus data) {
+    /*finish processes with the buffers*/
+    int internalNodeIndex = (data.getId()%maxNodesCount);//%protocolToBuffersGridSize;
+    for (int bufferIndx = 0; bufferIndx < readers.length; bufferIndx++) {
+      bufferIndexOfNode node = nodes[internalNodeIndex * readers.length + bufferIndx];
+      if(data.isOn() && !node.isConnected()) {
+        /*if it was not connected, need to reset buffers indexes*/
+        node.setDstBufferIndex(-1);
+      }
+      node.setConnected(data.isOn());
+    }
+  }
 
+  void processBufferObject(Object bufferObj, int localBufferIndex){
     long packet = 0;
     long packets_count = 1;
-    while(packet < packets_count){
-      /*** initialization logic ***/
-      writeProtocol.setTimeStart(timeStart);
-      writeProtocol.setBufferIndex(bufferIndexOffset + readData.getNested_buffer_id());
-      writeProtocol.setBunchId(bunchIds[(int)readData.getNested_buffer_id()]++);
-      if(writeProtocol.getBunchId() < 0){writeProtocol.setBunchId(writeProtocol.getBunchId() - Long.MIN_VALUE);}
-      writeProtocol.reserveForHeader();
-      /******/
-
-      /*** packets logic: callback should increase packet number, when needed ***/
-      writeProtocol.setPacket(packet);
-      writeProtocol.setPackets_grid_size(packets_count);
-      if(!callbacks[(int) readData.getNested_buffer_id()].serializeNext(readData.getData(), writeProtocol)){ break; }
-      packets_count = writeProtocol.getPackets_grid_size();
-      packet = writeProtocol.getPacket();
-      /****/
-      w0.writeFinished();
-
-      /*trying to get one another buffer for writing*/
-      writeProtocol = null;
+    boolean isLastPacket;
+    boolean isAllowedToSend;
+    do{
       while(writeProtocol == null) {
         writeProtocol = (cnetsProtocol) w0.writeNext(true);
       }
-    };
+      /*** initialization logic ***/
+      writeProtocol.setTimeStart(timeStart);
+      writeProtocol.setBufferIndex(bufferIndexOffset + localBufferIndex);
+      writeProtocol.setBunchId(bunchIds[localBufferIndex]++);
+      if(writeProtocol.getBunchId() < 0){writeProtocol.setBunchId(writeProtocol.getBunchId() - Long.MIN_VALUE);}
+      /******/
 
-    rSelectFromArr.readFinished();
+      /*** packets logic: callback should increase packet number, when needed ***/
+      do{
+        writeProtocol.reserveForHeader();
+        writeProtocol.setPacket(packet);
+        writeProtocol.setPackets_grid_size(packets_count);
+        isLastPacket = callbacks[localBufferIndex].serializeNext(bufferObj, writeProtocol);
+        packets_count = writeProtocol.getPackets_grid_size();
+        packet = writeProtocol.getPacket();
+        isAllowedToSend = isAllowedToSend(writeProtocol.getNodeUniqueId(),localBufferIndex);
+      }while(!isAllowedToSend && !isLastPacket);
+      /****/
+      if(isAllowedToSend) {
+        w0.writeFinished();
+        /*to get one another buffer for writing*/
+        writeProtocol = null;
+      }
+    }while(!isLastPacket);
+  }
+
+  private boolean isAllowedToSend(int nodeUniqueId, int localBufferIndex) {
+    if(nodeUniqueId<0){return true;}
+    int nodeIndex = nodeUniqueId%maxNodesCount;
+    bufferIndexOfNode node = nodes[nodeIndex * readers.length + localBufferIndex];
+    if(!node.isConnected() || node.getDstBufferIndex() < 0){
+      return false;
+    }
+    return true;
   }
 
   @Override

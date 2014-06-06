@@ -147,11 +147,15 @@ public class connectionsRegistry {
       if(arrContainers[nodeIndx].connection != null) {
         arrContainers[nodeIndx].connection.send(bb);
       }
-    }else {
+    }
+
+/*this is wrong,because not every node can have the buffer transferred
+    else {
       for (int i = 0; i < arrContainers.length; i++) {
         arrContainers[i].connection.send(bb);
       }
     }
+*/
     connectionsLock.unlock();
   }
 

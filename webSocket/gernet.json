@@ -19,6 +19,9 @@
 },{
   "name": "connectionStatusReceivers",
   "type": "writer[]"
+},{
+  "name": "buffersParameters",
+  "type": "reader[]"
 }],
 "depends":[{
   "path":"com.github.airutech.cnets.readerWriter",
@@ -48,6 +51,9 @@
   },{
     "name":"connections",
     "type":"com.github.airutech.cnetsTransports.type.cnetsConnections"
+  },{
+    "name":"receiveRemoteRepository",
+    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
   }]
 }
 }

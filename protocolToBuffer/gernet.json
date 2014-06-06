@@ -49,11 +49,11 @@
     "name":"connectionStatus",
     "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
   },{
-    "name":"input",
-    "type":"cnetsProtocol"
-  },{
     "name":"receiveRemoteRepository",
     "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
+  },{
+    "name":"input",
+    "type":"cnetsProtocol"
   }]
 }
 }

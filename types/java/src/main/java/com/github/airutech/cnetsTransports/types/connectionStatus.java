@@ -1,8 +1,5 @@
 package com.github.airutech.cnetsTransports.types;
 
-/**
- * Created by oleg on 6/4/14.
- */
 public class connectionStatus {
   private int id;
   private boolean on;

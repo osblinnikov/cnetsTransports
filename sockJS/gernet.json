@@ -16,9 +16,6 @@
 },{
   "name": "bindPort",
   "type": "int"
-},{
-  "name": "connectionStatus",
-  "type": "connectionStatusCallback"
 }],
 "depends":[{
   "path":"com.github.airutech.cnetsTransports.types",
