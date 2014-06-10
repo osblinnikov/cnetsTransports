@@ -1,4 +1,6 @@
 *.iml
+*.new
+*.old
 target
 .idea
 ### SublimeText ###

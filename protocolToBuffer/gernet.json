@@ -42,7 +42,7 @@
 "blocks":[],
 "connection":{
   "writeTo": [{
-    "name":"sendRepositoryToDestionation",
+    "name":"sendRepositoryToDestination",
     "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
   }],
   "readFrom": [{

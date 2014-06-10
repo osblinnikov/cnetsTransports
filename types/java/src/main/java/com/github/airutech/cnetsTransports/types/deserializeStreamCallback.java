@@ -1,7 +1,7 @@
 package com.github.airutech.cnetsTransports.types;
 
-import com.github.airutech.cnetsTransports.types.cnetsProtocol;
 
+import com.github.airutech.cnetsTransports.types.*;
 import java.nio.ByteBuffer;
 
 public interface deserializeStreamCallback {

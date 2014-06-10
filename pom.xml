@@ -16,5 +16,8 @@
     <module>webSocket/java</module>
     <module>sockJS/java</module>
     <module>types/java</module>
+    <module>msgpack/java</module>
+    <module>javaflow</module>
+    <module>javaflow-maven-plugin</module>
   </modules>
 </project>

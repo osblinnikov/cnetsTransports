@@ -1,0 +1,15 @@
+{
+"path":"com.github.airutech.cnetsTransports.msgpack",
+"ver":"0.0.0",
+"type":"library",
+"args": [],
+"blocks":[],
+"depends":[{
+  "path":"com.github.airutech.cnetsTransports.types",
+  "ver": "[0.0.0,)"
+}],
+"connection":{
+  "writeTo": [],
+  "readFrom": []
+}
+}

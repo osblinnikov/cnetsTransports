@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/repos/asf/!svn/ver/1355248/commons/sandbox/javaflow/branches/1.x/src/main/java/org/apache/commons/javaflow
+END
+ContinuationClassLoader.java
+K 25
+svn:wc:ra_dav:version-url
+V 136
+/repos/asf/!svn/ver/1355248/commons/sandbox/javaflow/branches/1.x/src/main/java/org/apache/commons/javaflow/ContinuationClassLoader.java
+END
+Continuation.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repos/asf/!svn/ver/1355248/commons/sandbox/javaflow/branches/1.x/src/main/java/org/apache/commons/javaflow/Continuation.java
+END
+ContinuationDeath.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/repos/asf/!svn/ver/1355248/commons/sandbox/javaflow/branches/1.x/src/main/java/org/apache/commons/javaflow/ContinuationDeath.java
+END
