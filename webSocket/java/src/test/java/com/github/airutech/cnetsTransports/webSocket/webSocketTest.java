@@ -47,7 +47,7 @@ public class webSocketTest {
 /*outgoing protocol Buffer**/
     Object buffersProtocolOutgoing[] = new Object[bufSizes];
     for(int i=0; i<buffersProtocolOutgoing.length; i++){
-      buffersProtocolOutgoing[i] = new cnetsProtocol(100);
+      buffersProtocolOutgoing[i] = new cnetsProtocol(100,100);
     }
     mapBuffer mOut = new mapBuffer(buffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader outpr0 = mOut.getReader(0);
@@ -56,7 +56,7 @@ public class webSocketTest {
 /*incoming protocol Buffer**/
     Object buffersProtocolIncoming[] = new Object[bufSizes];
     for(int i=0; i<buffersProtocolIncoming.length; i++){
-      buffersProtocolIncoming[i] = new cnetsProtocol(100);
+      buffersProtocolIncoming[i] = new cnetsProtocol(100,100);
     }
     mapBuffer mIn = new mapBuffer(buffersProtocolIncoming, 1000, "2", 1, 1000);
     reader inpr0 = mIn.getReader(0);
@@ -65,7 +65,7 @@ public class webSocketTest {
 /*Configuration Buffer**/
     Object buffersConfig[] = new Object[bufSizes];
     for(int i=0; i<buffersConfig.length; i++){
-      buffersConfig[i] = new cnetsProtocol(100);
+      buffersConfig[i] = new cnetsProtocol(100,100);
     }
     mapBuffer mConfig = new mapBuffer(buffersConfig, 1000, "3", 1, 1000);
     reader cr0 = mConfig.getReader(0);
@@ -78,7 +78,7 @@ public class webSocketTest {
 /*outgoing protocol Buffer**/
     Object clientbuffersProtocolOutgoing[] = new Object[bufSizes];
     for(int i=0; i<clientbuffersProtocolOutgoing.length; i++){
-      clientbuffersProtocolOutgoing[i] = new cnetsProtocol(100);
+      clientbuffersProtocolOutgoing[i] = new cnetsProtocol(100,100);
     }
     mapBuffer clientmOut = new mapBuffer(clientbuffersProtocolOutgoing, 1000, "1", 1, 1000);
     reader clientoutpr0 = clientmOut.getReader(0);
@@ -97,7 +97,7 @@ public class webSocketTest {
 /*incoming protocol Buffer**/
     Object clientbuffersProtocolIncoming[] = new Object[bufSizes];
     for(int i=0; i<clientbuffersProtocolIncoming.length; i++){
-      clientbuffersProtocolIncoming[i] = new cnetsProtocol(100);
+      clientbuffersProtocolIncoming[i] = new cnetsProtocol(100,100);
     }
     mapBuffer clientmIn = new mapBuffer(clientbuffersProtocolIncoming, 1000, "3", 1, 1000);
     reader clientinpr0 = clientmIn.getReader(0);
@@ -106,7 +106,7 @@ public class webSocketTest {
 /*Configuration Buffer**/
     Object clientbuffersConfig[] = new Object[bufSizes];
     for(int i=0; i<clientbuffersConfig.length; i++){
-      clientbuffersConfig[i] = new cnetsProtocol(100);
+      clientbuffersConfig[i] = new cnetsProtocol(100,100);
     }
     mapBuffer clientmConfig = new mapBuffer(clientbuffersConfig, 1000, "4", 1, 1000);
     reader clientcr0 = clientmConfig.getReader(0);

@@ -107,7 +107,7 @@ public class webSocket implements RunnableStoppable{
 
     switch ((int) r.getNested_buffer_id()){
       case 0:
-        sendToNode((cnetsProtocol)r.getData());
+        sendToNodes((cnetsProtocol) r.getData());
         break;
       case 1:
         processConnectionsConfig((cnetsConnections) r.getData());
@@ -119,9 +119,9 @@ public class webSocket implements RunnableStoppable{
     rSelect.readFinished();
   }
 
-  private void sendToNode(cnetsProtocol writeProtocol) {
+  private void sendToNodes(cnetsProtocol writeProtocol) {
     writeProtocol.serialize();
-    if(writeProtocol.getNodeUniqueId() < 0) {
+    if(writeProtocol.isPublished()) {
       for (int i = 0; i < maxNodesCount; i++) {
         nodeBufIndex node = nodes[i * buffersParameters.length + (int)writeProtocol.getBufferIndex()];
         if(node.getDstBufferIndex()>=0){
@@ -129,18 +129,21 @@ public class webSocket implements RunnableStoppable{
         }
       }
     }else{
-      int nodeIndex = writeProtocol.getNodeUniqueId()%maxNodesCount;
-      nodeBufIndex node = nodes[nodeIndex * buffersParameters.length + (int)writeProtocol.getBufferIndex()];
-      if(node.getDstBufferIndex() >= 0){
-        conManager.sendToNode(writeProtocol.getNodeUniqueId(), writeProtocol.getData());
-      }else{
-        System.err.printf("webSocket: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
-                "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
-                "bufferToProtocol module)\n",
-            writeProtocol.getNodeUniqueId(),
-            maxNodesCount,
-            writeProtocol.getBufferIndex()
-        );
+      for(int i=0; i<writeProtocol.getNodeUniqueIds().length; i++) {
+        if(writeProtocol.getNodeUniqueIds()[i] < 0){break;}
+        int nodeIndex = writeProtocol.getNodeUniqueIds()[i] % maxNodesCount;
+        nodeBufIndex node = nodes[nodeIndex * buffersParameters.length + (int) writeProtocol.getBufferIndex()];
+        if (node.getDstBufferIndex() >= 0) {
+          conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData());
+        } else {
+          System.err.printf("webSocket: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
+                  "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
+                  "bufferToProtocol module)\n",
+              writeProtocol.getNodeUniqueIds()[i],
+              maxNodesCount,
+              writeProtocol.getBufferIndex()
+          );
+        }
       }
     }
   }
@@ -300,7 +303,7 @@ public class webSocket implements RunnableStoppable{
 
     receivedProtocol.deserialize();
 
-    receivedProtocol.setNodeUniqueId(nodeIndex);
+    receivedProtocol.getNodeUniqueIds()[0] = nodeIndex;
 
     receiver.writeFinished();
   }

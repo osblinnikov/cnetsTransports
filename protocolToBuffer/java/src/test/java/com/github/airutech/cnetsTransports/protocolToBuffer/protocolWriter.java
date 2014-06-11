@@ -25,7 +25,7 @@ public class protocolWriter implements RunnableStoppable {
   int packIterator = 0, lastSecPack = 0;
   long curtime = System.currentTimeMillis();
   long endtime_sec = curtime + 1000;/*1sec*/
-  cnetsProtocol protocol = new cnetsProtocol(100);
+  cnetsProtocol protocol = new cnetsProtocol(100, 100);
   long timeStart = System.currentTimeMillis()/1000;
   final int bufSize = 100;
 

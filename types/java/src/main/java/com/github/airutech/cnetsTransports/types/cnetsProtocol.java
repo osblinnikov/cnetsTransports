@@ -10,27 +10,24 @@ public class cnetsProtocol {
   private long bunchId;
   private long packet;
   private long packets_grid_size;
-  private int nodeUniqueId; /*it's not going to be serialized*/
+  private int[] nodeUniqueIds; /*it's not going to be serialized*/
+  private boolean published; /*it's not going to be serialized*/
 
-  private cnetsProtocol(){}
-
-  public cnetsProtocol(ByteBuffer bb){
-    this.bb = bb;
-  }
-
-  public cnetsProtocol(int dataSize){
-    bb = ByteBuffer.wrap(new byte[(1 + dataSize)*4]);
+  public cnetsProtocol(int dataSize, int nodesSize){
+    bb = ByteBuffer.wrap(new byte[dataSize]);
+    nodeUniqueIds = new int[nodesSize];
   }
 
 
   public void setFrom(cnetsProtocol in) {
-    bb = in.bb;
+//    bb = in.bb;
     timeStart = in.timeStart;
     bunchId = in.bunchId;
     packet = in.packet;
     packets_grid_size = in.packets_grid_size;
     bufferIndex = in.bufferIndex;
-    nodeUniqueId = in.nodeUniqueId;
+//    nodeUniqueIds = in.nodeUniqueIds;
+//    published = in.published;
   }
 
   public void setData(ByteBuffer bb) {
@@ -41,12 +38,12 @@ public class cnetsProtocol {
     return bb;
   }
 
-  public int getNodeUniqueId() {
-    return nodeUniqueId;
+  public int[] getNodeUniqueIds() {
+    return nodeUniqueIds;
   }
 
-  public void setNodeUniqueId(int nodeUniqueId) {
-    this.nodeUniqueId = nodeUniqueId;
+  public void setNodeUniqueIds(int[] nodeUniqueIds) {
+    this.nodeUniqueIds = nodeUniqueIds;
   }
 
   public void setTimeStart(long timeStart) {
@@ -90,7 +87,7 @@ public class cnetsProtocol {
   *
   * */
   public boolean serialize(){
-    int oldLimit = bb.limit();
+    int oldPosition = bb.position();
     bb.position(0);
     try {
       types.writeUInt32(bufferIndex,bb);
@@ -98,7 +95,7 @@ public class cnetsProtocol {
       types.writeUInt32(bunchId,bb);
       types.writeUInt32(packet,bb);
       types.writeUInt32(packets_grid_size,bb);
-      bb.limit(oldLimit);
+      bb.position(oldPosition);
     } catch (IOException e) {
       e.printStackTrace();
       return false;
@@ -123,7 +120,7 @@ public class cnetsProtocol {
 
   public void reserveForHeader() {
     getData().clear();
-    getData().limit(cnetsProtocol.fullSize());
+//    getData().limit(cnetsProtocol.fullSize());
     getData().position(cnetsProtocol.fullSize());
   }
 
@@ -137,5 +134,13 @@ public class cnetsProtocol {
 
   public void incrementPacket() {
     this.packet++;
+  }
+
+  public boolean isPublished() {
+    return published;
+  }
+
+  public void setPublished(boolean published) {
+    this.published = published;
   }
 }

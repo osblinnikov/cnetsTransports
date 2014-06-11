@@ -121,9 +121,7 @@ public class protocolToBuffer implements RunnableStoppable{
       for (int bufferIndx = 0; bufferIndx < writers.length; bufferIndx++) {
         bufferOfNode node = nodes[i * writers.length + bufferIndx];
         if(node.getBufferObj()!=null){
-          if(!node.getCallback().deserializeNext(node.getBufferObj(), null)){
-            tryToFinishWriting(node);
-          }
+          tryToFinishWriting(node);
         }
       }
     }
@@ -146,7 +144,7 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   private void receiveRepositoryUpdate(cnetsProtocol repositoryUpdateProtocol) {
-    int internalNodeIndex = (repositoryUpdateProtocol.getNodeUniqueId()%maxNodesCount)%protocolToBuffersGridSize;
+    int internalNodeIndex = (repositoryUpdateProtocol.getNodeUniqueIds()[0]%maxNodesCount)%protocolToBuffersGridSize;
     int bufferIndx = 0;
     bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
     deserializeForNode(repositoryUpdateProtocol, node);
@@ -174,12 +172,12 @@ public class protocolToBuffer implements RunnableStoppable{
     if (currentlyReceivedProtocol == null) {return;}
     
     /* trying to find the local index for the received index */
-    if(currentlyReceivedProtocol.getNodeUniqueId() < 0){
-      System.err.printf("protocolToBuffer: processData: incoming nodeUid=%d is out of allowed range [0, %d)\n",currentlyReceivedProtocol.getNodeUniqueId(),maxNodesCount);
+    if(currentlyReceivedProtocol.getNodeUniqueIds()[0] < 0){
+      System.err.printf("protocolToBuffer: processData: incoming nodeUid=%d is out of allowed range [0, %d)\n",currentlyReceivedProtocol.getNodeUniqueIds()[0],maxNodesCount);
       return;
     }
 
-    int internalNodeIndex = (currentlyReceivedProtocol.getNodeUniqueId()%maxNodesCount)%protocolToBuffersGridSize;
+    int internalNodeIndex = (currentlyReceivedProtocol.getNodeUniqueIds()[0]%maxNodesCount)%protocolToBuffersGridSize;
 
     bufferOfNode node = null;
     /*searching for the buffer for arrived data from the node: internalNodeIndex*/
@@ -225,7 +223,8 @@ public class protocolToBuffer implements RunnableStoppable{
     }
 
     /*Stateful deserializaion to the object provided*/
-    if(!node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol)){
+    boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
+    if(isLastPacket){
       tryToFinishWriting(node);
     }
   }

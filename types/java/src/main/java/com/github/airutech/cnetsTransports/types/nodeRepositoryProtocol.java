@@ -78,7 +78,7 @@ public class nodeRepositoryProtocol implements serializeStreamCallback, deserial
     outputMetaData.setPackets_grid_size((long)Math.ceil(currentFullSizeOfNames/availableSpace));
     outputMetaData.setPacket(lastSerializedPacket+1);
     lastSerializedPacket = outputMetaData.getPacket();
-    outputMetaData.setNodeUniqueId(-1);
+    outputMetaData.getNodeUniqueIds()[0] = -1;
 
 
     return true;
@@ -94,10 +94,6 @@ public class nodeRepositoryProtocol implements serializeStreamCallback, deserial
       return lastReceivedPacketTime <= 3000;
     }
     lastReceivedPacketTime = System.currentTimeMillis();
-
-
-
-
 
     if(input.getPacket() <= input.getPackets_grid_size() - 1){
       return true;

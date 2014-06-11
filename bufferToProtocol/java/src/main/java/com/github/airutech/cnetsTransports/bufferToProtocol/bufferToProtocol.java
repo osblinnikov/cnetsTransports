@@ -164,7 +164,7 @@ public class bufferToProtocol implements RunnableStoppable{
         isLastPacket = callbacks[localBufferIndex].serializeNext(bufferObj, writeProtocol);
         packets_count = writeProtocol.getPackets_grid_size();
         packet = writeProtocol.getPacket();
-        isAllowedToSend = isAllowedToSend(writeProtocol.getNodeUniqueId(),localBufferIndex);
+        isAllowedToSend = writeProtocol.isPublished() || isAllowedToSend(writeProtocol.getNodeUniqueIds(),localBufferIndex);
       }while(!isAllowedToSend && !isLastPacket);
       /****/
       if(isAllowedToSend) {
@@ -175,14 +175,17 @@ public class bufferToProtocol implements RunnableStoppable{
     }while(!isLastPacket);
   }
 
-  private boolean isAllowedToSend(int nodeUniqueId, int localBufferIndex) {
-    if(nodeUniqueId<0){return true;}
-    int nodeIndex = nodeUniqueId%maxNodesCount;
-    bufferIndexOfNode node = nodes[nodeIndex * readers.length + localBufferIndex];
-    if(!node.isConnected() || node.getDstBufferIndex() < 0){
-      return false;
+  private boolean isAllowedToSend(int[] nodeUniqueIds, int localBufferIndex) {
+    if(nodeUniqueIds == null){return true;}
+    for(int i=0; i<nodeUniqueIds.length; i++) {
+      if(nodeUniqueIds[i] < 0){return false;}
+      int nodeIndex = nodeUniqueIds[i] % maxNodesCount;
+      bufferIndexOfNode node = nodes[nodeIndex * readers.length + localBufferIndex];
+      if (node.isConnected() && node.getDstBufferIndex() >= 0) {
+        return true;
+      }
     }
-    return true;
+    return false;
   }
 
   @Override

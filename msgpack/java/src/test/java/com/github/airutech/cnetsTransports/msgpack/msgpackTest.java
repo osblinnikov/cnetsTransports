@@ -1,6 +1,6 @@
 
 package com.github.airutech.cnetsTransports.msgpack;
-import org.apache.commons.javaflow.Continuation;
+import com.github.airutech.cnetsTransports.types.cnetsProtocol;
 import org.junit.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -9,22 +9,26 @@ import org.msgpack.unpacker.Unpacker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.LinkedList;
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
+
+
+import com.github.airutech.cnetsTransports.types.*;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 /*[[[end]]] (checksum: 503d02cfa8b93b58544ae7dd214861e5)*/
 
 public class msgpackTest {
   @Test
   public void msgpackTest() throws IOException {
-    Continuation c = Continuation.startWith(new MyRunnable());
-    System.out.println("returned a continuation");
-    while(c!=null) {
-      c = Continuation.continueWith(c);
-    }
 
 //    msgpack classObj = new msgpack();
     MessagePack msgpack = new MessagePack();
@@ -60,7 +64,7 @@ public class msgpackTest {
     // Deserialization
     //
     byte[] bytes = out.toByteArray();
-    System.out.printf("bytes count %d \n", bytes.length);
+//    System.out.printf("bytes count %d \n", bytes.length);
     ByteArrayInputStream in = new ByteArrayInputStream(bytes);
     Unpacker unpacker = msgpack.createUnpacker(in);
 
@@ -84,6 +88,48 @@ public class msgpackTest {
     String ws = unpacker.read(String.class);
     ByteBuffer buf = unpacker.read(ByteBuffer.class);
     BigInteger bi = unpacker.read(BigInteger.class);
+  }
+
+  @Test
+  public void msgPackSerializerTest(){
+    TestMessage dataObject = new TestMessage();
+    dataObject.testValue = 10001;
+    msgPackSerializer serializer = new msgPackSerializer(dataObject);
+    cnetsProtocol protocol = new cnetsProtocol(0,0);
+    protocol.setPacket(0);
+    protocol.setPackets_grid_size(1);
+    protocol.setBufferIndex(0);
+    protocol.setBunchId(0);
+    protocol.setTimeStart(10001);
+
+    boolean isLastPacket = false;
+    LinkedList<cnetsProtocol> ll = new LinkedList<cnetsProtocol>();
+    while(!isLastPacket) {
+      System.out.printf("packet %d\n", protocol.getPacket());
+      cnetsProtocol wrProtocol = new cnetsProtocol(30,10);
+      wrProtocol.setFrom(protocol);
+      wrProtocol.reserveForHeader();
+      isLastPacket = serializer.serializeNext(dataObject, wrProtocol);
+      wrProtocol.serialize();
+      protocol.incrementPacket();
+      ll.add(wrProtocol);
+    }
+/*For test*/
+    dataObject.testValue = 0;
+    dataObject.testArr[9] = 111;
+
+    msgPackDeserializer deserializer = new msgPackDeserializer(dataObject);
+
+    for(cnetsProtocol l: ll) {
+      l.getData().flip();
+      l.deserialize();
+      deserializer.deserializeNext(dataObject, l);
+    }
+
+    System.out.printf("VALUE: %d\n",dataObject.testValue);
+    System.out.printf("ARR: %s ==== %s\n", Arrays.toString(new TestMessage().testArr), Arrays.toString(dataObject.testArr));
+    assertEquals(10001, dataObject.testValue);
+    assertArrayEquals(new TestMessage().testArr, dataObject.testArr);
   }
 }
 
