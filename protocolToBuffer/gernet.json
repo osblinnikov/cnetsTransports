@@ -13,9 +13,6 @@
 },{
   "name": "maxNodesCount",
   "type": "int"
-},{
-  "name": "maxBuffersCount",
-  "type": "int"
 }],
 "depends":[{
    "path":"com.github.airutech.cnets.types",

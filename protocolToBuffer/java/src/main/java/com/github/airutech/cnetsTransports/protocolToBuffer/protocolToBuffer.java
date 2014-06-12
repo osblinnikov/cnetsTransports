@@ -16,14 +16,13 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class protocolToBuffer implements RunnableStoppable{
-  writer[] writers;deserializeStreamCallback[] callbacks;int protocolToBuffersGridSize;int maxNodesCount;int maxBuffersCount;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  writer[] writers;deserializeStreamCallback[] callbacks;int protocolToBuffersGridSize;int maxNodesCount;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public protocolToBuffer(writer[] writers,deserializeStreamCallback[] callbacks,int protocolToBuffersGridSize,int maxNodesCount,int maxBuffersCount,writer w0,reader r0,reader r1,reader r2){
+  public protocolToBuffer(writer[] writers,deserializeStreamCallback[] callbacks,int protocolToBuffersGridSize,int maxNodesCount,writer w0,reader r0,reader r1,reader r2){
     this.writers = writers;
     this.callbacks = callbacks;
     this.protocolToBuffersGridSize = protocolToBuffersGridSize;
     this.maxNodesCount = maxNodesCount;
-    this.maxBuffersCount = maxBuffersCount;
     this.w0 = w0;
     this.r0 = r0;
     this.r1 = r1;
@@ -49,7 +48,7 @@ public class protocolToBuffer implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: ab0b3a0cff6879eb2f9e576908271a51) */
+/*[[[end]]] (checksum: 92110f05990c43c998bfa9f8b72e7dfb) */
 
   private void onKernels() {
 

@@ -14,6 +14,8 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
@@ -21,10 +23,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 import com.github.airutech.cnetsTransports.types.*;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-/*[[[end]]] (checksum: 503d02cfa8b93b58544ae7dd214861e5)*/
+/*[[[end]]] (checksum: 503d02cfa8b93b58544ae7dd214861e5) */
 
 public class msgpackTest {
   @Test
