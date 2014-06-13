@@ -1,7 +1,7 @@
 {
 "path":"com.github.airutech.cnetsTransports.msgpack",
 "ver":"0.0.0",
-"type":"library",
+"type":"com.github.airutech.gernet.plugins.library",
 "args": [],
 "blocks":[],
 "depends":[{

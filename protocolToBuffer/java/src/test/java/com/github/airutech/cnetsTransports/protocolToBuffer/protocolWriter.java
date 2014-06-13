@@ -36,7 +36,7 @@ public class protocolWriter implements RunnableStoppable {
 
   @Override
   public void run() {
-    cnetsProtocol d = (cnetsProtocol) w0.writeNext(true);
+    cnetsProtocol d = (cnetsProtocol) w0.writeNext(-1);
     if (d != null) {
       /*TODO: serializeTo data here*/
       protocol.setTimeStart(timeStart);

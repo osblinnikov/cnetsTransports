@@ -29,7 +29,7 @@ class protocolReader implements RunnableStoppable {
 
   @Override
   public void run(){
-    cnetsProtocol d = (cnetsProtocol) r0.readNext(true);
+    cnetsProtocol d = (cnetsProtocol) r0.readNext(-1);
     if (d != null) {
       d.getData();
       r0.readFinished();

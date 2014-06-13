@@ -1,6 +1,7 @@
 {
 "path":"com.github.airutech.cnetsTransports.sockJS",
 "ver":"0.0.0",
+"type":"com.github.airutech.gernet.plugins.kernel",
 "args": [{
   "name": "inBuffersIds",
   "type": "long[]"

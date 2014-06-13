@@ -8,12 +8,12 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
-#include "github.com/airutech/cnetsTransports/types/c/include/types.h"
 #include "github.com/airutech/cnets/readerWriter/c/include/readerWriter.h"
 #include "github.com/airutech/cnets/runnablesContainer/c/include/runnablesContainer.h"
 #include "github.com/airutech/cnets/selector/c/include/selector.h"
 #include "github.com/airutech/cnets/queue/c/include/queue.h"
 #include "github.com/airutech/cnets/mapBuffer/c/include/mapBuffer.h"
+#include "github.com/airutech/cnetsTransports/types/c/include/types.h"
 
 #undef com_github_airutech_cnetsTransports_webSocket_EXPORT_API
 #if defined WIN32 && !defined __MINGW32__ && !defined(CYGWIN) && !defined(com_github_airutech_cnetsTransports_webSocket_STATIC)
@@ -43,29 +43,29 @@ com_github_airutech_cnets_runnablesContainer com_github_airutech_cnetsTransports
 #undef com_github_airutech_cnetsTransports_webSocket_onCreateMacro
 #define com_github_airutech_cnetsTransports_webSocket_onCreateMacro(_NAME_) /**/
 
-#define com_github_airutech_cnetsTransports_webSocket_create(_NAME_,_inBuffersIds,_maxNodesCount,_maxBuffersCount,_initialConnection,_bindPort,_connectionStatus,_sslContext,_w0,_r0,_r1)\
+#define com_github_airutech_cnetsTransports_webSocket_create(_NAME_,_maxNodesCount,_initialConnection,_bindPort,_sslContext,_nodesReceivers,_connectionStatusReceivers,_buffersParameters,_r0,_r1,_r2)\
     com_github_airutech_cnetsTransports_webSocket _NAME_;\
-    _NAME_.inBuffersIds = _inBuffersIds;\
     _NAME_.maxNodesCount = _maxNodesCount;\
-    _NAME_.maxBuffersCount = _maxBuffersCount;\
     _NAME_.initialConnection = _initialConnection;\
     _NAME_.bindPort = _bindPort;\
-    _NAME_.connectionStatus = _connectionStatus;\
     _NAME_.sslContext = _sslContext;\
+    _NAME_.nodesReceivers = _nodesReceivers;\
+    _NAME_.connectionStatusReceivers = _connectionStatusReceivers;\
+    _NAME_.buffersParameters = _buffersParameters;\
     com_github_airutech_cnetsTransports_webSocket_onCreateMacro(_NAME_)\
-    _NAME_.w0 = _w0;\
     _NAME_.r0 = _r0;\
     _NAME_.r1 = _r1;\
+    _NAME_.r2 = _r2;\
     com_github_airutech_cnetsTransports_webSocket_initialize(&_NAME_);\
     com_github_airutech_cnetsTransports_webSocket_onKernels(&_NAME_);
 
 typedef struct com_github_airutech_cnetsTransports_webSocket{
-    arrayObject inBuffersIds;int maxNodesCount;int maxBuffersCount;String initialConnection;int bindPort;connectionStatusCallback connectionStatus;SSLContext sslContext;writer w0;reader r0;reader r1;
+    int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;arrayObject nodesReceivers;arrayObject connectionStatusReceivers;arrayObject buffersParameters;reader r0;reader r1;reader r2;
 
   
   com_github_airutech_cnets_runnablesContainer (*getRunnables)(struct com_github_airutech_cnetsTransports_webSocket *that);
   void (*run)(void *that);
-/*[[[end]]] (checksum: bf905b81e40dc6b5886187a6aee0addc)*/
+/*[[[end]]] (checksum: 8a4f2bb124527a8e2a1b991cbb0383a2)*/
 
 }com_github_airutech_cnetsTransports_webSocket;
 

@@ -28,7 +28,7 @@ class intBoxerWriter implements RunnableStoppable {
 
   @Override
   public void run(){
-    IntBoxer d = (IntBoxer) w0.writeNext(true);
+    IntBoxer d = (IntBoxer) w0.writeNext(-1);
     if (d != null) {
       d.value = packIterator;
       w0.writeFinished();

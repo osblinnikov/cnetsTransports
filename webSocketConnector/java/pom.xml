@@ -55,13 +55,13 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 <dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>bufferToProtocol</artifactId>
+    <artifactId>protocolToBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>protocolToBuffer</artifactId>
+    <artifactId>bufferToProtocol</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -72,26 +72,38 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>types</artifactId>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>msgpack</artifactId>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnets</groupId>
     <artifactId>readerWriter</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>queue</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -108,8 +120,14 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
+    <groupId>no.eyasys.mobileAlarm</groupId>
+    <artifactId>types</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -119,7 +137,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: a64c093655ac29baa1b308b37a5c00e6)-->
+<!--[[[end]]] (checksum: 54c9624d1b80e4a14e22bfe72fafbad8)-->
     </dependencies>
 
     <build>

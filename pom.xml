@@ -14,6 +14,7 @@
     <module>bufferToProtocol/java</module>
     <module>Java-WebSocket</module>
     <module>webSocket/java</module>
+    <module>webSocketConnector/java</module>
     <module>sockJS/java</module>
     <module>types/java</module>
     <module>msgpack/java</module>

@@ -89,7 +89,7 @@ public class protocolToBuffer implements RunnableStoppable{
     Thread.currentThread().setName("protocolToBuffer");
 
     /*** get next structure for reading ****/
-    bufferReadData r = rSelect.readNextWithMeta(true);
+    bufferReadData r = rSelect.readNextWithMeta(-1);
     if(r.getData()==null) {
       checkTimedOutBuffers();
       return;
@@ -160,7 +160,7 @@ public class protocolToBuffer implements RunnableStoppable{
     if(data.isOn()) {
       nodeRepositoryProtocol protocol = null;
       while(protocol == null) {
-        protocol = (nodeRepositoryProtocol) w0.writeNext(true);
+        protocol = (nodeRepositoryProtocol) w0.writeNext(-1);
       }
       protocol.setDestinationUniqueNodeId(data.getId());
       w0.writeFinished();
@@ -218,7 +218,7 @@ public class protocolToBuffer implements RunnableStoppable{
 
     /*get next buffer for writing*/
     while(node.getBufferObj() == null) {
-      node.setBufferObj(node.getW0().writeNext(true));
+      node.setBufferObj(node.getW0().writeNext(-1));
     }
 
     /*Stateful deserializaion to the object provided*/

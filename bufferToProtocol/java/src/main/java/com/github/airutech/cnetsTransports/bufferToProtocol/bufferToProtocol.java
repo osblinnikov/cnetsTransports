@@ -91,7 +91,7 @@ public class bufferToProtocol implements RunnableStoppable{
   public void run() {
     Thread.currentThread().setName("bufferToProtocol");
 
-    bufferReadData r = rSelect.readNextWithMeta(true);
+    bufferReadData r = rSelect.readNextWithMeta(-1);
     if (r.getData() == null) {return;}
 
     switch ((int) r.getNested_buffer_id()) {
@@ -147,7 +147,7 @@ public class bufferToProtocol implements RunnableStoppable{
     boolean isAllowedToSend;
     do{
       while(writeProtocol == null) {
-        writeProtocol = (cnetsProtocol) w0.writeNext(true);
+        writeProtocol = (cnetsProtocol) w0.writeNext(-1);
       }
       /*** initialization logic ***/
       writeProtocol.setTimeStart(timeStart);

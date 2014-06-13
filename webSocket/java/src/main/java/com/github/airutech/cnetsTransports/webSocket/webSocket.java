@@ -102,7 +102,7 @@ public class webSocket implements RunnableStoppable{
     }
 
     /*get next data to read*/
-    bufferReadData r = rSelect.readNextWithMeta(true);
+    bufferReadData r = rSelect.readNextWithMeta(-1);
     if(r.getData()==null){return;}
 
     switch ((int) r.getNested_buffer_id()){
@@ -252,7 +252,7 @@ public class webSocket implements RunnableStoppable{
     int id = conManager.findUniqueConnectionId(hashKey);
     connectionStatus conStatus = null;
     while(conStatus == null) {
-      conStatus = (connectionStatus) w.writeNext(true);
+      conStatus = (connectionStatus) w.writeNext(-1);
     }
     conStatus.setId(id);
     for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
@@ -273,7 +273,7 @@ public class webSocket implements RunnableStoppable{
 
     connectionStatus conStatus = null;
     while(conStatus == null) {
-      conStatus = (connectionStatus) w.writeNext(true);
+      conStatus = (connectionStatus) w.writeNext(-1);
     }
     conStatus.setId(id);
     for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
@@ -297,7 +297,7 @@ public class webSocket implements RunnableStoppable{
     writer receiver = nodesReceivers[nodeIndex%nodesReceivers.length];
     cnetsProtocol receivedProtocol = null;
     while(receivedProtocol == null) {
-      receivedProtocol = (cnetsProtocol) receiver.writeNext(true);
+      receivedProtocol = (cnetsProtocol) receiver.writeNext(-1);
     }
     receivedProtocol.setData(msg);
 

@@ -28,7 +28,7 @@ public class intBoxerReader implements RunnableStoppable {
 
   @Override
   public void run() {
-    IntBoxer d = (IntBoxer) r0.readNext(true);
+    IntBoxer d = (IntBoxer) r0.readNext(-1);
     if (d != null) {
 //      d.value = packIterator;
 //      System.out.println(d.value);

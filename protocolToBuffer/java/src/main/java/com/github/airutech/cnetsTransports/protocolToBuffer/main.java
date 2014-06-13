@@ -17,9 +17,6 @@ import com.github.airutech.cnets.mapBuffer.*;
 /*[[[end]]] (checksum: 1edb4e8324b4a0ff7d5b72ea3065ab86)*/
 public class main{
   public static void main(String[] args){
-    protocolToBuffer classObj = new protocolToBuffer(new writer[1],new deserializeStreamCallback[1],0,0,0,null,null,null,null);
-    runnablesContainer runnables = classObj.getRunnables();
-    runnables.launch(true);
-    
+    protocolToBuffer classObj = new protocolToBuffer(new writer[1],new deserializeStreamCallback[1],0,0,null,null,null,null);
   }
 }

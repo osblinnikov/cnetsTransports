@@ -18,7 +18,7 @@ import com.github.airutech.cnets.mapBuffer.*;
 public class protocolToBufferTest {
   @Test
   public void protocolToBufferTest(){
-    protocolToBuffer classObj = new protocolToBuffer(new writer[1],new deserializeStreamCallback[1],0,0,0,null,null,null,null);
+    protocolToBuffer classObj = new protocolToBuffer(new writer[1],new deserializeStreamCallback[1],0,0,null,null,null,null);
     runnablesContainer runnables = classObj.getRunnables();
     runnables.launch(false);
     runnables.stop();
