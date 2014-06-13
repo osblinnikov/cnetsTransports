@@ -6,6 +6,9 @@
   "name":"serverUrl",
   "type":"string"
 },{
+  "name":"bindPort",
+  "type":"int"
+},{
   "name": "maxNodesCount",
   "type": "int",
   "value": 1
@@ -300,7 +303,11 @@
       "blockId": 2,
       "pinId": 1
     }],
-    "readFrom": []
+    "readFrom": [{
+      "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
+      "blockId":"export",
+      "pinId":0
+    }]
   }
 },{
   "id":6,
@@ -371,21 +378,12 @@
 }],
 "connection":{
   "writeTo": [{
-    "name":"configFromServer",
-    "type":"no.eyasys.mobileAlarm.types.deviceConfig"
-  },{
-    "name":"sendSms",
-    "type":"no.eyasys.mobileAlarm.types.smsMessage"
-  },{
     "type": "no.eyasys.mobileAlarm.types.connectionStatus",
     "name": "currentConnectionsStatus"
   }],
   "readFrom": [{
-    "name":"configToServer",
-    "type":"no.eyasys.mobileAlarm.types.deviceConfig"
-  },{
-    "name":"stateToServer",
-    "type":"no.eyasys.mobileAlarm.types.deviceState"
+    "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
+    "name": "connectionConfig"
   }]
 }
 }

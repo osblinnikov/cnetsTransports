@@ -42,8 +42,8 @@ com_github_airutech_cnets_runnablesContainer com_github_airutech_cnetsTransports
 
 void com_github_airutech_cnetsTransports_webSocketConnector_run(void *t){
     com_github_airutech_cnetsTransports_webSocketConnector *that = (com_github_airutech_cnetsTransports_webSocketConnector*)t;
-    that->_protocolToBuffer.run(&that->_protocolToBuffer);
-    that->_bufferToProtocol.run(&that->_bufferToProtocol);
+    that->_protocolToBuffer_0.run(&that->_protocolToBuffer_0);
+    that->_bufferToProtocol_0.run(&that->_bufferToProtocol_0);
     that->_webSocket.run(&that->_webSocket);
 }
 
