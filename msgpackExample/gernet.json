@@ -1,0 +1,26 @@
+{
+"path":"com.github.airutech.cnetsTransports.msgpackExample",
+"ver":"0.0.0",
+"type":"com.github.airutech.cnetsTransports.msgpackTpl",
+"args": [],
+"props": [{
+  "name":"testInt",
+  "type":"int"
+},{
+  "name":"testFloatArr",
+  "type":"float"
+},{
+  "name":"testNestedExample",
+  "type":"com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
+  "value":"null"
+}],
+"depends":[{
+  "path":"com.github.airutech.cnetsTransports.msgpack",
+  "ver":"0.0.0"
+}],
+"blocks":[],
+"connection":{
+  "writeTo": [],
+  "readFrom": []
+}
+}

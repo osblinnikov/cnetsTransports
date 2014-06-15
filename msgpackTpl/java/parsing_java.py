@@ -199,7 +199,6 @@ def getConstructor(a):
     out += "\n    this.readersSelector = new selector(arrReaders);"
     out += "\n    this.rSelect = readersSelector.getReader(0,-1);"
   out += "\n    onCreate();"
-  out += "\n    initialize();"
   out += "\n  }"
   return out
 
@@ -243,8 +242,8 @@ def getReaderWriter(a):
 
 def importBlocks(a):
   out = ""
-  for v in a.read_data["blocks"]:
-    out+="\nimport "+v["path"]+".*;"
+  # for v in a.read_data["blocks"]:
+  #   out+="\nimport "+v["path"]+".*;"
   for v in a.read_data["depends"]:
     out+="\nimport "+v["path"]+".*;"
   return out
@@ -467,3 +466,31 @@ def getRunnables(a):
     runnablesContainer[] arrContainers = new runnablesContainer['''+str(sizeRunnables)+"];\n"+out+'''
     runnables.setContainers(arrContainers);
     return runnables;'''
+
+def serializeWith(a):
+  out = ""
+  for v in a.read_data["props"]:
+    if len(v["type"])>2 and v["type"][-2:] == '[]':
+      out += '''
+    for(int i=0; i<'''+v["name"]+'''.length; i++) {
+      if (!s.serializeValue((('''+a.className+''') s.getData()).'''+v["name"]+'''[i])) { return false; }
+    }'''
+    else:
+      out += '''
+    if(!s.serializeValue((('''+a.className+''') s.getData()).'''+v["name"]+''')){ return false; }'''
+  return out
+
+def deserializeWith(a):
+  out = ""
+  for v in a.read_data["props"]:
+    if len(v["type"])>2 and v["type"][-2:] == '[]':
+      out += '''
+      for(int i=0; i<'''+v["name"]+'''.length; i++) {
+        (('''+a.className+''') d.getData()).'''+v["name"]+'''[i] = d.deserializeValue(d, (('''+a.className+''') d.getData()).'''+v["name"]+'''[i]);
+      }'''
+    else:
+      out += '''
+      (('''+a.className+''') d.getData()).'''+v["name"]+''' = d.deserializeValue(d, (('''+a.className+''') d.getData()).'''+v["name"]+''');'''
+
+
+  return out

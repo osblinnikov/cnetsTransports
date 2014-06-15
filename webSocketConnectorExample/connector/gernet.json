@@ -1,14 +1,6 @@
-<%
-import sys
-sys.path.insert(0, a.parserPath)
 
-import parsing_java
-p = reload(parsing_java)
-p.parsingGernet(a)
-
-%>
 {
-"path":"${a.domainName}.${a.className}",
+"path":"com.github.airutech.cnetsTransports.webSocketConnectorExample.connector",
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connector",
 "args": [{

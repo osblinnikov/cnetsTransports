@@ -2,47 +2,56 @@ import json
 import re
 
 
-def getReaderWriterArgumentsStrArr(readerWriterArguments):
+def getReaderWriterArgumentsStrarrDel0(a):
   readerWriterArgumentsStrArr = []
+
+  readerWriterArguments = a.rwArguments
   if readerWriterArguments[0]["name"] != "grid_id":
     raise Exception("getReaderWriterArgumentsStrArr: readerWriterArguments[0][\"name\"]!=\"grid_id\"")
   for value in readerWriterArguments:
     if value["type"] == "unsigned":
-      value["type"] = "long"
+      value["type"] = "int"
     readerWriterArgumentsStrArr.append(value["type"]+" "+value["name"])
-  return readerWriterArgumentsStrArr
 
-def getReaderWriterArgumentsStrarrDel0(readerWriterArguments):
-  readerWriterArgumentsStrArr = getReaderWriterArgumentsStrArr(readerWriterArguments)
   del readerWriterArgumentsStrArr[0]
   return readerWriterArgumentsStrArr
 
-def getReaderWriterArgumentsStr(readerWriterArguments):
-  return ','.join(getReaderWriterArgumentsStrArr(readerWriterArguments))
+def getReaderWriterArgumentsStr(a):
+  readerWriterArgumentsStrArr = ["_NAME_","_that"]
+
+  readerWriterArguments = a.rwArguments
+  if readerWriterArguments[0]["name"] != "grid_id":
+    raise Exception("getReaderWriterArgumentsStrArr: readerWriterArguments[0][\"name\"]!=\"grid_id\"")
+  for value in readerWriterArguments:
+    if value["type"] == "unsigned":
+      value["type"] = "int"
+    readerWriterArgumentsStrArr.append("_"+value["name"])
+
+  return ','.join(readerWriterArgumentsStrArr)
 
 def filterTypes(t):
-  isObject = True
+  isObject = False
   isArray = False
   if len(t)>2 and t[-2:] == '[]':
     isArray = True
     t = t[:-2]
   if t in ["char*","string"]:
-    t = "String"
+    t = "char*"
   if t in ["spinlock"]:
-    t = "Lock"
-  if t in ["char","unsigned char"]:
-    t = "Char" if isArray else "char"
-    isObject = False
-  if t in ["int","int32_t", "unsigned short", "short"]:
-    t = "Integer" if isArray else "int"
-    isObject = False
-  if t in ["unsigned","unsigned int","uint32_t","long","long long","uint64_t","int64_t"]:
-    t = "Long" if isArray else "long"
-    isObject = False
+    t = "pthread_spinlock_t"
+  #   t = "Char" if isArray else "char"
+  #   isObject = False
+  # if t in ["unsigned","int","uint32_t","int32_t","unsigned int", "unsigned short", "short"]:
+  #   t = "Integer" if isArray else "int"
+  #   isObject = False
+  # if t in ["long","long long","uint64_t","int64_t"]:
+  #   t = "Long" if isArray else "long"
+  #   isObject = False
   if t in ["Object"]:
-    t = "Object"
+    t = "void*"
+    isObject = True
   if isArray:
-    t += "[]"
+    t = "arrayObject"
     isObject = True
   return t, isObject, isArray
 
@@ -50,40 +59,18 @@ def getFieldsArrStr(a):
   arr = []
   props = []
   if a.read_data.has_key("props"):
-    for i,v in enumerate(a.read_data["props"]):
-      t, isObject, isArray = filterTypes(v["type"])
-      v["type"] = t
-      if v.has_key("size"):
-        if not isArray:
-          raise Exception("getFieldsArrStr: size of property "+str(i)+" was specified but type is not array!")
-        arr.append(t+" "+v["name"])
-      elif isArray:
-        raise Exception("getFieldsArrStr: failed because type of property "+str(i)+" is Array but `size` was not specified")
-      elif v.has_key("value"):
-        arr.append(t+" "+v["name"]+" = "+str(v["value"]))
-      else:
-        arr.append(t+" "+v["name"])
-
-  for v in a.read_data["args"]:
+    props = a.read_data["props"]
+  for v in a.read_data["args"]+props:
     t, isObject, isArray = filterTypes(v["type"])
-    v["type"] = t
-    arr.append(v["type"]+" "+v["name"])
-
-  for i,v in enumerate(a.read_data["connection"]["writeTo"]):
-    arr.append("writer w"+str(i))
-
-  for i,v in enumerate(a.read_data["connection"]["readFrom"]):
-    arr.append("reader r"+str(i))
-  if len(a.read_data["connection"]["readFrom"]) > 1:
-    arr.append("reader rSelect")
-    arr.append("selector readersSelector")
-  return arr
-
-def getargsArrStrs(a):
-  arr = []
-  for v in a.read_data["args"]:
-    t, isObject, isArray = filterTypes(v["type"])
-    v["type"] = t
+    if v.has_key("size"):
+      if not isArray:
+        raise Exception("getFieldsArrStr: size of property "+str(v["name"])+" was specified but type is not array!")
+    # if isArray:
+    #   if not v.has_key("size")
+    #     arr.append(v["type"][:-2]+" _"+v["name"]+"_["+str(v["size"])+"]")
+      # else:
+      #   raise Exception("prop "+v["type"]+" "+v["name"]+" is Array, but size was not specified")
+    # v["type"] = t
     arr.append(t+" "+v["name"])
 
   for i,v in enumerate(a.read_data["connection"]["writeTo"]):
@@ -91,6 +78,20 @@ def getargsArrStrs(a):
 
   for i,v in enumerate(a.read_data["connection"]["readFrom"]):
     arr.append("reader r"+str(i))
+  return arr
+
+def getargsArrStrs(a):
+  arr = ["_NAME_"]
+  for v in a.read_data["args"]:
+    t, isObject, isArray = filterTypes(v["type"])
+    # v["type"] = t
+    arr.append("_"+v["name"])
+
+  for i,v in enumerate(a.read_data["connection"]["writeTo"]):
+    arr.append("_w"+str(i))
+
+  for i,v in enumerate(a.read_data["connection"]["readFrom"]):
+    arr.append("_r"+str(i))
 
   return arr
 
@@ -98,12 +99,22 @@ def groupId(path):
   path = path.split(".")
   del path[-1]
   return '.'.join(path)
+
 def artifactId(path):
-  path = path.split(".")
-  return path[-1]
+  fullNameList = path.split('.')
+  return '_'.join(fullNameList)
+
+def getPath(path):
+  path = path.split('.')
+  arr = []
+  arr.append(path[1]+"."+path[0])
+  to_delete = [0,1]
+  for offset, index in enumerate(to_delete):
+    index -= offset
+    del path[index]
+  return '/'.join(arr+path)
 
 def parsingGernet(a):
-
   a.read_data = None
   with open (a.prefix, "r") as jsonfile:
     json_data = re.sub(r'/\*.*?\*/', '', jsonfile.read())
@@ -116,9 +127,9 @@ def parsingGernet(a):
     jsonfile.close()
 
   fullName = a.read_data["path"]
+  a.fullName_ = artifactId(fullName)
   a.version = a.read_data["ver"]
   fullNameList = fullName.split('.')
-  a.fullName_ = '_'.join(fullNameList)
   a.className = fullNameList[-1]
   a.companyDomain = fullNameList[1]+'.'+fullNameList[0]
   a.company = fullNameList[1]
@@ -145,8 +156,8 @@ def parsingGernet(a):
   a.rwArguments = [{"name":"grid_id","type":"unsigned"}]
   if a.read_data.get("rwArgs")!=None:
     a.rwArguments+=a.read_data["rwArgs"]
-  a.arrDel0 = getReaderWriterArgumentsStrarrDel0(a.rwArguments)
-  a.rwArgumentsStr = getReaderWriterArgumentsStr(a.rwArguments)
+  # a.arrDel0 = getReaderWriterArgumentsStrarrDel0(a.rwArguments)
+  a.rwArgumentsStr = getReaderWriterArgumentsStr(a)
 
 def getProps(a):
   fieldsArray = getFieldsArrStr(a)
@@ -156,104 +167,108 @@ def getProps(a):
 def getConstructor(a):
   out = ""
   argsArray = getargsArrStrs(a)
-  out += "  public "+a.className+"("+','.join(argsArray)+"){"
+  out += "#define "+a.fullName_+"_create("+','.join(argsArray)+")"
+  out += "\\\n    "+a.fullName_+" _NAME_;"
   for value in a.read_data["args"]:
-    out += "\n    this."+value["name"]+" = "+value["name"]+";"
-  for i,v in enumerate(a.read_data["connection"]["writeTo"]):
-    out += "\n    this.w"+str(i)+" = w"+str(i)+";"
-  for i,v in enumerate(a.read_data["connection"]["readFrom"]):
-    out += "\n    this.r"+str(i)+" = r"+str(i)+";"
+    out += "\\\n    _NAME_."+value["name"]+" = _"+value["name"]+";"
 
+  out += "\\\n    "+a.fullName_+"_onCreateMacro(_NAME_)"
+
+  if a.read_data.has_key("props"):
+    for value in a.read_data["props"]:
+      t, isObject, isArray = filterTypes(value["type"])
+      if value.has_key("value"):
+        out += "\\\n    _NAME_."+value["name"]+" = "+value["value"]+";"
+      elif isArray:
+        if isinstance(value["size"], basestring):
+          value["size"] = "_"+value["size"]
+        out += "\\\n    arrayObject_create(_NAME_##_"+value["name"]+"_, "+'_'.join(value["type"][:-2].split('.'))+", "+str(value["size"])+")"
+        out += "\\\n    _NAME_."+value["name"]+" = _NAME_##_"+value["name"]+"_;"
+
+
+  for i,v in enumerate(a.read_data["connection"]["writeTo"]):
+    out += "\\\n    _NAME_.w"+str(i)+" = _w"+str(i)+";"
+  for i,v in enumerate(a.read_data["connection"]["readFrom"]):
+    out += "\\\n    _NAME_.r"+str(i)+" = _r"+str(i)+";"
+  
   if a.read_data.has_key("props"):
     for i,v in enumerate(a.read_data["props"]):
       if v.has_key("value"):
-        out += "\n    this."+v["name"]+" = "+str(v["value"])+";"
-      elif v.has_key("size"):
-        out += "\n    this."+v["name"]+" = new "+v["type"][:-2]+"["+str(v["size"])+"];"
-
-  selectableArgs = []
-  for i,v in enumerate(a.read_data["args"]):
-    if v.has_key("selectable") and v["selectable"] == True:
-      if v["type"] != 'reader[]':
-        raise Exception("every selectable argument should have reader[] type, but we have "+v["type"]+" "+v["name"])
-      selectableArgs.append(v)
-
-  if len(a.read_data["connection"]["readFrom"]) > 1 or len(selectableArgs)>0:
-    selectablesCount = str(len(a.read_data["connection"]["readFrom"]))
-    for i,v in enumerate(selectableArgs):
-      selectablesCount += " + "+str(v["name"])+".length"
-    out += "\n    reader[] arrReaders = new reader["+selectablesCount+"];"
-
-    lastId = 0
-    for i,v in enumerate(a.read_data["connection"]["readFrom"]):
-      out += "\n    arrReaders["+str(i)+"] = r"+str(i)+";"
-      lastId = i
-    if len(selectableArgs)>0:
-      out += "\n    int totalLength = "+str(lastId + 1)+";"
-      for i,v in enumerate(selectableArgs):
-        out += "\n    for(int i=0;i<"+str(v["name"])+".length; i++){"
-        out += "\n      arrReaders[totalLength + i] = "+v["name"]+"[i];"
-        out += "\n    }"
-        if i+1 != len(selectableArgs):
-          out += "\n    totalLength += "+str(v["name"])+".length;"
-    out += "\n    this.readersSelector = new selector(arrReaders);"
-    out += "\n    this.rSelect = readersSelector.getReader(0,-1);"
-  out += "\n    onCreate();"
-  out += "\n    initialize();"
-  out += "\n  }"
+        out += "\\\n    _NAME_."+v["name"]+" = "+v["value"]+";"  
+  out += "\\\n    "+a.fullName_+"_initialize(&_NAME_);"
+  out += initializeBuffers(a)
+  out += "\\\n    "+a.fullName_+"_onKernels(&_NAME_);"
+  out += initializeKernels(a)
   return out
 
 def getContainerClass(a):
+  arrDel0 = getReaderWriterArgumentsStrarrDel0(a)
   out = ""
-  if len(a.arrDel0)>0:
-    out += "\nclass "+a.className+"Container{"
-    for rwArg in a.arrDel0:
+  if len(arrDel0)>0:
+    out += "\ntypedef struct "+a.fullName_+"_container{"
+    for rwArg in arrDel0:
       out += "\n  "+rwArg+";"
-    out += "\n}"
+    out += "\n}"+a.fullName_+"_container;"
   return out
 
 def getReaderWriter(a):
   out = ""
-  out += "\npublic reader getReader("+a.rwArgumentsStr+"){"
-  out += "\n  Object container = null;"
+  out += "#define "+a.fullName_+"_createReader("+a.rwArgumentsStr+")"
   if len(a.rwArguments) == 0:
     raise Exception("len(a.rwArguments) == 0")
   elif len(a.rwArguments) > 1:
-    out += "\n  "+a.className+"Container obj = new "+a.className+"Container();"
+    out += "\\\n  "+a.fullName_+"_container _NAME_##_container;"
     for value in a.rwArguments:
       if value['name'] != "grid_id":
-        out += "\n  obj."+value['name']+" = "+value["name"]+";"
-    out += "\n  container = obj;"
-  out += "\n  return new reader(new bufferKernelParams(this, "+a.rwArguments[0]["name"]+", container));"
-  out += "\n}"
+        out += "\\\n  _NAME_##_container."+value['name']+" = _"+value["name"]+";"
+    out += "\\\n  reader _NAME_ = "+a.fullName_+"_getReader(_that,(void*)&_NAME_##_container,_grid_id);"
+  else:
+    out += "\\\n  reader _NAME_ = "+a.fullName_+"_getReader(_that,NULL,_grid_id);"
+  
 
-  out += "\npublic writer getWriter("+a.rwArgumentsStr+"){"
-  out += "\n  Object container = null;"
+  out += "\n\n#define "+a.fullName_+"_createWriter("+a.rwArgumentsStr+")"
   if len(a.rwArguments) == 0:
     raise Exception("len(a.rwArguments) == 0")
   elif len(a.rwArguments) > 1:
-    out += "\n  "+a.className+"Container obj = new "+a.className+"Container();"
+    out += "\\\n  "+a.fullName_+"_container _NAME_##_container;"
     for value in a.rwArguments:
       if value['name'] != "grid_id":
-        out += "\n  obj."+value['name']+" = "+value["name"]+";"
-    out += "\n  container = obj;"
-  out += "\n  return new writer(new bufferKernelParams(this, "+a.rwArguments[0]["name"]+", container));"
-  out += "\n}"
+        out += "\\\n  _NAME_##_container."+value['name']+" = _"+value["name"]+";"
+    out += "\\\n  writer _NAME_ = "+a.fullName_+"_getWriter(_that,(void*)&_NAME_##_container,_grid_id);"
+  else:
+    out += "\\\n  writer _NAME_ = "+a.fullName_+"_getWriter(_that,NULL,_grid_id);"
+
   return out
+
+def directoryFromBlockPath(path):
+  pathList = path.split('.')
+  domain = pathList[0]
+  del pathList[0]
+  domain = pathList[0]+"."+domain
+  del pathList[0]
+  fileName = pathList[-1]
+  # del pathList[-1]
+  return '/'.join([domain]+pathList+["c","include",fileName])
 
 def importBlocks(a):
   out = ""
-  for v in a.read_data["blocks"]:
-    out+="\nimport "+v["path"]+".*;"
-  for v in a.read_data["depends"]:
-    out+="\nimport "+v["path"]+".*;"
+  for v in a.read_data["blocks"]+a.read_data["depends"]:
+    out+="\n#include \""+directoryFromBlockPath(v["path"])+".h\""
   return out
 
 def declareBlocks(a):
   out = ""
   for v in a.read_data["blocks"]:
     pathList = v["path"].split('.')
-    out += v["path"]+"."+pathList[-1]+" "+v["name"]+";"
+    out += "_".join(pathList)+" "+v["name"]+";"
+
+  sizeRunnables = 0
+  for k,v in enumerate(a.read_data["blocks"]):
+    if v.has_key("type") and v["type"] == "buffer":
+      continue
+    sizeRunnables += 1
+  if sizeRunnables > 0:
+    out += "\ncom_github_airutech_cnets_runnablesContainer arrContainers["+str(sizeRunnables)+"];"
   return out
 
 def checkPinId(arrPins, pinId):
@@ -266,7 +281,7 @@ def checkPinId(arrPins, pinId):
     return pinId
   else:
     return -1
-    
+
 def getReadersWriters(a,v, curBlock):
   arr = []
   #set writer to the buffer
@@ -274,16 +289,16 @@ def getReadersWriters(a,v, curBlock):
     blockId = w["blockId"]
     if blockId == "export":
       if checkPinId(a.read_data["connection"]["writeTo"], w["pinId"]) != -1:
-        arr.append("this.w"+str(w["pinId"]))
+        arr.append("_NAME_.w"+str(w["pinId"]))
       else:
-        raise Exception("pinId this.w."+str(w["pinId"])+" was not found in the exported connection")
+        raise Exception("pinId _NAME_.w."+str(w["pinId"])+" was not found in the exported connection")
     elif blockId != "internal":
       rblock = a.read_data["blocks"][int(blockId)]
       if rblock["type"] != "buffer":
         raise Exception("Connection from the block allowed only to the block with type='buffer'")
       # r = rblock["connection"]["readFrom"]
       if checkPinId(rblock["connection"]["readFrom"], w["pinId"]) != -1:
-        arr.append(rblock["name"]+"w"+str(w["pinId"]))
+        arr.append("_NAME_##"+rblock["name"]+"w"+str(w["pinId"]))
       else:
         raise Exception("pinId w."+str(w["pinId"])+" was not found in the destination buffer")
 
@@ -292,16 +307,16 @@ def getReadersWriters(a,v, curBlock):
     blockId = r["blockId"]
     if blockId == "export":
       if checkPinId(a.read_data["connection"]["readFrom"], r["pinId"]) != -1:
-        arr.append("this.r"+str(r["pinId"]))
+        arr.append("_NAME_.r"+str(r["pinId"]))
       else:
-        raise Exception("pinId this.r."+str(r["pinId"])+" was not found in the exported connection")
+        raise Exception("pinId _NAME_.r."+str(r["pinId"])+" was not found in the exported connection")
     elif blockId != "internal":
       wblock = a.read_data["blocks"][int(blockId)]
       if wblock["type"] != "buffer":
         raise Exception("Connection from the block allowed only to the block with type='buffer'")
       # r = wblock["connection"]["writeTo"]
       if checkPinId(wblock["connection"]["writeTo"], r["pinId"]) != -1:
-        arr.append(wblock["name"]+"r"+str(r["pinId"]))
+        arr.append("_NAME_##"+wblock["name"]+"r"+str(r["pinId"]))
       else:
         raise Exception("pinId r."+str(r["pinId"])+" was not found in the destination buffer")
   return arr
@@ -339,6 +354,15 @@ def getRwArgs(i,w):
       rwArgs.append(str(arg["value"]))
   return [str(grid_id)]+rwArgs
 
+def searchPropertyAndArgName(a, propName):
+  props = []
+  if a.read_data.has_key("props"):
+    props = a.read_data["props"]
+  for v in a.read_data["args"]+props:
+    if v["name"] == propName:
+      return True
+  return False
+
 def initializeBuffers(a):
   out = ""
   #buffers
@@ -350,18 +374,25 @@ def initializeBuffers(a):
     for d in v["args"]:
       castType = ""
       if d.has_key("type"):
-        castType = "("+d["type"]+")"
-      argsList.append(castType+str(d["value"]))
+        t, isObject, isArray = filterTypes(d["type"])
+        if t != "arrayObject":
+          castType = "("+t+")"
+      argValue = str(d["value"])
+      if searchPropertyAndArgName(a,d["value"]):
+        argValue = "_NAME_."+argValue
+      argsList.append(castType+argValue)
     #create variables
-    out += "\n    "+v["name"]+" = new "+v["path"]+"."+pathList[-1]+"("+','.join(argsList)+");"
+    out += "\\\n    "+'_'.join(pathList)+"_create("+','.join([v["name"]]+argsList)+")"
+    out += "\\\n    _NAME_."+v["name"]+" = "+v["name"]+";"
     #get writer from buffer
     for i,w in enumerate(v["connection"]["writeTo"]):
-      out += "\n    reader "+v["name"]+"r"+str(i)+" = "+v["name"]+".getReader("+','.join(getRwArgs(i,w))+");"
+      out += "\\\n    "+'_'.join(pathList)+"_createReader("+','.join([ "_NAME_##"+v["name"]+"r"+str(i),  "&_NAME_."+v["name"]] + getRwArgs(i,w))+")"
       connectBufferToReader(a, blockNum, i, w)
     #get reader from buffer
     for i,w in enumerate(v["connection"]["readFrom"]):
-      out += "\n    writer "+v["name"]+"w"+str(i)+" = "+v["name"]+".getWriter("+','.join(getRwArgs(i,w))+");"
+      out += "\\\n    "+'_'.join(pathList)+"_createWriter("+','.join([ "_NAME_##"+v["name"]+"w"+str(i),  "&_NAME_."+v["name"]] + getRwArgs(i,w))+")"
   return out
+
 def initializeKernels(a):
   out = ""
   #kernels
@@ -373,50 +404,46 @@ def initializeKernels(a):
     for d in v["args"]:
       castType = ""
       if d.has_key("type"):
-        castType = "("+d["type"]+")"
+        t, isObject, isArray = filterTypes(d["type"])
+        if t != "arrayObject":
+          castType = "("+t+")"
       argsList.append(castType+str(d["value"]))
 
-    out += "\n    "+v["name"]+" = new "+v["path"]+"."+pathList[-1]+"("+','.join(argsList+getReadersWriters(a,v,i))+");"
+    out += "\\\n    "+'_'.join(pathList)+"_create("+','.join([v["name"]]+argsList+getReadersWriters(a,v,i))+");"
+    out += "\\\n    _NAME_."+v["name"]+" = "+v["name"]+";"
 
   return out
 
 def runBlocks(a):
-  out = ""
+  out = []
   #kernels
   for i,v in enumerate(a.read_data["blocks"]):
     if v.has_key("type") and v["type"] == "buffer":
       continue
-    out += "\n    "+v["name"]+".run();"
-  return out
-
-# def stopBlocks(a):
-#   out = ""
-#   #kernels
-#   for i,v in enumerate(a.read_data["blocks"]):
-#     if v.has_key("type") and v["type"] == "buffer":
-#       continue
-#     out += "\n    "+v["name"]+".stop();"
-#   return out
+    out.append ("    that->"+v["name"]+".run(&that->"+v["name"]+");")
+  if len(out) > 0:
+    return "    "+a.fullName_+" *that = ("+a.fullName_+"*)t;\n"+'\n'.join(out)
+  return ''
 
 def getDefaultRunParameters(a):
-  argsList = []
+  argsList = ["classObj"]
   for v in a.read_data["args"]:
     t, isObject, isArray = filterTypes(v["type"])
     if v.has_key("value_java"):
       argsList.append(str(v["value_java"]))
     elif v.has_key("value"):
       argsList.append(str(v["value"]))
-    elif isArray:
-      t = t[:-2]
-      argsList.append("new "+t+"[1]")
-    elif isObject:
-      argsList.append("null")
+    elif isArray or isObject:
+    #   # t = t[:-2]
+    #   argsList.append("new arrayObject")
+    # elif isObject:
+      argsList.append("arrayObjectNULL()")
     else:
       argsList.append("0")
   for v in a.read_data["connection"]["writeTo"]:
-    argsList.append("null")
+    argsList.append("writerNULL()")
   for v in a.read_data["connection"]["readFrom"]:
-    argsList.append("null")
+    argsList.append("readerNULL()")
   return ','.join(argsList)
 
 def startRunnables(a):
@@ -424,11 +451,11 @@ def startRunnables(a):
   if a.read_data.has_key("type"):
     typeOfBlock = a.read_data["type"]
 
-  out = a.className+" classObj = new "+a.className+"("+getDefaultRunParameters(a)+");"
+  out = a.fullName_+"_create("+getDefaultRunParameters(a)+");"
   if typeOfBlock == "kernel":
     out += '''
-    runnablesContainer runnables = classObj.getRunnables();
-    runnables.launch(true);
+    com_github_airutech_cnets_runnablesContainer runnables = classObj.getRunnables(&classObj);
+    runnables.launch(&runnables,TRUE);
     '''
   return out
 
@@ -437,33 +464,38 @@ def testRunnables(a):
   if a.read_data.has_key("type"):
     typeOfBlock = a.read_data["type"]
 
-  out = a.className+" classObj = new "+a.className+"("+getDefaultRunParameters(a)+");"
+  out = a.fullName_+"_create("+getDefaultRunParameters(a)+");"
   if typeOfBlock == "kernel":
     out += '''
-    runnablesContainer runnables = classObj.getRunnables();
-    runnables.launch(false);
-    runnables.stop();
+    com_github_airutech_cnets_runnablesContainer runnables = classObj.getRunnables(&classObj);
+    runnables.launch(&runnables,FALSE);
+    runnables.stop(&runnables);
     '''
   return out
 
 def getRunnables(a):
   sizeRunnables = 0
-  out = ""
+  out = "\n"
 
   for blockNum, v in enumerate(a.read_data["blocks"]):
     if v.has_key("type") and v["type"] == "buffer":
       continue
-    out += "    arrContainers["+str(sizeRunnables)+"] = "+v["name"]+".getRunnables();\n"
+    out += "    that->arrContainers["+str(sizeRunnables)+"] = that->"+v["name"]+".getRunnables(&that->"+v["name"]+");\n"
     sizeRunnables += 1
 
   if sizeRunnables == 0:
     return '''
-    runnablesContainer runnables = new runnablesContainer();
-    runnables.setCore(this);
+    com_github_airutech_cnets_runnablesContainer_create(runnables)
+    RunnableStoppable_create(runnableStoppableObj,that, '''+a.fullName_+'''_)
+    runnables.setCore(&runnables,runnableStoppableObj);
     return runnables;'''
   else:
     return  '''
-    runnablesContainer runnables = new runnablesContainer();
-    runnablesContainer[] arrContainers = new runnablesContainer['''+str(sizeRunnables)+"];\n"+out+'''
-    runnables.setContainers(arrContainers);
+    com_github_airutech_cnets_runnablesContainer_create(runnables)
+    '''+out+'''
+    arrayObject arr;
+    arr.array = (void*)&that->arrContainers;
+    arr.length = '''+str(sizeRunnables)+''';
+    arr.itemSize = sizeof(com_github_airutech_cnets_runnablesContainer);
+    runnables.setContainers(&runnables,arr);
     return runnables;'''
