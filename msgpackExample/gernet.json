@@ -2,13 +2,17 @@
 "path":"com.github.airutech.cnetsTransports.msgpackExample",
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.msgpackTpl",
-"args": [],
+"args": [{
+  "name":"testDoubleArr",
+  "type":"double[]"
+}],
 "props": [{
   "name":"testInt",
   "type":"int"
 },{
   "name":"testFloatArr",
-  "type":"float"
+  "type":"float[]",
+  "size":10
 },{
   "name":"testNestedExample",
   "type":"com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",

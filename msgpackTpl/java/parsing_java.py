@@ -469,7 +469,7 @@ def getRunnables(a):
 
 def serializeWith(a):
   out = ""
-  for v in a.read_data["props"]:
+  for v in a.read_data["props"]+a.read_data["args"]:
     if len(v["type"])>2 and v["type"][-2:] == '[]':
       out += '''
     for(int i=0; i<'''+v["name"]+'''.length; i++) {
@@ -482,7 +482,7 @@ def serializeWith(a):
 
 def deserializeWith(a):
   out = ""
-  for v in a.read_data["props"]:
+  for v in a.read_data["props"]+a.read_data["args"]:
     if len(v["type"])>2 and v["type"][-2:] == '[]':
       out += '''
       for(int i=0; i<'''+v["name"]+'''.length; i++) {
