@@ -5,6 +5,9 @@
 "args": [{
   "name":"testDoubleArr",
   "type":"double[]"
+},{
+  "name":"testNestedExampleArr",
+  "type":"com.github.airutech.cnetsTransports.msgpackExample.msgpackExample[]"
 }],
 "props": [{
   "name":"testInt",
@@ -20,7 +23,10 @@
 }],
 "depends":[{
   "path":"com.github.airutech.cnetsTransports.msgpack",
-  "ver":"0.0.0"
+  "ver":"[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.types",
+  "ver":"[0.0.0,)"
 }],
 "blocks":[],
 "connection":{

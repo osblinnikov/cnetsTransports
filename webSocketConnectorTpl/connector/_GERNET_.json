@@ -5,12 +5,11 @@ sys.path.insert(0, a.parserPath)
 import parsing_java
 p = reload(parsing_java)
 p.parsingGernet(a)
-
 %>
 {
-"path":"${a.domainName}.${a.className}",
+"path":"${a.domainName}.${a.className}.connector",
 "ver":"0.0.0",
-"type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connector",
+"type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connectorSrc",
 "args": [{
   "name": "maxNodesCount",
   "type": "int"
@@ -27,62 +26,6 @@ p.parsingGernet(a)
   "name": "binBuffersSize",
   "type": "int"
 }],
-"props": [],
-"depends":[{
-  "path":"com.github.airutech.cnetsTransports.types",
-  "ver": "[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnets.readerWriter",
-  "ver": "[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnets.runnablesContainer",
-  "ver": "[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnets.selector",
-  "ver": "[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnets.queue",
-  "ver": "[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnets.mapBuffer",
-  "ver": "[0.0.0,)"
-}],
-"blocks":[{
-  "id":0,
-  "name": "_connector",
-  "path":"com.github.airutech.cnetsTransports.webSocketConnector",
-  "ver":"[0.0.0,)",
-  "args": [{
-    "name":"serverUrl",
-    "value":"serverUrl"
-  },{
-    "name":"bindPort",
-    "value":"bindPort"
-  },{
-    "name": "maxNodesCount",
-    "value": "maxNodesCount"
-  },{
-    "name": "buffersLengths",
-    "value": "buffersLengths"
-  },{
-    "name": "binBuffersSize",
-    "value": "binBuffersSize"
-  }],
-  "connection":{
-    "writeTo": [{
-      "type": "no.eyasys.mobileAlarm.types.connectionStatus",
-      "name": "currentConnectionsStatus",
-      "blockId": "export",
-      "pinId":0
-    }],
-    "readFrom": [{
-      "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
-      "name": "connectionConfig",
-      "blockId": "export",
-      "pinId":0
-    }]
-  }
-}],
 "connection":{
   "writeTo": [{
     "type": "no.eyasys.mobileAlarm.types.connectionStatus",
@@ -92,5 +35,10 @@ p.parsingGernet(a)
     "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
     "name": "connectionConfig"
   }]
-}
+},
+/*[[[cog
+import cogging as c
+c.tpl(cog,templateFile,c.a(prefix=configFile))
+]]]*/
+/*[[[end]]]*/
 }

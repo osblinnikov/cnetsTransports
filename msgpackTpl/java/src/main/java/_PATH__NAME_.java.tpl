@@ -6,13 +6,13 @@ public class ${a.className}  implements cnetsMessagePackable {
 ${p.getProps(a)}  
 ${p.getConstructor(a)}
  @Override
-  public boolean serializeWith(msgPackSerializer s){
+  public boolean serializeWith(cnetsSerializeValue s){
 ${p.serializeWith(a)}
     return true;
   }
 
   @Override
-  public boolean deserializeWith(msgPackDeserializer d) {
+  public boolean deserializeWith(cnetsDeserializeValue d) {
     try {
 ${p.deserializeWith(a)}
     } catch (IOException e) {return false;}

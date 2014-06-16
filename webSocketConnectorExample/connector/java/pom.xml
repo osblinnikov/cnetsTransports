@@ -55,13 +55,49 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 <dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>webSocketConnector</artifactId>
+    <artifactId>protocolToBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>types</artifactId>
+    <artifactId>bufferToProtocol</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>webSocket</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -84,18 +120,24 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>queue</artifactId>
+    <groupId>no.eyasys.mobileAlarm</groupId>
+    <artifactId>types</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
+    <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: cb934164f8cc8eb804e600042f0a4ebf)-->
+<!--[[[end]]] (checksum: 54c9624d1b80e4a14e22bfe72fafbad8)-->
     </dependencies>
 
     <build>

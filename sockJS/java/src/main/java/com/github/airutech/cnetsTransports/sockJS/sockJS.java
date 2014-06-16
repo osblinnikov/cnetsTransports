@@ -13,9 +13,9 @@ import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class sockJS implements RunnableStoppable{
-  Long[] inBuffersIds;int maxNodesCount;int maxBuffersCount;String initialConnection;int bindPort;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
+  long[] inBuffersIds;int maxNodesCount;int maxBuffersCount;String initialConnection;int bindPort;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public sockJS(Long[] inBuffersIds,int maxNodesCount,int maxBuffersCount,String initialConnection,int bindPort,writer w0,reader r0,reader r1){
+  public sockJS(long[] inBuffersIds,int maxNodesCount,int maxBuffersCount,String initialConnection,int bindPort,writer w0,reader r0,reader r1){
     this.inBuffersIds = inBuffersIds;
     this.maxNodesCount = maxNodesCount;
     this.maxBuffersCount = maxBuffersCount;
@@ -44,7 +44,7 @@ public class sockJS implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: e205a642b90284cb2d63fb222b4e3147)*/
+/*[[[end]]] (checksum: 571795565af223458c263453d374fb06)*/
 
   private void onCreate(){
 

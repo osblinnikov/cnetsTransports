@@ -3,31 +3,34 @@ package com.github.airutech.cnetsTransports.msgpack;
 import com.github.airutech.cnetsTransports.types.*;
 import org.apache.commons.javaflow.Continuation;
 import org.msgpack.MessagePack;
-import org.msgpack.packer.BufferPacker;
 import org.msgpack.unpacker.BufferUnpacker;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class msgPackDeserializer implements deserializeStreamCallback, Runnable {
+public class msgPackDeserializer implements deserializeStreamCallback, Runnable, cnetsDeserializeValue {
   Continuation c = null;
 
   boolean isLastPacket = false;
-  private Object data;
+  private cnetsMessagePackable data;
   private cnetsProtocol inputMetaData = null;
-  private cnetsMessagePackable deserializeObjectCallback = null;
 
   /***** PACKING *****/
   ByteBuffer bufPack;
   MessagePack msgpack = new MessagePack();
   BufferUnpacker unpacker;
 
-  public msgPackDeserializer(cnetsMessagePackable deserializeObjectCallback){
-    this.deserializeObjectCallback = deserializeObjectCallback;
+  public msgPackDeserializer(){
+
+  }
+
+  private void suspend(boolean isLastPacket) {
+    this.isLastPacket = isLastPacket;
+    Continuation.suspend();
   }
 
   @Override
-  public boolean deserializeNext(Object bufDataObj, cnetsProtocol input) {
+  public boolean deserializeNext(cnetsMessagePackable bufDataObj, cnetsProtocol input) {
     assert inputMetaData == null || bufDataObj == this.data;
     assert bufDataObj != null && input != null;
 
@@ -50,44 +53,23 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable 
     return isLastPacket;
   }
 
-  public <T> T deserializeValue(msgPackDeserializer d, T value) throws IOException {
-    int lastPosition = getBufPack().position();
+  @Override
+  public <T> T deserializeValue(T value) throws IOException {
+    int lastPosition = bufPack.position();
     try {
-      value = getUnpacker().read(value);
+      value = unpacker.read(value);
     }catch (IOException e) {
-      getBufPack().position(lastPosition);
+      bufPack.position(lastPosition);
       suspend(false);
-      value = getUnpacker().read(value);
+      value = unpacker.read(value);
     }
     return value;
-  }
-
-
-  public void suspend(boolean isLastPacket) {
-    this.isLastPacket = isLastPacket;
-    Continuation.suspend();
-  }
-
-  public Object getData() {
-    return data;
-  }
-
-  private cnetsProtocol getInputMetaData() {
-    return inputMetaData;
-  }
-
-  public ByteBuffer getBufPack() {
-    return bufPack;
-  }
-
-  public BufferUnpacker getUnpacker() {
-    return unpacker;
   }
 
   @Override
   public void run() {
     while(true) {
-      if(deserializeObjectCallback.deserializeWith(this)){
+      if(data.deserializeWith(this)){
         suspend(true);
       }else{
         return;

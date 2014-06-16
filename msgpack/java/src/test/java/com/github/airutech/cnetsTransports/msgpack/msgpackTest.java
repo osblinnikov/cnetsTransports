@@ -93,7 +93,7 @@ public class msgpackTest {
   public void msgPackSerializerTest(){
     TestMessage dataObject = new TestMessage();
     dataObject.testValue = 10001;
-    msgPackSerializer serializer = new msgPackSerializer(dataObject);
+    msgPackSerializer serializer = new msgPackSerializer();
     cnetsProtocol protocol = new cnetsProtocol(0,0);
     protocol.setPacket(0);
     protocol.setPackets_grid_size(1);
@@ -117,7 +117,7 @@ public class msgpackTest {
     dataObject.testValue = 0;
     dataObject.testArr[9] = 111;
 
-    msgPackDeserializer deserializer = new msgPackDeserializer(dataObject);
+    msgPackDeserializer deserializer = new msgPackDeserializer();
 
     for(cnetsProtocol l: ll) {
       l.getData().flip();

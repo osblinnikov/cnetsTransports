@@ -8,50 +8,45 @@ import org.msgpack.packer.BufferPacker;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class msgPackSerializer implements serializeStreamCallback, Runnable {
+public class msgPackSerializer implements serializeStreamCallback, Runnable, cnetsSerializeValue {
   Continuation c = null;
 
-  Object data = null;
   cnetsProtocol outputMetaData = null;
-
+  cnetsMessagePackable data = null;
   boolean isLastPacket = false;
-  private cnetsMessagePackable serializeObjectCallback = null;
 
   /***** PACKING *****/
   ByteBuffer bufPack;
   MessagePack msgpack = new MessagePack();
   BufferPacker packer;
 
-  public msgPackSerializer(cnetsMessagePackable serializeObjectCallback){
-    this.serializeObjectCallback = serializeObjectCallback;
+  public msgPackSerializer(){
+
   }
 
-  private cnetsProtocol getOutputMetaData() {
-    return outputMetaData;
+  private void sendPacket(boolean isLastPacket){
+    if(isLastPacket) {
+      /*prevent receiver from waiting for more packets*/
+      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 1);
+    }else{
+      /*keep receiver receiving packets*/
+      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
+    }
+    this.isLastPacket = isLastPacket;
+    Continuation.suspend();
+    assert data != null && outputMetaData != null;
   }
 
-  public Object getData() {
-    return data;
-  }
-
-
-  public ByteBuffer getBufPack() {
-    return bufPack;
-  }
-
-  public BufferPacker getPacker() {
-    return packer;
-  }
-
+  @Override
   public <T> boolean serializeValue(T value){
-    int lastPosition = getBufPack().position();
+    int lastPosition = bufPack.position();
     try {
-      getPacker().write(value);
+      packer.write(value);
     }catch (IOException e) {
-      getBufPack().position(lastPosition);
+      bufPack.position(lastPosition);
       sendPacket(false);
       try {
-        getPacker().write(value);
+        packer.write(value);
       }catch (IOException e1){
         /*it is not allowed to fail twice, it means that buffer size is not big enough*/
         e1.printStackTrace();
@@ -63,14 +58,14 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable {
   }
 
   @Override
-  public boolean serializeNext(Object data, cnetsProtocol outputMetaData) {
+  public boolean serializeNext(cnetsMessagePackable data, cnetsProtocol outputMetaData) {
     assert this.outputMetaData == null || data == this.data;
     assert data != null && outputMetaData != null;
 
     this.data = data;
     this.outputMetaData = outputMetaData;
 
-    bufPack = getOutputMetaData().getData();
+    bufPack = outputMetaData.getData();
     packer = msgpack.createBufferPacker(bufPack);
 
     isLastPacket = false;
@@ -89,41 +84,11 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable {
   @Override
   public void run() {
     while(true) {
-      if(serializeObjectCallback.serializeWith(this)){
+      if(data.serializeWith(this)){
         sendPacket(true);
       }else{
         return;
       }
     }
-  }
-
-//  public boolean sendIfNotEnoughSpace(){
-//
-//  }
-//
-//  public boolean sendIfNotEnoughSpace(int requiredSpace){
-//    ByteBuffer bb = outputMetaData.getData();
-//    if(bb.limit() - bb.position() < requiredSpace){
-//      return false;
-//    }
-//    isLastPacket = false;
-//    /*keep receiver receiving packets*/
-//    outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
-//    Continuation.suspend();
-//    assert data != null && outputMetaData != null;
-//    return true;
-//  }
-
-  public void sendPacket(boolean isLastPacket){
-    if(isLastPacket) {
-      /*prevent receiver from waiting for more packets*/
-      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 1);
-    }else{
-      /*keep receiver receiving packets*/
-      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
-    }
-    this.isLastPacket = isLastPacket;
-    Continuation.suspend();
-    assert data != null && outputMetaData != null;
   }
 }

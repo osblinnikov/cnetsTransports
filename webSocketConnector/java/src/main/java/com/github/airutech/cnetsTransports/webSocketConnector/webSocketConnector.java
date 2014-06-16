@@ -8,6 +8,14 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
+import com.github.airutech.cnetsTransports.protocolToBuffer.*;
+import com.github.airutech.cnetsTransports.bufferToProtocol.*;
+import com.github.airutech.cnetsTransports.webSocket.*;
+import com.github.airutech.cnets.mapBuffer.*;
+import com.github.airutech.cnets.mapBuffer.*;
+import com.github.airutech.cnets.mapBuffer.*;
+import com.github.airutech.cnets.mapBuffer.*;
+import com.github.airutech.cnets.mapBuffer.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
@@ -77,7 +85,7 @@ com.github.airutech.cnetsTransports.protocolToBuffer.protocolToBuffer _protocolT
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: edd5dd0f1bf391ae69cc38386cdd9f06)*/
+/*[[[end]]] (checksum: ea998a6c3024523a5e8637dea183e9a3)*/
 
   private void onCreate(){
 

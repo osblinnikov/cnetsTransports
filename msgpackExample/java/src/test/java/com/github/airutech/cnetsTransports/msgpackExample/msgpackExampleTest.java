@@ -8,11 +8,12 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 import com.github.airutech.cnetsTransports.msgpack.*;
-/*[[[end]]] (checksum: 2336878afccccfdca1250ad1ea7ac872)*/
+import com.github.airutech.cnetsTransports.types.*;
+/*[[[end]]] (checksum: 2efde7ee4403f3abae3320deaa5dd81d)*/
 public class msgpackExampleTest {
   @Test
   public void msgpackExampleTest(){
-    msgpackExample classObj = new msgpackExample();
+
   }
 }
 
