@@ -13,16 +13,31 @@ import no.eyasys.mobileAlarm.types.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
 public class webSocketConnectorExample implements RunnableStoppable{
-  int maxNodesCount;int buffersLengths;String serverUrl;int bindPort;int binBuffersSize;writer w0;reader r0;
+  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 5;int binBuffersSize = 128;long timeoutInterval = 1000L;String moduleUniqueName;String serverUrl;int bindPort;int statsInterval;writer w0;writer w1;writer w2;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public webSocketConnectorExample(int maxNodesCount,int buffersLengths,String serverUrl,int bindPort,int binBuffersSize,writer w0,reader r0){
-    this.maxNodesCount = maxNodesCount;
-    this.buffersLengths = buffersLengths;
+  public webSocketConnectorExample(String moduleUniqueName,String serverUrl,int bindPort,int statsInterval,writer w0,writer w1,writer w2,reader r0,reader r1,reader r2){
+    this.moduleUniqueName = moduleUniqueName;
     this.serverUrl = serverUrl;
     this.bindPort = bindPort;
-    this.binBuffersSize = binBuffersSize;
+    this.statsInterval = statsInterval;
     this.w0 = w0;
+    this.w1 = w1;
+    this.w2 = w2;
     this.r0 = r0;
+    this.r1 = r1;
+    this.r2 = r2;
+    this.countNodesProcessors = 2;
+    this.countBuffersProcessors = 2;
+    this.maxNodesCount = 5;
+    this.buffersLengths = 5;
+    this.binBuffersSize = 128;
+    this.timeoutInterval = 1000L;
+    reader[] arrReaders = new reader[3];
+    arrReaders[0] = r0;
+    arrReaders[1] = r1;
+    arrReaders[2] = r2;
+    this.readersSelector = new selector(arrReaders);
+    this.rSelect = readersSelector.getReader(0,-1);
     onCreate();
     initialize();
   }
@@ -31,7 +46,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     
     onKernels();
     
-    _connector = new com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connector(maxNodesCount,buffersLengths,serverUrl,bindPort,binBuffersSize,this.w0,this.r0);
+    _connector = new com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connector(moduleUniqueName+"._connector",maxNodesCount,buffersLengths,serverUrl,bindPort,binBuffersSize,statsInterval,this.w0,this.r0);
   }
   public runnablesContainer getRunnables(){
     
@@ -42,7 +57,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: 938009efd7c57b9f0c5b8f16b6b88eb7)*/
+/*[[[end]]] (checksum: 83030a5c05155d9dbfa3d16967e41ce1)*/
 
   private void onCreate(){
 

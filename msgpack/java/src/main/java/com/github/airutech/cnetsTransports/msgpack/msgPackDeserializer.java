@@ -12,7 +12,8 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   Continuation c = null;
 
   boolean isLastPacket = false;
-  private cnetsMessagePackable data;
+  private cnetsMessagePackable callback;
+  private Object data;
   private cnetsProtocol inputMetaData = null;
 
   /***** PACKING *****/
@@ -20,8 +21,9 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   MessagePack msgpack = new MessagePack();
   BufferUnpacker unpacker;
 
-  public msgPackDeserializer(){
-
+  public msgPackDeserializer(cnetsMessagePackable callback){
+    this.callback = callback;
+    assert callback != null;
   }
 
   private void suspend(boolean isLastPacket) {
@@ -30,7 +32,7 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   }
 
   @Override
-  public boolean deserializeNext(cnetsMessagePackable bufDataObj, cnetsProtocol input) {
+  public boolean deserializeNext(Object bufDataObj, cnetsProtocol input) {
     assert inputMetaData == null || bufDataObj == this.data;
     assert bufDataObj != null && input != null;
 
@@ -69,7 +71,7 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   @Override
   public void run() {
     while(true) {
-      if(data.deserializeWith(this)){
+      if(callback.deserializeWith(this,data)){
         suspend(true);
       }else{
         return;

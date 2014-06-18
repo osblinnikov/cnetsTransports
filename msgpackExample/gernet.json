@@ -1,7 +1,7 @@
 {
 "path":"com.github.airutech.cnetsTransports.msgpackExample",
 "ver":"0.0.0",
-"type":"com.github.airutech.cnetsTransports.msgpackTpl",
+"type":"com.github.airutech.gernet.plugins.structure",
 "args": [{
   "name":"testDoubleArr",
   "type":"double[]"
@@ -21,13 +21,7 @@
   "type":"com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
   "value":"null"
 }],
-"depends":[{
-  "path":"com.github.airutech.cnetsTransports.msgpack",
-  "ver":"[0.0.0,)"
-},{
-  "path":"com.github.airutech.cnetsTransports.types",
-  "ver":"[0.0.0,)"
-}],
+"depends":[],
 "blocks":[],
 "connection":{
   "writeTo": [],

@@ -17,7 +17,7 @@ import com.github.airutech.cnets.types.*;
 public class webSocketConnectorExampleTest {
   @Test
   public void webSocketConnectorExampleTest(){
-    webSocketConnectorExample classObj = new webSocketConnectorExample(0,0,null,0,0,null,null);
+    webSocketConnectorExample classObj = new webSocketConnectorExample(null,null,0,0,null,null,null,null,null,null);
   }
 }
 

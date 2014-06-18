@@ -4,6 +4,9 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connectorSrc",
 "args": [{
+  "name": "moduleUniqueName",
+  "type": "string"
+},{
   "name": "maxNodesCount",
   "type": "int"
 },{
@@ -17,6 +20,9 @@
   "type": "int"
 },{
   "name": "binBuffersSize",
+  "type": "int"
+},{
+  "name": "statsInterval",
   "type": "int"
 }],
 "connection":{
@@ -34,7 +40,7 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
-"props": [],
+"props": [{"type": "connectionStatus[]", "name": "_connectionStatusBuffer_forNodes_0_Arr", "size": 5}, {"type": "cnetsProtocol[]", "name": "_inputProtocolBuffer_forNodes_0_Arr", "size": 5}, {"type": "byte[]", "name": "_inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers", "size": 640}, {"type": "writer[]", "name": "_protocolToBuffer_0_writers", "size": 3}, {"type": "deserializeStreamCallback[]", "name": "_protocolToBuffer_0_writers_callbacks", "size": 3}, {"type": "connectionStatus[]", "name": "_connectionStatusBuffer_forNodes_1_Arr", "size": 5}, {"type": "cnetsProtocol[]", "name": "_inputProtocolBuffer_forNodes_1_Arr", "size": 5}, {"type": "byte[]", "name": "_inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers", "size": 640}, {"type": "writer[]", "name": "_protocolToBuffer_1_writers", "size": 2}, {"type": "deserializeStreamCallback[]", "name": "_protocolToBuffer_1_writers_callbacks", "size": 2}, {"type": "reader[]", "name": "_bufferToProtocol_0_readers", "size": 1}, {"type": "serializeStreamCallback[]", "name": "_bufferToProtocol_0_readers_callbacks", "size": 1}, {"type": "reader[]", "name": "_bufferToProtocol_1_readers", "size": 1}, {"type": "serializeStreamCallback[]", "name": "_bufferToProtocol_1_readers_callbacks", "size": 1}, {"type": "writer[]", "name": "_nodesReceivers_writers", "size": 2}, {"type": "writer[]", "name": "_connectionStatusReceivers_writers", "size": 2}, {"type": "reader[]", "name": "_allBuffers_readers", "size": 2}, {"type": "nodeRepositoryProtocol[]", "name": "_nodeRepositoryProtocolBufferArr", "size": 2}, {"type": "cnetsProtocol[]", "name": "_outputProtocolBuffer_Arr", "size": 5}, {"type": "byte[]", "name": "_outputProtocolBuffer_Arr_BinaryBuffers", "size": 640}, {"type": "cnetsProtocol[]", "name": "_connectionStatusBuffer_publish_Arr", "size": 5}, {"type": "byte[]", "name": "_connectionStatusBuffer_publish_Arr_BinaryBuffers", "size": 640}, {"type": "cnetsConnections[]", "name": "_connectionsBufferArr", "size": 5}],
 "depends":[{
   "path":"com.github.airutech.cnets.readerWriter",
   "ver": "[0.0.0,)"
@@ -54,290 +60,6 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
   "path":"com.github.airutech.cnets.types",
   "ver": "[0.0.0,)"
 }],
-"blocks":[{
-  "id":0,
-  "name": "_protocolToBuffer_0",
-  "path":"com.github.airutech.cnetsTransports.protocolToBuffer",
-  "ver":"[0.0.0,)",
-  "args": [{
-    "name": "writers",
-    "value": "_protocolToBuffer_0_writers"
-  },{
-    "name": "callbacks",
-    "value": "_protocolToBuffer_0_writers_callbacks"
-  },{
-    "name": "protocolToBuffersGridSize",
-    "value": "_protocolToBuffer_cnt"
-  },{
-    "name": "maxNodesCount",
-    "value": "maxNodesCount"
-  }],
-  "connection":{
-    "writeTo": [{
-      "name":"sendRepositoryToDestination",
-      "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol",
-      "blockId": 4,
-      "pinId": 0
-    }],
-    "readFrom": [{
-      "name":"connectionStatus",
-      "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
-    },{
-      "name":"receiveRemoteRepository",
-      "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
-    },{
-      "name":"input",
-      "type":"cnetsProtocol"
-    }]
-  }
-},{
-  "id":1,
-  "name": "_bufferToProtocol_0",
-  "path":"com.github.airutech.cnetsTransports.bufferToProtocol",
-  "ver":"[0.0.0,)",
-  "args": [{
-    "name": "readers",
-    "value": "_bufferToProtocol_0_readers"
-  },{
-    "name": "serializeCallbacks",
-    "value": "_bufferToProtocol_0_readers_callbacks"
-  },{
-    "name": "bufferIndexOffset",
-    "value": 0
-  },{
-    "name": "maxNodesCount",
-    "value": "maxNodesCount"
-  }],
-  "connection":{
-    "writeTo": [{
-      "name":"output",
-      "type":"cnetsProtocol",
-      "blockId": 3,
-      "pinId": 0
-    }],
-    "readFrom": [{
-       "name":"connectionStatus",
-       "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
-     },{
-      "name":"receiveRemoteRepository",
-      "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
-    }]
-  }
-},{
- "id":2,
- "name": "_webSocket",
- "path":"com.github.airutech.cnetsTransports.webSocket",
- "ver":"[0.0.0,)",
- "args": [{
-    "name": "maxNodesCount",
-    "value":"maxNodesCount"
-  },{
-    "name": "initialConnection",
-    "value":"serverUrl"
-  },{
-    "name": "bindPort",
-    "value": -1
-  },{
-    "name": "sslContext",
-    "value": "null"
-  },{
-    "name": "nodesReceivers",
-    "value": "_webSocket_nodesReceivers_writers"
-  },{
-    "name": "connectionStatusReceivers",
-    "value": "_webSocket_connectionStatusReceivers_writers"
-  },{
-    "name": "buffersParameters",
-    "value": "_webSocket_buffers_readers"
-  }],
- "connection":{
-   "writeTo": [],
-   "readFrom": [{
-     "name":"toSocket",
-     "type":"com.github.airutech.cnetsTransports.type.cnetsProtocol"
-   },{
-     "name":"connections",
-     "type":"com.github.airutech.cnetsTransports.type.cnetsConnections"
-   },{
-     "name":"receiveRemoteRepository",
-     "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
-   }]
- }
-},{
- "id":3,
- "type":"buffer",
- "name":"_outputProtocolBuffer_0",
- "path":"com.github.airutech.cnets.mapBuffer",
- "ver":"[0.0.0,)",
- "args": [{
-   "name":"_outputProtocolBuffer_0_Arr",
-   "value":"_outputProtocolBuffer_0_Arr",
-   "type":"Object[]"
- },{
-   "name": "timeout_milisec",
-   "value": "2000L"
- },{
-   "name": "uniqueId",
-   "value": "\"0L\""
- },{
-   "name": "readers_grid_size",
-   "value": 1
- },{
-  "name": "statsInterval",
-  "value": 1000
- }],
- "connection": {
-   "writeTo": [{
-     "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol",
-     "blockId": 2,
-     "pinId": 0
-   }],
-   "readFrom": [{
-     "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"
-   }]
- }
-},{
-   "id":4,
-   "type":"buffer",
-   "name":"_nodeRepositoryProtocolBuffer",
-   "path":"com.github.airutech.cnets.mapBuffer",
-   "ver":"[0.0.0,)",
-   "args": [{
-     "name":"_nodeRepositoryProtocolBufferArr",
-     "value":"_nodeRepositoryProtocolBufferArr",
-     "type":"Object[]"
-   },{
-     "name": "timeout_milisec",
-     "value": "2000L"
-   },{
-     "name": "uniqueId",
-     "value": "\"1L\""
-   },{
-     "name": "readers_grid_size",
-     "value": 3
-  },{
-    "name": "statsInterval",
-    "value": 1000
-  }],
-   "connection": {
-      "writeTo": [{
-       "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
-       "blockId": 0,
-       "pinId": 1
-      },{
-        "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
-        "blockId": 1,
-        "pinId": 1
-      },{
-        "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
-        "blockId": 2,
-        "pinId": 2
-      }],
-      "readFrom": [{
-        "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"
-      }]
-   }
-},{
-  "id":5,
-  "type":"buffer",
-  "name":"_connectionsBuffer",
-  "path":"com.github.airutech.cnets.mapBuffer",
-  "ver":"[0.0.0,)",
-  "args": [{
-    "name":"_connectionsBufferArr",
-    "value":"_connectionsBufferArr",
-    "type":"Object[]"
-  },{
-    "name": "timeout_milisec",
-    "value": "2000L"
-  },{
-    "name": "uniqueId",
-    "value": "\"2L\""
-  },{
-    "name": "readers_grid_size",
-    "value": 1
-  },{
-    "name": "statsInterval",
-    "value": 1000
-  }],
-  "connection": {
-    "writeTo": [{
-      "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
-      "blockId": 2,
-      "pinId": 1
-    }],
-    "readFrom": [{
-      "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
-      "blockId":"export",
-      "pinId":0
-    }]
-  }
-},{
-  "id":6,
-  "type":"buffer",
-  "name":"_connectionStatusBuffer_forNodes_0",
-  "path":"com.github.airutech.cnets.mapBuffer",
-  "ver":"[0.0.0,)",
-  "args": [{
-    "name":"_connectionStatusBuffer_forNodes_0_Arr",
-    "value":"_connectionStatusBuffer_forNodes_0_Arr",
-    "type":"Object[]"
-  },{
-    "name": "timeout_milisec",
-    "value": "2000L"
-  },{
-    "name": "uniqueId",
-    "value": "\"3L\""
-  },{
-    "name": "readers_grid_size",
-    "value": 1
-  },{
-    "name": "statsInterval",
-    "value": 1000
-  }],
-  "connection": {
-    "writeTo": [{
-      "type": "com.github.airutech.cnetsTransports.types.connectionStatus",
-      "blockId": 0,
-      "pinId": 0
-    },{
-      "type": "com.github.airutech.cnetsTransports.types.connectionStatus",
-      "blockId": 1,
-      "pinId": 0
-    }],
-    "readFrom": []
-  }
-},{
- "id":7,
- "type":"buffer",
- "name":"_inputProtocolBuffer_forNodes_0",
- "path":"com.github.airutech.cnets.mapBuffer",
- "ver":"[0.0.0,)",
- "args": [{
-   "name":"_inputProtocolBuffer_forNodes_0_Arr",
-   "value":"_inputProtocolBuffer_forNodes_0_Arr",
-   "type":"Object[]"
- },{
-   "name": "timeout_milisec",
-   "value": "2000L"
- },{
-   "name": "uniqueId",
-   "value": "\"4L\""
- },{
-   "name": "readers_grid_size",
-   "value": 1
- },{
-  "name": "statsInterval",
-  "value": 1000
- }],
- "connection": {
-   "writeTo": [{
-     "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol",
-     "blockId": 0,
-     "pinId": 2
-   }],
-   "readFrom": []
- }
-}]
-/*[[[end]]] (checksum: 12603ef3449f54c7754e827fd62655c7)*/
+"blocks": [{"connection": {"writeTo": [{"pinId": 2, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 8}, {"pinId": 1, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 9}, {"pinId": 1, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 10}, {"pinId": 1, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 11}, {"pinId": 1, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 12}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}]}, "ver": "[0.0.0,)", "name": "_nodeRepositoryProtocolBuffer", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_nodeRepositoryProtocolBufferArr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_nodeRepositoryProtocolBuffer\""}, {"value": 5}, {"value": "statsInterval"}], "type": "buffer", "id": 0}, {"connection": {"writeTo": [{"pinId": 1, "type": "com.github.airutech.cnetsTransports.types.cnetsConnections", "blockId": 8}], "readFrom": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.cnetsConnections", "blockId": "export"}]}, "ver": "[0.0.0,)", "name": "_connectionsBuffer", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionsBufferArr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_connectionsBuffer\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 1}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol", "blockId": 8}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"}, {"type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"}]}, "ver": "[0.0.0,)", "name": "_outputProtocolBuffer", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_outputProtocolBuffer_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_outputProtocolBuffer\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 2}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.connectionStatus", "blockId": 11}, {"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.connectionStatus", "blockId": 12}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.connectionStatus"}]}, "ver": "[0.0.0,)", "name": "_connectionStatusBuffer_publish", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionStatusBuffer_publish_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_connectionStatusBuffer_publish\""}, {"value": 2}, {"value": "statsInterval"}], "type": "buffer", "id": 3}, {"connection": {"comment": "need to get readers manually in source code", "writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.connectionStatus", "blockId": 9}], "readFrom": []}, "ver": "[0.0.0,)", "name": "_connectionStatusBuffer_forNodes_0", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionStatusBuffer_forNodes_0_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_connectionStatusBuffer_forNodes_0\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 4}, {"connection": {"comment": "need to get readers manually in source code", "writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.connectionStatus", "blockId": 10}], "readFrom": []}, "ver": "[0.0.0,)", "name": "_connectionStatusBuffer_forNodes_1", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionStatusBuffer_forNodes_1_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_connectionStatusBuffer_forNodes_1\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 5}, {"connection": {"comment": "need to get readers manually in source code", "writeTo": [{"pinId": 2, "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol", "blockId": 9}], "readFrom": []}, "ver": "[0.0.0,)", "name": "_inputProtocolBuffer_forNodes0", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionStatusBuffer_forNodes_0_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_inputProtocolBuffer_forNodes0\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 6}, {"connection": {"comment": "need to get readers manually in source code", "writeTo": [{"pinId": 2, "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol", "blockId": 10}], "readFrom": []}, "ver": "[0.0.0,)", "name": "_inputProtocolBuffer_forNodes1", "path": "com.github.airutech.cnets.mapBuffer", "args": [{"type": "Object[]", "value": "_connectionStatusBuffer_forNodes_1_Arr"}, {"value": "1000L"}, {"value": "moduleUniqueName+\"_inputProtocolBuffer_forNodes1\""}, {"value": 1}, {"value": "statsInterval"}], "type": "buffer", "id": 7}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.connectionStatus", "blockId": 3}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"}, {"type": "com.github.airutech.cnetsTransports.types.cnetsConnections"}, {"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}]}, "ver": "[0.0.0,)", "name": "_webSocket", "path": "com.github.airutech.cnetsTransports.webSocket", "args": [{"value": "maxNodesCount"}, {"value": "serverUrl"}, {"value": "bindPort"}, {"name": "sslContext", "value": "null"}, {"value": "_nodesReceivers_writers"}, {"value": "_connectionStatusReceivers_writers"}, {"value": "_allBuffers_readers"}], "type": "kernel", "id": 8}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 0}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.connectionStatus"}, {"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}, {"type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"}]}, "ver": "[0.0.0,)", "name": "_protocolToBuffer_0", "path": "com.github.airutech.cnetsTransports.protocolToBuffer", "args": [{"value": "_protocolToBuffer_0_writers"}, {"value": "_protocolToBuffer_0_writers_callbacks"}, {"value": 0}, {"value": 2}, {"value": 5}], "type": "kernel", "id": 9}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol", "blockId": 0}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.connectionStatus"}, {"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}, {"type": "com.github.airutech.cnetsTransports.types.cnetsProtocol"}]}, "ver": "[0.0.0,)", "name": "_protocolToBuffer_1", "path": "com.github.airutech.cnetsTransports.protocolToBuffer", "args": [{"value": "_protocolToBuffer_1_writers"}, {"value": "_protocolToBuffer_1_writers_callbacks"}, {"value": 3}, {"value": 2}, {"value": 5}], "type": "kernel", "id": 10}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol", "blockId": 2}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.connectionStatus"}, {"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}]}, "ver": "[0.0.0,)", "name": "_bufferToProtocol_0", "path": "com.github.airutech.cnetsTransports.bufferToProtocol", "args": [{"value": "_bufferToProtocol_0_readers"}, {"value": "_bufferToProtocol_0_readers_callbacks"}, {"value": 0}, {"value": 5}], "type": "kernel", "id": 11}, {"connection": {"writeTo": [{"pinId": 0, "type": "com.github.airutech.cnetsTransports.types.cnetsProtocol", "blockId": 2}], "readFrom": [{"type": "com.github.airutech.cnetsTransports.types.connectionStatus"}, {"type": "com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"}]}, "ver": "[0.0.0,)", "name": "_bufferToProtocol_1", "path": "com.github.airutech.cnetsTransports.bufferToProtocol", "args": [{"value": "_bufferToProtocol_1_readers"}, {"value": "_bufferToProtocol_1_readers_callbacks"}, {"value": 1}, {"value": 5}], "type": "kernel", "id": 12}]
+/*[[[end]]] (checksum: 6c3aefc68e88be59d4df0901c04af0ed)*/
 }

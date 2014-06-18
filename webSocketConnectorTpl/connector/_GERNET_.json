@@ -2,8 +2,8 @@
 import sys
 sys.path.insert(0, a.parserPath)
 
-import parsing_java
-p = reload(parsing_java)
+import parsing_connector
+p = reload(parsing_connector)
 p.parsingGernet(a)
 %>
 {
@@ -11,6 +11,9 @@ p.parsingGernet(a)
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connectorSrc",
 "args": [{
+  "name": "moduleUniqueName",
+  "type": "string"
+},{
   "name": "maxNodesCount",
   "type": "int"
 },{
@@ -24,6 +27,9 @@ p.parsingGernet(a)
   "type": "int"
 },{
   "name": "binBuffersSize",
+  "type": "int"
+},{
+  "name": "statsInterval",
   "type": "int"
 }],
 "connection":{

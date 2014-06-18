@@ -45,16 +45,19 @@
 }],
 "blocks":[],
 "connection":{
-  "writeTo": [],
+  "writeTo": [{
+    "name":"statuses",
+    "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
+  }],
   "readFrom": [{
     "name":"toSocket",
-    "type":"com.github.airutech.cnetsTransports.type.cnetsProtocol"
+    "type":"com.github.airutech.cnetsTransports.types.cnetsProtocol"
   },{
     "name":"connections",
-    "type":"com.github.airutech.cnetsTransports.type.cnetsConnections"
+    "type":"com.github.airutech.cnetsTransports.types.cnetsConnections"
   },{
     "name":"receiveRemoteRepository",
-    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
+    "type":"com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"
   }]
 }
 }

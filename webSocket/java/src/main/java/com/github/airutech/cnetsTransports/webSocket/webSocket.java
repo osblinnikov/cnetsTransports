@@ -25,9 +25,9 @@ import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
 import com.github.airutech.cnetsTransports.types.*;
 public class webSocket implements RunnableStoppable{
-  int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public webSocket(int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,reader r0,reader r1,reader r2){
+  public webSocket(int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,writer w0,reader r0,reader r1,reader r2){
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
@@ -35,6 +35,7 @@ public class webSocket implements RunnableStoppable{
     this.nodesReceivers = nodesReceivers;
     this.connectionStatusReceivers = connectionStatusReceivers;
     this.buffersParameters = buffersParameters;
+    this.w0 = w0;
     this.r0 = r0;
     this.r1 = r1;
     this.r2 = r2;
@@ -59,7 +60,7 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 495b4910412a64e30235a528533b2fea) */
+/*[[[end]]] (checksum: fd79db56b875336f83bad657897c7887) */
 
   private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
@@ -243,44 +244,48 @@ public class webSocket implements RunnableStoppable{
 
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     conManager.addConnection(hashKey,webSocket);
-
-    if(connectionStatusReceivers == null) {return;}
-
     int nodeIndex = conManager.findConnectionId(hashKey);
-    writer w = connectionStatusReceivers[nodeIndex%connectionStatusReceivers.length];
-
     int id = conManager.findUniqueConnectionId(hashKey);
-    connectionStatus conStatus = null;
-    while(conStatus == null) {
-      conStatus = (connectionStatus) w.writeNext(-1);
-    }
-    conStatus.setId(id);
+
     for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
       nodes[id * buffersParameters.length + bufferIndex].setNodeUniqueId(id);
       nodes[id * buffersParameters.length + bufferIndex].setDstBufferIndex(-1);
     }
-    conStatus.setOn(true);
-    w.writeFinished();
+    sendConnStatus(nodeIndex, id, true);
   }
 
   public void onClose(String hashKey) {
-    int nodeIndex = conManager.findConnectionId(hashKey);
-    writer w = connectionStatusReceivers[nodeIndex%connectionStatusReceivers.length];
     int id = conManager.findUniqueConnectionId(hashKey);
+    int nodeIndex = conManager.findConnectionId(hashKey);
     conManager.removeConnection(hashKey);
-
-    if(connectionStatusReceivers == null) {return;}
-
-    connectionStatus conStatus = null;
-    while(conStatus == null) {
-      conStatus = (connectionStatus) w.writeNext(-1);
-    }
-    conStatus.setId(id);
     for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++) {
       nodes[id * buffersParameters.length+bufferIndex].setDstBufferIndex(-1);
     }
-    conStatus.setOn(false);
-    w.writeFinished();
+    sendConnStatus(nodeIndex, id, false);
+  }
+
+  private void sendConnStatus(int nodeIndex, int id, boolean status){
+    connectionStatus conStatus = null;
+    if(w0 != null) {
+      conStatus = null;
+      while (conStatus == null) {
+        conStatus = (connectionStatus) w0.writeNext(-1);
+      }
+      conStatus.setId(id);
+      conStatus.setOn(status);
+      w0.writeFinished();
+    }
+
+    if(connectionStatusReceivers != null) {
+      writer w = connectionStatusReceivers[nodeIndex % connectionStatusReceivers.length];
+      conStatus = null;
+      while (conStatus == null) {
+        conStatus = (connectionStatus) w.writeNext(-1);
+      }
+      conStatus.setId(id);
+      conStatus.setOn(status);
+      w.writeFinished();
+    }
   }
 
   public void onMessage(String hashKey, String msg) {

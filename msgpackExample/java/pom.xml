@@ -53,19 +53,7 @@
     ]]]-->
 
 
-    <dependency>
-        <groupId>com.github.airutech.cnetsTransports</groupId>
-        <artifactId>msgpack</artifactId>
-        <version>[0.0.0,)</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>com.github.airutech.cnetsTransports</groupId>
-        <artifactId>types</artifactId>
-        <version>[0.0.0,)</version>
-        <scope>compile</scope>
-    </dependency>
-    <!--[[[end]]] (checksum: e0e241d144fa65fe5120a3c71d35edf3)-->
+    <!--[[[end]]] (checksum: e1c06d85ae7b8b032bef47e42e4c08f9)-->
 </dependencies>
 
 <build>

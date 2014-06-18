@@ -54,6 +54,66 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 <dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>webSocket</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>protocolToBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>protocolToBuffer</artifactId>
     <version>[0.0.0,)</version>
@@ -67,37 +127,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>webSocket</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
+    <artifactId>bufferToProtocol</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -137,7 +167,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 54c9624d1b80e4a14e22bfe72fafbad8)-->
+<!--[[[end]]] (checksum: 4100412d1b10ac6d6213967b5d730980)-->
     </dependencies>
 
     <build>

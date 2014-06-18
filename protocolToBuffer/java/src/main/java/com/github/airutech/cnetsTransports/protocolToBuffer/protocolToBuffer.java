@@ -16,11 +16,12 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class protocolToBuffer implements RunnableStoppable{
-  writer[] writers;deserializeStreamCallback[] callbacks;int protocolToBuffersGridSize;int maxNodesCount;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  writer[] writers;deserializeStreamCallback[] callbacks;int nodesIndexOffset;int protocolToBuffersGridSize;int maxNodesCount;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public protocolToBuffer(writer[] writers,deserializeStreamCallback[] callbacks,int protocolToBuffersGridSize,int maxNodesCount,writer w0,reader r0,reader r1,reader r2){
+  public protocolToBuffer(writer[] writers,deserializeStreamCallback[] callbacks,int nodesIndexOffset,int protocolToBuffersGridSize,int maxNodesCount,writer w0,reader r0,reader r1,reader r2){
     this.writers = writers;
     this.callbacks = callbacks;
+    this.nodesIndexOffset = nodesIndexOffset;
     this.protocolToBuffersGridSize = protocolToBuffersGridSize;
     this.maxNodesCount = maxNodesCount;
     this.w0 = w0;
@@ -48,7 +49,7 @@ public class protocolToBuffer implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 92110f05990c43c998bfa9f8b72e7dfb) */
+/*[[[end]]] (checksum: 41dde291cca26e0e7aea3ee611dcae06) */
 
   private void onKernels() {
 
@@ -127,7 +128,10 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update){
-    int internalNodeIndex = (update.getDestinationUniqueNodeId()%maxNodesCount)%protocolToBuffersGridSize;
+    int id = update.getDestinationUniqueNodeId();
+    int internalNodeIndex = (id%maxNodesCount);
+    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
+    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
     String[] names = update.getBufferNames();
     /*searching locally names equal to remote buffer names*/
     for(int i=0; i<names.length; i++){
@@ -143,7 +147,10 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   private void receiveRepositoryUpdate(cnetsProtocol repositoryUpdateProtocol) {
-    int internalNodeIndex = (repositoryUpdateProtocol.getNodeUniqueIds()[0]%maxNodesCount)%protocolToBuffersGridSize;
+    int id = repositoryUpdateProtocol.getNodeUniqueIds()[0];
+    int internalNodeIndex = (id%maxNodesCount);
+    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
+    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
     int bufferIndx = 0;
     bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
     deserializeForNode(repositoryUpdateProtocol, node);
@@ -151,7 +158,10 @@ public class protocolToBuffer implements RunnableStoppable{
 
   private void processStatus(connectionStatus data) {
     /*finish processes with the buffers*/
-    int internalNodeIndex = (data.getId()%maxNodesCount)%protocolToBuffersGridSize;
+    int id = data.getId();
+    int internalNodeIndex = (id%maxNodesCount);
+    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
+    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
     for (int bufferIndx = 0; bufferIndx < writers.length; bufferIndx++) {
       bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
       tryToFinishWriting(node);
@@ -176,7 +186,10 @@ public class protocolToBuffer implements RunnableStoppable{
       return;
     }
 
-    int internalNodeIndex = (currentlyReceivedProtocol.getNodeUniqueIds()[0]%maxNodesCount)%protocolToBuffersGridSize;
+    int id = currentlyReceivedProtocol.getNodeUniqueIds()[0];
+    int internalNodeIndex = (id%maxNodesCount);
+    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
+    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
 
     bufferOfNode node = null;
     /*searching for the buffer for arrived data from the node: internalNodeIndex*/

@@ -46,10 +46,10 @@
   }],
   "readFrom": [{
      "name":"connectionStatus",
-     "type":"com.github.airutech.cnetsTransports.type.connectionStatus"
+     "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
    },{
     "name":"receiveRemoteRepository",
-    "type":"com.github.airutech.cnetsTransports.type.nodeRepositoryProtocol"
+    "type":"com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"
   }]
 }
 }

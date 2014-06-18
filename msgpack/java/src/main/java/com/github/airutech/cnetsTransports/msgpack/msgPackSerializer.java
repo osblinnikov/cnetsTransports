@@ -12,7 +12,8 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   Continuation c = null;
 
   cnetsProtocol outputMetaData = null;
-  cnetsMessagePackable data = null;
+  cnetsMessagePackable callback = null;
+  Object data = null;
   boolean isLastPacket = false;
 
   /***** PACKING *****/
@@ -20,8 +21,9 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   MessagePack msgpack = new MessagePack();
   BufferPacker packer;
 
-  public msgPackSerializer(){
-
+  public msgPackSerializer(cnetsMessagePackable callback){
+    this.callback = callback;
+    assert callback != null;
   }
 
   private void sendPacket(boolean isLastPacket){
@@ -58,7 +60,7 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   }
 
   @Override
-  public boolean serializeNext(cnetsMessagePackable data, cnetsProtocol outputMetaData) {
+  public boolean serializeNext( Object data, cnetsProtocol outputMetaData) {
     assert this.outputMetaData == null || data == this.data;
     assert data != null && outputMetaData != null;
 
@@ -84,7 +86,7 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   @Override
   public void run() {
     while(true) {
-      if(data.serializeWith(this)){
+      if(callback.serializeWith(this,data)){
         sendPacket(true);
       }else{
         return;

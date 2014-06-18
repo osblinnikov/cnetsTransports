@@ -16,6 +16,6 @@ import com.github.airutech.cnets.types.*;
 /*[[[end]]] (checksum: b239d6da7275b929b3c969215d09d810)*/
 public class main{
   public static void main(String[] args){
-    webSocketConnectorExample classObj = new webSocketConnectorExample(0,0,null,0,0,null,null);
+    webSocketConnectorExample classObj = new webSocketConnectorExample(null,null,0,0,null,null,null,null,null,null);
   }
 }

@@ -280,7 +280,7 @@ def connectBufferToReader(a, blockNum, i, w):
     wblock = a.read_data["blocks"][int(blockId)]
     if wblock.has_key("type") and wblock["type"] == "buffer":
       raise Exception("Interconnections of buffers ["+str(blockNum)+" and "+str(blockId)+"] are forbidden")
-    arr_id = checkPinId(wblock["connection"]["readFrom"],w["pinId"])
+    arr_id = checkPinId(wblock["connection"]["readFrom"], w["pinId"])
     if arr_id == -1:
       raise Exception("pinId w."+str(w["pinId"])+" was not found in the destination buffer")
     if w["pinId"] != arr_id:

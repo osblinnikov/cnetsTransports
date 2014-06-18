@@ -9,6 +9,7 @@ p.parsingGernet(a)
 %>
 package ${a.read_data["path"]};
 
+import com.github.airutech.cnetsTransports.types.connectionStatus;
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
@@ -30,7 +31,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
   @Override
   public void run(){
-    ${p.runBlocks(a)}
+    /*${p.runBlocks(a)}*/
   }
 
   @Override
