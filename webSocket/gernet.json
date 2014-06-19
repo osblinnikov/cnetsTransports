@@ -3,6 +3,9 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.gernet.plugins.kernel",
 "args": [{
+  "name": "subscribedBuffersNames",
+  "type": "string[]"
+},{
   "name": "maxNodesCount",
   "type": "int"
 },{
@@ -40,6 +43,9 @@
   "path":"com.github.airutech.cnets.mapBuffer",
   "ver": "[0.0.0,)"
 },{
+  "path":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol",
+  "ver": "[0.0.0,)"
+},{
   "path":"com.github.airutech.cnetsTransports.types",
   "ver": "[0.0.0,)"
 }],
@@ -57,7 +63,7 @@
     "type":"com.github.airutech.cnetsTransports.types.cnetsConnections"
   },{
     "name":"receiveRemoteRepository",
-    "type":"com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"
+    "type":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"
   }]
 }
 }

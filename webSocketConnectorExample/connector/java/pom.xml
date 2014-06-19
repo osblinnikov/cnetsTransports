@@ -102,6 +102,12 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
+    <groupId>com.github.airutech.cnetsTransports.nodeRepositoryProtocol</groupId>
+    <artifactId>source</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>webSocket</artifactId>
     <version>[0.0.0,)</version>
@@ -167,7 +173,19 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 4100412d1b10ac6d6213967b5d730980)-->
+<!--[[[end]]] (checksum: ff70d0ca3c4f276c3b41e69310b4ed21)-->
+      <dependency>
+        <groupId>com.github.airutech.cnetsTransports.msgpackExample</groupId>
+        <artifactId>msgpack</artifactId>
+        <version>[0.0.0,)</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.github.airutech.cnetsTransports</groupId>
+        <artifactId>msgpack</artifactId>
+        <version>0.0.0</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 
     <build>

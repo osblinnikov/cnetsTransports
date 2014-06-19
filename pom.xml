@@ -10,12 +10,17 @@
   <url>http://maven.apache.org</url>
 
   <modules>
+    <module>nodeRepositoryProtocol/java</module>
+    <module>nodeRepositoryProtocol/msgpack/java</module>
+    <module>nodeRepositoryProtocol/source/java</module>
+    <module>msgpackExample/java</module>
+    <module>msgpackExample/msgpack/java</module>
     <module>protocolToBuffer/java</module>
     <module>bufferToProtocol/java</module>
     <module>Java-WebSocket</module>
     <module>webSocket/java</module>
-    <module>webSocketConnector/java</module>
-    <module>sockJS/java</module>
+    <module>webSocketConnectorExample/connector/java</module>
+    <module>webSocketConnectorExample/java</module>
     <module>types/java</module>
     <module>msgpack/java</module>
     <module>msgpack-java</module>

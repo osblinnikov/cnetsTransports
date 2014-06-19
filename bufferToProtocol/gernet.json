@@ -3,6 +3,9 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.gernet.plugins.kernel",
 "args": [{
+  "name": "subscribedBuffersNames",
+  "type": "string[]"
+},{
   "name": "readers",
   "type": "reader[]",
   "selectable": true
@@ -18,6 +21,9 @@
 }],
 "depends":[{
   "path":"com.github.airutech.cnetsTransports.types",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol",
   "ver": "[0.0.0,)"
 },{
   "path":"com.github.airutech.cnets.types",
@@ -45,11 +51,11 @@
     "type":"cnetsProtocol"
   }],
   "readFrom": [{
-     "name":"connectionStatus",
-     "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
-   },{
+    "name":"connectionStatus",
+    "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
+  },{
     "name":"receiveRemoteRepository",
-    "type":"com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"
+    "type":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"
   }]
 }
 }

@@ -13,6 +13,11 @@ public class cnetsProtocol {
   private int[] nodeUniqueIds; /*it's not going to be serialized*/
   private boolean published; /*it's not going to be serialized*/
 
+  public cnetsProtocol(){
+    bb = null;
+    nodeUniqueIds = null;
+  }
+
   public cnetsProtocol(int dataSize, int nodesSize){
     bb = ByteBuffer.wrap(new byte[dataSize]);
     nodeUniqueIds = new int[nodesSize];

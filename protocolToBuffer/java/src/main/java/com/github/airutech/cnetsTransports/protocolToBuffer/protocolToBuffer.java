@@ -9,6 +9,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 import com.github.airutech.cnets.types.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.queue.*;
@@ -16,15 +17,15 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class protocolToBuffer implements RunnableStoppable{
-  writer[] writers;deserializeStreamCallback[] callbacks;int nodesIndexOffset;int protocolToBuffersGridSize;int maxNodesCount;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  String[] subscribedBuffersNames;writer[] writers;deserializeStreamCallback[] callbacks;int nodesIndexOffset;int protocolToBuffersGridSize;int maxNodesCount;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public protocolToBuffer(writer[] writers,deserializeStreamCallback[] callbacks,int nodesIndexOffset,int protocolToBuffersGridSize,int maxNodesCount,writer w0,reader r0,reader r1,reader r2){
+  public protocolToBuffer(String[] subscribedBuffersNames,writer[] writers,deserializeStreamCallback[] callbacks,int nodesIndexOffset,int protocolToBuffersGridSize,int maxNodesCount,reader r0,reader r1,reader r2){
+    this.subscribedBuffersNames = subscribedBuffersNames;
     this.writers = writers;
     this.callbacks = callbacks;
     this.nodesIndexOffset = nodesIndexOffset;
     this.protocolToBuffersGridSize = protocolToBuffersGridSize;
     this.maxNodesCount = maxNodesCount;
-    this.w0 = w0;
     this.r0 = r0;
     this.r1 = r1;
     this.r2 = r2;
@@ -49,7 +50,7 @@ public class protocolToBuffer implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 41dde291cca26e0e7aea3ee611dcae06) */
+/*[[[end]]] (checksum: 114685977d7b9c06756543a08469225e) */
 
   private void onKernels() {
 
@@ -60,22 +61,29 @@ public class protocolToBuffer implements RunnableStoppable{
   int nodesOnline = 0;
 
   private void onCreate(){
+    if(writers==null || subscribedBuffersNames==null){return;}
+    assert writers.length == subscribedBuffersNames.length;
     if(protocolToBuffersGridSize <= 0){return;}
     nodesStored = (int)Math.ceil(maxNodesCount/protocolToBuffersGridSize);
     nodes = new bufferOfNode[nodesStored * writers.length];
+    for(int i=0; i<nodes.length; i++){
+      nodes[i] = new bufferOfNode();
+    }
     for (int i = 0; i < nodesStored; i++) {
       for (int bufferIndx = 0; bufferIndx < writers.length; bufferIndx++) {
         bufferOfNode node = nodes[i * writers.length + bufferIndx];
-        node = new bufferOfNode();
         node.setInit(false);
         node.setBufferObj(null);
-        node.setW0(writers[bufferIndx].copy());
+        if(writers[bufferIndx]!=null) {
+          node.setW0(writers[bufferIndx].copy());
+        }
         node.setCallback(callbacks[bufferIndx]);
         node.setBunchId(0);
         node.setTimeStart(0);
         node.setDstBufferIndex(-1);
         node.setNodeId(-1);
         node.setOwnBufferIndex(bufferIndx);
+        node.setWriterName(subscribedBuffersNames[bufferIndx]);
       }
     }
   }
@@ -105,11 +113,7 @@ public class protocolToBuffer implements RunnableStoppable{
         processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
         break;
       case 2:
-        if(((cnetsProtocol) r.getData()).getBufferIndex() == 0){
-          receiveRepositoryUpdate((cnetsProtocol) r.getData());
-        }else{
-          processData((cnetsProtocol) r.getData());
-        }
+        processData((cnetsProtocol) r.getData());
         break;
     }
     rSelect.readFinished();
@@ -127,35 +131,6 @@ public class protocolToBuffer implements RunnableStoppable{
     }
   }
 
-  private void processRepositoryUpdate(nodeRepositoryProtocol update){
-    int id = update.getDestinationUniqueNodeId();
-    int internalNodeIndex = (id%maxNodesCount);
-    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
-    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
-    String[] names = update.getBufferNames();
-    /*searching locally names equal to remote buffer names*/
-    for(int i=0; i<names.length; i++){
-      for(int bufferIndx=0; bufferIndx<writers.length; bufferIndx++){
-        bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
-        if(node.getW0().uniqueId().equals(names[i])){
-          tryToFinishWriting(node);
-          node.setDstBufferIndex(i);
-          break;
-        }
-      }
-    }
-  }
-
-  private void receiveRepositoryUpdate(cnetsProtocol repositoryUpdateProtocol) {
-    int id = repositoryUpdateProtocol.getNodeUniqueIds()[0];
-    int internalNodeIndex = (id%maxNodesCount);
-    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
-    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
-    int bufferIndx = 0;
-    bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
-    deserializeForNode(repositoryUpdateProtocol, node);
-  }
-
   private void processStatus(connectionStatus data) {
     /*finish processes with the buffers*/
     int id = data.getId();
@@ -166,16 +141,16 @@ public class protocolToBuffer implements RunnableStoppable{
       bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
       tryToFinishWriting(node);
     }
-
-    if(data.isOn()) {
-      nodeRepositoryProtocol protocol = null;
-      while(protocol == null) {
-        protocol = (nodeRepositoryProtocol) w0.writeNext(-1);
-      }
-      protocol.setDestinationUniqueNodeId(data.getId());
-      w0.writeFinished();
-    }
   }
+
+//  private void sendRepositoryUpdateToDestination(int id){
+//    nodeRepositoryProtocol protocol = null;
+//    while(protocol == null) {
+//      protocol = (nodeRepositoryProtocol) w0.writeNext(-1);
+//    }
+//    protocol.setDestinationUniqueNodeId(id);
+//    w0.writeFinished();
+//  }
 
   private void processData(cnetsProtocol currentlyReceivedProtocol){
     if (currentlyReceivedProtocol == null) {return;}
@@ -238,6 +213,25 @@ public class protocolToBuffer implements RunnableStoppable{
     boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
     if(isLastPacket){
       tryToFinishWriting(node);
+    }
+  }
+
+  private void processRepositoryUpdate(nodeRepositoryProtocol update){
+    int id = update.nodeId;
+    int internalNodeIndex = (id%maxNodesCount);
+    if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
+    internalNodeIndex = internalNodeIndex%protocolToBuffersGridSize;
+    String[] names = update.bufferNames;
+    /*searching locally names equal to remote buffer names*/
+    for(int i=0; i<names.length; i++){
+      for(int bufferIndx=0; bufferIndx<writers.length; bufferIndx++){
+        bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
+        if(node.getWriterName().equals(names[i])){
+          tryToFinishWriting(node);
+          node.setDstBufferIndex(i);
+          break;
+        }
+      }
     }
   }
 

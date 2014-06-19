@@ -28,6 +28,7 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
 
   private void suspend(boolean isLastPacket) {
     this.isLastPacket = isLastPacket;
+    callback.fromNodeId(inputMetaData.getNodeUniqueIds()[0], data);
     Continuation.suspend();
   }
 

@@ -23,11 +23,13 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.mapBuffer.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.types.*;
 public class webSocket implements RunnableStoppable{
-  int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  String[] subscribedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public webSocket(int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,writer w0,reader r0,reader r1,reader r2){
+  public webSocket(String[] subscribedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,writer w0,reader r0,reader r1,reader r2){
+    this.subscribedBuffersNames = subscribedBuffersNames;
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
@@ -60,7 +62,7 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: fd79db56b875336f83bad657897c7887) */
+/*[[[end]]] (checksum: c4e707a22b820e5afc779b27d5bea2bb) */
 
   private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
@@ -75,14 +77,18 @@ public class webSocket implements RunnableStoppable{
   
   private void onCreate(){
     conManager = new connectionsRegistry(maxNodesCount);
-    if(buffersParameters == null){return;}
+    if(buffersParameters == null || subscribedBuffersNames == null){return;}
+    assert subscribedBuffersNames.length == buffersParameters.length;
     /*local storage for all nodes and all localBuffers*/
     nodes = new nodeBufIndex[maxNodesCount*buffersParameters.length];
+    for(int i=0; i<nodes.length; i++){
+      nodes[i] = new nodeBufIndex();
+    }
     for(int i=0; i<maxNodesCount; i++){
       for(int bufferIndex=0; bufferIndex<buffersParameters.length; bufferIndex++){
         nodeBufIndex node = nodes[i * buffersParameters.length + bufferIndex];
         node.setDstBufferIndex(-1);
-        node.setR0(buffersParameters[bufferIndex]);
+        node.setWriterName(subscribedBuffersNames[bufferIndex]);
       }
     }
   }
@@ -154,14 +160,14 @@ public class webSocket implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update) {
-    int internalNodeIndex = (update.getDestinationUniqueNodeId()%maxNodesCount);
-    String[] names = update.getBufferNames();
+    int internalNodeIndex = (update.nodeId%maxNodesCount);
+    String[] names = update.bufferNames;
     /*searching locally names equal to remote buffer names*/
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<buffersParameters.length; bufferIndx++){
         nodeBufIndex node = nodes[internalNodeIndex * buffersParameters.length + bufferIndx];
         node.setDstBufferIndex(-1);
-        if(node.getR0().uniqueId().equals(names[i])){
+        if(node.getWriterName().equals(names[i])){
           node.setDstBufferIndex(i);
           break;
         }

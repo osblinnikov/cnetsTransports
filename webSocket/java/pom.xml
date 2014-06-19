@@ -90,11 +90,17 @@
       </dependency>
       <dependency>
           <groupId>com.github.airutech.cnetsTransports</groupId>
+          <artifactId>nodeRepositoryProtocol</artifactId>
+          <version>[0.0.0,)</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.github.airutech.cnetsTransports</groupId>
           <artifactId>types</artifactId>
           <version>[0.0.0,)</version>
           <scope>compile</scope>
       </dependency>
-<!--[[[end]]] (checksum: 15f01602aa0b7f80ea76c0ea2b0f8a93)-->
+<!--[[[end]]] (checksum: cd8c7573c1f61f7ab231a71041cabcad)-->
     </dependencies>
 
     <build>

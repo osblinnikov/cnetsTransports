@@ -60,6 +60,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.airutech.cnetsTransports</groupId>
+            <artifactId>nodeRepositoryProtocol</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.airutech.cnets</groupId>
             <artifactId>types</artifactId>
             <version>[0.0.0,)</version>
@@ -95,7 +101,7 @@
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
-<!--[[[end]]] (checksum: 9001f901019c2568bafb6b26af8e3067)-->
+<!--[[[end]]] (checksum: 40b15a5a661bca89119eeb97f996281a)-->
     </dependencies>
 
     <build>

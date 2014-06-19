@@ -242,16 +242,16 @@ def getReadersWriters(a,v, curBlock):
       if checkPinId(a.read_data["connection"]["writeTo"], w["pinId"]) != -1:
         arr.append("this.w"+str(w["pinId"]))
       else:
-        raise Exception("pinId this.w."+str(w["pinId"])+" was not found in the exported connection")
+        raise Exception("pinId this.w."+str(w["pinId"])+" was not found in the exported connection , curBlock: "+str(curBlock))
     elif blockId != "internal":
       rblock = a.read_data["blocks"][int(blockId)]
       if rblock["type"] != "buffer":
-        raise Exception("Connection from the block allowed only to the block with type='buffer'")
+        raise Exception("Connection from the block allowed only to the block with type='buffer' , curBlock: "+str(curBlock))
       # r = rblock["connection"]["readFrom"]
       if checkPinId(rblock["connection"]["readFrom"], w["pinId"]) != -1:
         arr.append(rblock["name"]+"w"+str(w["pinId"]))
       else:
-        raise Exception("pinId w."+str(w["pinId"])+" was not found in the destination buffer")
+        raise Exception("pinId w."+str(w["pinId"])+" was not found in the destination buffer "+str(blockId)+", curBlock: "+str(curBlock))
 
   #get reader from buffer
   for i,r in enumerate(v["connection"]["readFrom"]):
@@ -260,16 +260,16 @@ def getReadersWriters(a,v, curBlock):
       if checkPinId(a.read_data["connection"]["readFrom"], r["pinId"]) != -1:
         arr.append("this.r"+str(r["pinId"]))
       else:
-        raise Exception("pinId this.r."+str(r["pinId"])+" was not found in the exported connection")
+        raise Exception("pinId this.r."+str(r["pinId"])+" was not found in the exported connection , curBlock: "+str(curBlock))
     elif blockId != "internal":
       wblock = a.read_data["blocks"][int(blockId)]
       if wblock["type"] != "buffer":
-        raise Exception("Connection from the block allowed only to the block with type='buffer'")
+        raise Exception("Connection from the block allowed only to the block with type='buffer' , curBlock: "+str(curBlock))
       # r = wblock["connection"]["writeTo"]
       if checkPinId(wblock["connection"]["writeTo"], r["pinId"]) != -1:
         arr.append(wblock["name"]+"r"+str(r["pinId"]))
       else:
-        raise Exception("pinId r."+str(r["pinId"])+" was not found in the destination buffer")
+        raise Exception("pinId r."+str(r["pinId"])+" was not found in the destination buffer "+str(blockId)+" , curBlock: "+str(curBlock))
   return arr
 
 def connectBufferToReader(a, blockNum, i, w):

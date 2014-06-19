@@ -16,7 +16,17 @@ def getGernetProps(a):
     binBuffersSize = findPropValueByName(a,"binBuffersSize")
     readersCount = len(a.read_data["connection"]["readFrom"]) - 1
     writersCount = len(a.read_data["connection"]["writeTo"]) - 1
+
     out = []
+
+    out.append(dict(name="countNodesProcessors",type="int",value=countNodesProcessors))
+    out.append(dict(name="countBuffersProcessors",type="int",value=countBuffersProcessors))
+    out.append(dict(name="maxNodesCount",type="int",value=maxNodesCount))
+    out.append(dict(name="buffersLengths",type="int",value=buffersLengths))
+    out.append(dict(name="binBuffersSize",type="int",value=binBuffersSize))
+    out.append(dict(name="readersCount",type="int",value=readersCount))
+    out.append(dict(name="writersCount",type="int",value=writersCount))
+
     nodesLeftCount = maxNodesCount
     nodesPerProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))
     for processorId in range(0, countNodesProcessors):
@@ -40,16 +50,6 @@ def getGernetProps(a):
             name="_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr_BinaryBuffers",
             type="byte[]",
             size=binBuffersSize*buffersLengths
-        ))
-        out.append(dict(
-            name="_protocolToBuffer_"+str(processorId)+"_writers",
-            type="writer[]",
-            size=nodesPerProcessorCeil
-        ))
-        out.append(dict(
-            name="_protocolToBuffer_"+str(processorId)+"_writers_callbacks",
-            type="deserializeStreamCallback[]",
-            size=nodesPerProcessorCeil
         ))
 
     buffersPerProcessorCeil = int(math.ceil(float(readersCount)/countBuffersProcessors))
@@ -82,11 +82,6 @@ def getGernetProps(a):
         name="_connectionStatusReceivers_writers",
         type="writer[]",
         size=countNodesProcessors
-    ))
-    out.append(dict(
-        name="_allBuffers_readers",
-        type="reader[]",
-        size=readersCount
     ))
     out.append(dict(
         name="_nodeRepositoryProtocolBufferArr",
@@ -129,14 +124,14 @@ def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, c
 
     #add transportKernel connection
     nodeRepositoryProtocolWriteTo.append(dict(
-        type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
+        type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
         blockId=transportKernelId,
         pinId=2
     ))
     #connect to the next kernel after transport kernel
     for i in range(transportKernelId+1,transportKernelId+1+countNodesProcessors+countBuffersProcessors):
         nodeRepositoryProtocolWriteTo.append(dict(
-            type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
+            type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
             blockId=i,
             pinId=1
         ))
@@ -151,13 +146,11 @@ def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, c
         args=[
             dict(value="_nodeRepositoryProtocolBufferArr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_nodeRepositoryProtocolBuffer\""),
-            dict(value=countNodesProcessors + countBuffersProcessors + 1),# +1 for transportKernel
-            dict(value="statsInterval")#as module argument
+            dict(value=countNodesProcessors + countBuffersProcessors + 1)# +1 for transportKernel
         ],
         connection=dict(
             writeTo=nodeRepositoryProtocolWriteTo,
-            readFrom=[dict(type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol")]
+            readFrom=[dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol")]
         )
     )
 
@@ -171,9 +164,7 @@ def initConnectionsBuffer(connectionsBufferId, transportKernelId, timeoutInterva
         args=[
             dict(value="_connectionsBufferArr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_connectionsBuffer\""),
-            dict(value=1),# configure connections only in transport
-            dict(value="statsInterval")#as module argument
+            dict(value=1)# configure connections only in transport
         ],
         connection=dict(
             writeTo=[dict(
@@ -202,9 +193,7 @@ def initSendProtocolsBuffer(sendProtocolsBufferId, countBuffersProcessors, trans
         args=[
             dict(value="_outputProtocolBuffer_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_outputProtocolBuffer\""),
-            dict(value=1),# configure connections only in transport
-            dict(value="statsInterval")#as module argument
+            dict(value=1)# configure connections only in transport
         ],
         connection=dict(
             writeTo=[dict(
@@ -226,9 +215,7 @@ def initConnStatusBuffer(pubConnStatusBufferId,transportKernelId, timeoutInterva
         args=[
             dict(value="_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_connectionStatusBuffer_forNodes_"+str(processorId)+"\""),
-            dict(value=1),# configure connections only in transport
-            dict(value="statsInterval")#as module argument
+            dict(value=1)# configure connections only in transport
         ],
         connection=dict(
             writeTo=[dict(
@@ -241,14 +228,19 @@ def initConnStatusBuffer(pubConnStatusBufferId,transportKernelId, timeoutInterva
         )
     )
 
-def initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countBuffersProcessors, countNodesProcessors, timeoutInterval):
+def initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countBuffersProcessors, countNodesProcessors, timeoutInterval, repSourceKernelId):
     writeToList = []
     for processorId in range(countNodesProcessors, countBuffersProcessors+countNodesProcessors):
         writeToList.append(dict(
             type="com.github.airutech.cnetsTransports.types.connectionStatus",
-            blockId=transportKernelId+1+processorId, #after transport kernel will be the protocolToBuffer
+            blockId=transportKernelId+1+processorId,
             pinId=0
         ))
+    writeToList.append(dict(
+        type="com.github.airutech.cnetsTransports.types.connectionStatus",
+        blockId=repSourceKernelId,
+        pinId=0
+    ))
     return dict(
         id=pubConnStatusBufferId,
         type="buffer",
@@ -258,9 +250,7 @@ def initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countB
         args=[
             dict(value="_connectionStatusBuffer_publish_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_connectionStatusBuffer_publish\""),
-            dict(value=countBuffersProcessors),# configure connections only in transport
-            dict(value="statsInterval")#as module argument
+            dict(value=countBuffersProcessors)# configure connections only in transport
         ],
         connection=dict(
             writeTo=writeToList,
@@ -272,15 +262,13 @@ def initRecvProtocolsBuffer(pubConnStatusBufferId, transportKernelId, countNodes
     return dict(
         id=pubConnStatusBufferId+1+countNodesProcessors+processorId,
         type="buffer",
-        name="_inputProtocolBuffer_forNodes"+str(processorId),
+        name="_inputProtocolBuffer_forNodes_"+str(processorId),
         path="com.github.airutech.cnets.mapBuffer",
         ver="[0.0.0,)",
         args=[
             dict(value="_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value="moduleUniqueName+\"_inputProtocolBuffer_forNodes"+str(processorId)+"\""),
-            dict(value=1),# configure connections only in transport
-            dict(value="statsInterval")#as module argument
+            dict(value=1)# configure connections only in transport
         ],
         connection=dict(
             writeTo=[dict(
@@ -293,6 +281,24 @@ def initRecvProtocolsBuffer(pubConnStatusBufferId, transportKernelId, countNodes
         )
     )
 
+def initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId):
+    return dict(
+        id=repSourceKernelId,
+        type="kernel",
+        name="_nodeRepositoryProtocolSource",
+        path="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.source",
+        ver="[0.0.0,)",
+        args=[dict(value="subscribedBuffersNames")],
+        connection=dict(
+            writeTo=[dict(
+                type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
+                blockId=nodeRepositoryProtocolBufferId,
+                pinId=0
+            )],
+            readFrom=[dict(type="com.github.airutech.cnetsTransports.types.cnetsConnections")]
+        )
+    )
+
 def initTransportKernel(transportKernelId,pubConnStatusBufferId):
     return dict(
         id=transportKernelId,
@@ -301,13 +307,14 @@ def initTransportKernel(transportKernelId,pubConnStatusBufferId):
         path="com.github.airutech.cnetsTransports.webSocket",
         ver="[0.0.0,)",
         args=[
+            dict(value="subscribedBuffersNames"),
             dict(value="maxNodesCount"),
             dict(value="serverUrl"),
             dict(value="bindPort"),
             dict(value="null", name="sslContext"),
             dict(value="_nodesReceivers_writers"),
             dict(value="_connectionStatusReceivers_writers"),
-            dict(value="_allBuffers_readers")
+            dict(value="allReaders")
         ],
         connection=dict(
             writeTo=[dict(
@@ -318,12 +325,12 @@ def initTransportKernel(transportKernelId,pubConnStatusBufferId):
             readFrom=[
                 dict(type="com.github.airutech.cnetsTransports.types.cnetsProtocol"),
                 dict(type="com.github.airutech.cnetsTransports.types.cnetsConnections"),
-                dict(type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol")
+                dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol")
             ]
         )
     )
 
-def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount, nodeRepositoryProtocolBufferId):
+def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount):
     nodesIndexOffset = int(math.ceil(float(maxNodesCount)/countNodesProcessors))*processorId
     return dict(
         id=transportKernelId+1+processorId,
@@ -332,27 +339,24 @@ def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processo
         path="com.github.airutech.cnetsTransports.protocolToBuffer",
         ver="[0.0.0,)",
         args=[
-            dict(value="_protocolToBuffer_"+str(processorId)+"_writers"),
-            dict(value="_protocolToBuffer_"+str(processorId)+"_writers_callbacks"),
+            dict(value="subscribedBuffersNames"),
+            dict(value="allWriters"),
+            dict(value="allWriters_callbacks"),
             dict(value=nodesIndexOffset),
             dict(value=countNodesProcessors),
-            dict(value=maxNodesCount)
+            dict(value="maxNodesCount")
         ],
         connection=dict(
-            writeTo=[dict(
-                type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol",
-                blockId=nodeRepositoryProtocolBufferId,
-                pinId=0
-            )],
+            writeTo=[],
             readFrom=[
                 dict(type="com.github.airutech.cnetsTransports.types.connectionStatus"),
-                dict(type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"),
+                dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"),
                 dict(type="com.github.airutech.cnetsTransports.types.cnetsProtocol")
             ]
         )
     )
 
-def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount, sendProtocolsBufferId, bufferIndexOffset):
+def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, sendProtocolsBufferId, bufferIndexOffset):
     return dict(
         id=transportKernelId+countNodesProcessors+1+processorId,
         type="kernel",
@@ -360,10 +364,11 @@ def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processo
         path="com.github.airutech.cnetsTransports.bufferToProtocol",
         ver="[0.0.0,)",
         args=[
+            dict(value="subscribedBuffersNames"),
             dict(value="_bufferToProtocol_"+str(processorId)+"_readers"),
             dict(value="_bufferToProtocol_"+str(processorId)+"_readers_callbacks"),
             dict(value=bufferIndexOffset),
-            dict(value=maxNodesCount)
+            dict(value="maxNodesCount")
         ],
         connection=dict(
             writeTo=[dict(
@@ -373,7 +378,7 @@ def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processo
             )],
             readFrom=[
                 dict(type="com.github.airutech.cnetsTransports.types.connectionStatus"),
-                dict(type="com.github.airutech.cnetsTransports.types.nodeRepositoryProtocol"),
+                dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"),
             ]
         )
     )
@@ -396,19 +401,21 @@ def getGernetBlocks(a):
     connectionsBufferId = 1
     sendProtocolsBufferId = 2
     pubConnStatusBufferId = 3
-    transportKernelId = pubConnStatusBufferId+1 + 2*countNodesProcessors # id of first kernel in blocks, after all buffers
+    repSourceKernelId = pubConnStatusBufferId+1 + 2*countNodesProcessors
+    transportKernelId = repSourceKernelId+1 # id of first kernel in blocks, after all buffers
     ##############################################
 
     out.append(initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval))
     out.append(initConnectionsBuffer(connectionsBufferId,transportKernelId, timeoutInterval))
     out.append(initSendProtocolsBuffer(sendProtocolsBufferId,countBuffersProcessors, transportKernelId, timeoutInterval))
-    out.append(initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countBuffersProcessors, countNodesProcessors, timeoutInterval))
+    out.append(initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countBuffersProcessors, countNodesProcessors, timeoutInterval,repSourceKernelId))
     for processorId in range(0, countNodesProcessors):
         out.append(initConnStatusBuffer(pubConnStatusBufferId, transportKernelId, timeoutInterval, processorId))
     for processorId in range(0, countNodesProcessors):
         out.append(initRecvProtocolsBuffer(pubConnStatusBufferId,transportKernelId, countNodesProcessors, timeoutInterval, processorId))
 
-    #first kernel
+    out.append(initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId))
+    #transport kernel
     out.append(initTransportKernel(transportKernelId,pubConnStatusBufferId))
 
     leftCount = maxNodesCount
@@ -419,7 +426,7 @@ def getGernetBlocks(a):
         if leftCount < perProcessorCeil:
             perProcessorCeil = leftCount
         leftCount = leftCount - perProcessorCeil
-        out.append(initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount, nodeRepositoryProtocolBufferId))
+        out.append(initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount))
 
 
     leftCount = readersCount
@@ -431,7 +438,7 @@ def getGernetBlocks(a):
         if leftCount < perProcessorCeil:
             perProcessorCeil = leftCount
         leftCount = leftCount - perProcessorCeil
-        out.append(initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount, sendProtocolsBufferId,bufferIndexOffset))
+        out.append(initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, sendProtocolsBufferId, bufferIndexOffset))
         bufferIndexOffset += perProcessorCeil
 
     return json.dumps(out)

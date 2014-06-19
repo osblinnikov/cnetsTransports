@@ -3,9 +3,6 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl",
 "args": [{
-  "name": "moduleUniqueName",
-  "type": "string"
-},{
   "name": "serverUrl",
   "type": "String"
 },{
@@ -62,26 +59,31 @@
  "path":"${_JAVA_PATH_}.${_NAME_}.connector",
  "ver":"[0.0.0,)",
  "args": [{
-    "name": "moduleUniqueName",
-    "value": "moduleUniqueName+\"._connector\""
+    "name": "subscribedBuffersNames",
+    "value": "subscribedBuffersNames",
+    "comment": "this variable should be declared and initialized in the generator"
   },{
-    "name": "maxNodesCount",
-    "value": "maxNodesCount"
+     "name": "allWriters",
+     "value": "allWriters",
+     "comment": "this variable should be declared and initialized in the generator"
   },{
-    "name": "buffersLengths",
-    "value": "buffersLengths"
+    "name": "allReaders",
+    "value": "allReaders",
+    "comment": "this variable should be declared and initialized in the generator"
+  },{
+    "name": "allWriters_callbacks",
+    "value": "allWriters_callbacks",
+    "comment": "this variable should be declared and initialized in the generator"
+  },{
+    "name": "allReaders_callbacks",
+    "value": "allReaders_callbacks",
+    "comment": "this variable should be declared and initialized in the generator"
   },{
     "name": "serverUrl",
     "value": "serverUrl"
   },{
     "name": "bindPort",
     "value": "bindPort"
-  },{
-    "name": "binBuffersSize",
-    "value": "binBuffersSize"
-  },{
-    "name": "statsInterval",
-    "type": "statsInterval"
   }],
  "connection":{
     "writeTo": [{

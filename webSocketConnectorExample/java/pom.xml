@@ -95,7 +95,19 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 09647cce7a1b37e5a6e8e49a775c97c3)-->
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports.msgpackExample</groupId>
+    <artifactId>msgpack</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>msgpack</artifactId>
+    <version>0.0.0</version>
+    <scope>compile</scope>
+</dependency>
+<!--[[[end]]] (checksum: 54820c0292729f0e0b18fc17f34e4f59)-->
     </dependencies>
 
     <build>

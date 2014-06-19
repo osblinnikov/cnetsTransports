@@ -11,25 +11,25 @@ p.parsingGernet(a)
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connectorSrc",
 "args": [{
-  "name": "moduleUniqueName",
-  "type": "string"
+  "name": "subscribedBuffersNames",
+  "type": "string[]"
 },{
-  "name": "maxNodesCount",
-  "type": "int"
+  "name": "allWriters",
+  "type": "writer[]"
 },{
-  "name": "buffersLengths",
-  "type": "int"
+  "name": "allReaders",
+  "type": "reader[]"
+},{
+  "name": "allWriters_callbacks",
+  "type": "deserializeStreamCallback[]"
+},{
+  "name": "allReaders_callbacks",
+  "type": "serializeStreamCallback[]"
 },{
   "name": "serverUrl",
   "type": "String"
 },{
   "name": "bindPort",
-  "type": "int"
-},{
-  "name": "binBuffersSize",
-  "type": "int"
-},{
-  "name": "statsInterval",
   "type": "int"
 }],
 "connection":{

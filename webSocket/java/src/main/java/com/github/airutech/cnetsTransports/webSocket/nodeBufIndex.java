@@ -1,13 +1,11 @@
 package com.github.airutech.cnetsTransports.webSocket;
 
-import com.github.airutech.cnets.readerWriter.reader;
-
 /**
  * Created by oleg on 6/6/14.
  */
 public class nodeBufIndex {
   private int dstBufferIndex;
-  private reader r0;
+  private String writerName;
   private int nodeUniqueId;
 
   public void setDstBufferIndex(int dstBufferIndex) {
@@ -18,12 +16,12 @@ public class nodeBufIndex {
     return dstBufferIndex;
   }
 
-  public void setR0(reader r0) {
-    this.r0 = r0;
+  public void setWriterName(String writerName) {
+    this.writerName = writerName;
   }
 
-  public reader getR0() {
-    return r0;
+  public String getWriterName() {
+    return writerName;
   }
 
   public int getNodeUniqueId() {

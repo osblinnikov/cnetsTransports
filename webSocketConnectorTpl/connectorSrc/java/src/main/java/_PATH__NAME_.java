@@ -9,7 +9,6 @@ p.parsingGernet(a)
 %>
 package ${a.read_data["path"]};
 
-import com.github.airutech.cnetsTransports.types.connectionStatus;
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))

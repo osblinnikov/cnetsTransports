@@ -76,5 +76,17 @@ public class msgpack  implements cnetsMessagePackable {
     return true;
   }
 /*[[[end]]] (checksum: ecdbacb894c11eea477e0f44824382ee)*/
+
+  @Override
+  public void fillNodeIds(cnetsProtocol outputMetaData, Object target) {
+    //com.github.airutech.cnetsTransports.msgpackExample.msgpackExample that = (com.github.airutech.cnetsTransports.msgpackExample.msgpackExample)target;
+    //outputMetaData.setNodeUniqueIds(new int[]{});
+    outputMetaData.setPublished(true);
+  }
+
+  @Override
+  public void fromNodeId(int id, Object target) {
+    //com.github.airutech.cnetsTransports.msgpackExample.msgpackExample that = (com.github.airutech.cnetsTransports.msgpackExample.msgpackExample)target;
+  }
 }
 

@@ -7,6 +7,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 import com.github.airutech.cnetsTransports.types.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.queue.*;
@@ -14,9 +15,10 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class bufferToProtocol implements RunnableStoppable{
-  reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
+  String[] subscribedBuffersNames;reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public bufferToProtocol(reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,int maxNodesCount,writer w0,reader r0,reader r1){
+  public bufferToProtocol(String[] subscribedBuffersNames,reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,int maxNodesCount,writer w0,reader r0,reader r1){
+    this.subscribedBuffersNames = subscribedBuffersNames;
     this.readers = readers;
     this.callbacks = callbacks;
     this.bufferIndexOffset = bufferIndexOffset;
@@ -48,7 +50,7 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: bcedebf4c428433031942f59ab454165) */
+/*[[[end]]] (checksum: 9aea641a15f65dcd3202022e017c1996) */
 
   private long timeStart;
   private bufferIndexOfNode[] nodes = null;
@@ -70,13 +72,16 @@ public class bufferToProtocol implements RunnableStoppable{
         bunchIds[i] = 0;
       }
       nodes = new bufferIndexOfNode[maxNodesCount*readers.length];
-      for(int i=0; i<nodes.length; i++){
+      for(int i=0;i<nodes.length;i++){
+        nodes[i] = new bufferIndexOfNode();
+      }
+      for(int i=0; i<maxNodesCount; i++){
         for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++) {
-          nodes[i * readers.length + bufferIndx] = new bufferIndexOfNode();
           bufferIndexOfNode node = nodes[i * readers.length + bufferIndx];
           node.setR0(readers[bufferIndx]);
           node.setDstBufferIndex(-1);
           node.setConnected(false);
+          node.setWriterName(subscribedBuffersNames[bufferIndexOffset+bufferIndx]);
         }
       }
     }
@@ -96,7 +101,6 @@ public class bufferToProtocol implements RunnableStoppable{
 
     switch ((int) r.getNested_buffer_id()) {
       case 0:
-        /*todo: make sure received status belongs to me, because it could be addressed to another instance, responsible for the node*/
         processStatus((connectionStatus) r.getData());
         break;
       case 1:
@@ -111,13 +115,13 @@ public class bufferToProtocol implements RunnableStoppable{
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update) {
     /*we store all nodes but not all buffers, only our own buffers*/
-    int internalNodeIndex = (update.getDestinationUniqueNodeId()%maxNodesCount);//%protocolToBuffersGridSize;
-    String[] names = update.getBufferNames();
+    int internalNodeIndex = (update.nodeId%maxNodesCount);//%protocolToBuffersGridSize;
+    String[] names = update.bufferNames;
     /*searching locally names equal to remote buffer names*/
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++){
         bufferIndexOfNode node = nodes[internalNodeIndex * readers.length + bufferIndx];
-        if(node.getR0().uniqueId().equals(names[i])){
+        if(node.getWriterName().equals(names[i])){
           //tryToFinishWriting(node);
           node.setDstBufferIndex(i);
           node.setConnected(true);

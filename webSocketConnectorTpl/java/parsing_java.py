@@ -433,3 +433,24 @@ def getRunnables(a):
     runnablesContainer[] arrContainers = new runnablesContainer['''+str(sizeRunnables)+"];\n"+out+'''
     runnables.setContainers(arrContainers);
     return runnables;'''
+
+
+def fillConnectorsNames(a):
+    out = []
+    out.append("allWriters = new writer["+str(len(a.read_data["connection"]["writeTo"]) - 1)+"]"+";")
+    for i, v in enumerate(a.read_data["connection"]["writeTo"][1:]):
+        out.append("allWriters["+str(i)+"] = w"+str(i+1)+";")
+        out.append("allWriters_callbacks["+str(i)+"] = new msgPackDeserializer(new "+v["type"]+".msgpack.msgpack());")
+
+    if len(a.read_data["connection"]["readFrom"]) - 1 <= 0:
+        return out
+    out.append("subscribedBuffersNames = new String["+str(len(a.read_data["connection"]["readFrom"]) - 1)+"]"+";")
+    out.append("allReaders = new reader["+str(len(a.read_data["connection"]["readFrom"]) - 1)+"]"+";")
+
+    for i, v in enumerate(a.read_data["connection"]["readFrom"][1:]):
+        out.append("subscribedBuffersNames["+str(i)+"] = \""+v["name"]+"\";")
+        out.append("allReaders["+str(i)+"] = r"+str(i+1)+";")
+        out.append("allReaders_callbacks["+str(i)+"] = new msgPackSerializer(new "+v["type"]+".msgpack.msgpack());")
+
+
+    return "\n    ".join(out)

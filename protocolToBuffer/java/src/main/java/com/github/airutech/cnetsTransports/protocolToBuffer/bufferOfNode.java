@@ -3,6 +3,7 @@ package com.github.airutech.cnetsTransports.protocolToBuffer;
 import com.github.airutech.cnets.readerWriter.writer;
 import com.github.airutech.cnetsTransports.types.deserializeStreamCallback;
 
+import java.text.AttributedCharacterIterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
@@ -16,6 +17,7 @@ public class bufferOfNode {
   private int ownBufferIndex;
   private int nodeId;
   private deserializeStreamCallback callback;
+  private String writerName;
 
   bufferOfNode(){
   }
@@ -92,5 +94,13 @@ public class bufferOfNode {
 
   public deserializeStreamCallback getCallback() {
     return callback;
+  }
+
+  public String getWriterName() {
+    return writerName;
+  }
+
+  public void setWriterName(String writerName) {
+    this.writerName = writerName;
   }
 }

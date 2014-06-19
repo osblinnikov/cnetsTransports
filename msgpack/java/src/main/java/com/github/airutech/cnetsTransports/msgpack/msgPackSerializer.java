@@ -35,6 +35,7 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
       outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
     }
     this.isLastPacket = isLastPacket;
+    callback.fillNodeIds(outputMetaData,data);
     Continuation.suspend();
     assert data != null && outputMetaData != null;
   }
