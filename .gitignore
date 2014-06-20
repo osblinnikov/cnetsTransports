@@ -1,6 +1,7 @@
 *.iml
 *.new
 *.old
+*.pyc
 target
 .idea
 ### SublimeText ###

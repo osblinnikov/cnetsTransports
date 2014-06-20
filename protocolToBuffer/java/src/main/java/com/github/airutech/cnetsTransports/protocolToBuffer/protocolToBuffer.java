@@ -8,14 +8,12 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
-import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.readerWriter.*;
-import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
-import com.github.airutech.cnets.mapBuffer.*;
+
 public class protocolToBuffer implements RunnableStoppable{
   String[] subscribedBuffersNames;writer[] writers;deserializeStreamCallback[] callbacks;int nodesIndexOffset;int protocolToBuffersGridSize;int maxNodesCount;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
@@ -208,6 +206,8 @@ public class protocolToBuffer implements RunnableStoppable{
     while(node.getBufferObj() == null) {
       node.setBufferObj(node.getW0().writeNext(-1));
     }
+
+    r2.incrementBytesCounter(currentlyReceivedProtocol.getData().remaining());
 
     /*Stateful deserializaion to the object provided*/
     boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
