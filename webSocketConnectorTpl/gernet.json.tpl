@@ -8,9 +8,6 @@
 },{
   "name": "bindPort",
   "type": "int"
-},{
-  "name": "statsInterval",
-  "type": "int"
 }],
 "props": [{
   "name": "countNodesProcessors",

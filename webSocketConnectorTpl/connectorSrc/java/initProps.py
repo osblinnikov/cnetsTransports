@@ -79,6 +79,11 @@ def initializeProperties(a):
     out.append("  _outputProtocolBuffer_Arr[i].setData(ByteBuffer.wrap(_outputProtocolBuffer_Arr_BinaryBuffers, i*l, l));")
     out.append("}")
 
+    out.append("for(i=0; i<_dispatchConnStatusBuffer_Arr.length; i++){")
+    out.append("  _dispatchConnStatusBuffer_Arr[i] = new com.github.airutech.cnetsTransports.types.connectionStatus();")
+    out.append("}")
+
+
     return '\n    '.join(out)
 
 

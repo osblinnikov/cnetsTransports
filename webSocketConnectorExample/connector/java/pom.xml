@@ -102,6 +102,18 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>connectionStatusDispatcher</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
     <groupId>com.github.airutech.cnetsTransports.nodeRepositoryProtocol</groupId>
     <artifactId>source</artifactId>
     <version>[0.0.0,)</version>
@@ -173,19 +185,19 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: ff70d0ca3c4f276c3b41e69310b4ed21)-->
-      <dependency>
-        <groupId>com.github.airutech.cnetsTransports.msgpackExample</groupId>
-        <artifactId>msgpack</artifactId>
-        <version>[0.0.0,)</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.github.airutech.cnetsTransports</groupId>
-        <artifactId>msgpack</artifactId>
-        <version>0.0.0</version>
-        <scope>test</scope>
-      </dependency>
+<!--[[[end]]] (checksum: 5fe3236e3e8127ed945830f9e42cfa70)-->
+        <dependency>
+            <groupId>com.github.airutech.cnetsTransports</groupId>
+            <artifactId>msgpack</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnetsTransports.msgpackExample</groupId>
+            <artifactId>msgpack</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

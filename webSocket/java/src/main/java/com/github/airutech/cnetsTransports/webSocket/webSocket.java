@@ -26,16 +26,15 @@ import com.github.airutech.cnets.mapBuffer.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.types.*;
 public class webSocket implements RunnableStoppable{
-  String[] subscribedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer[] connectionStatusReceivers;reader[] buffersParameters;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  String[] subscribedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;reader[] buffersParameters;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public webSocket(String[] subscribedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer[] connectionStatusReceivers,reader[] buffersParameters,writer w0,reader r0,reader r1,reader r2){
+  public webSocket(String[] subscribedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,reader[] buffersParameters,writer w0,reader r0,reader r1,reader r2){
     this.subscribedBuffersNames = subscribedBuffersNames;
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
     this.sslContext = sslContext;
     this.nodesReceivers = nodesReceivers;
-    this.connectionStatusReceivers = connectionStatusReceivers;
     this.buffersParameters = buffersParameters;
     this.w0 = w0;
     this.r0 = r0;
@@ -62,7 +61,7 @@ public class webSocket implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: c4e707a22b820e5afc779b27d5bea2bb) */
+/*[[[end]]] (checksum: 04f97a70904b5345609b5a686ad3c933) */
 
   private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
@@ -277,20 +276,10 @@ public class webSocket implements RunnableStoppable{
       while (conStatus == null) {
         conStatus = (connectionStatus) w0.writeNext(-1);
       }
+      conStatus.setNodeIndex(nodeIndex);
       conStatus.setId(id);
       conStatus.setOn(status);
       w0.writeFinished();
-    }
-
-    if(connectionStatusReceivers != null) {
-      writer w = connectionStatusReceivers[nodeIndex % connectionStatusReceivers.length];
-      conStatus = null;
-      while (conStatus == null) {
-        conStatus = (connectionStatus) w.writeNext(-1);
-      }
-      conStatus.setId(id);
-      conStatus.setOn(status);
-      w.writeFinished();
     }
   }
 

@@ -8,9 +8,6 @@
 },{
   "name": "bindPort",
   "type": "int"
-},{
-  "name": "statsInterval",
-  "type": "int"
 }],
 "props": [{
   "name": "countNodesProcessors",
@@ -115,26 +112,26 @@
     "type": "no.eyasys.mobileAlarm.types.connectionStatus",
     "name": "currentConnectionsStatus"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "receivedExample0"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "receivedExample1"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "receivedExample2"
   }],
   "readFrom": [{
     "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
     "name": "connectionConfig"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "exampleToSend0"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "exampleToSend1"
   },{
-    "type": "com.github.airutech.cnetsTransports.msgpackExample",
+    "type": "com.github.airutech.cnetsTransports.msgpackExample.msgpackExample",
     "name": "exampleToSend2"
   }]
 }

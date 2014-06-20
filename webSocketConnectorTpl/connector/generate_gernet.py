@@ -114,6 +114,12 @@ def getGernetProps(a):
         type="cnetsConnections[]",
         size=buffersLengths
     ))
+    
+    out.append(dict(
+        name="_dispatchConnStatusBuffer_Arr",
+        type="com.github.airutech.cnetsTransports.types.connectionStatus[]",
+        size=buffersLengths
+    ))
 
     return json.dumps(out)
 
@@ -173,9 +179,7 @@ def initConnectionsBuffer(connectionsBufferId, transportKernelId, timeoutInterva
                 pinId=1
             )],
             readFrom=[dict(
-                type="com.github.airutech.cnetsTransports.types.cnetsConnections",
-                blockId="export",
-                pinId=0
+                type="com.github.airutech.cnetsTransports.types.cnetsConnections"
             )]
         )
     )
@@ -281,6 +285,50 @@ def initRecvProtocolsBuffer(pubConnStatusBufferId, transportKernelId, countNodes
         )
     )
 
+def initConStatusDispatcherBuffer(dispatchConnStatusBufferId,dispatchConnStatusKernelId,timeoutInterval):
+    return dict(
+        id=dispatchConnStatusBufferId,
+        type="buffer",
+        name="_dispatchConnStatusBuffer",
+        path="com.github.airutech.cnets.mapBuffer",
+        ver="[0.0.0,)",
+        args=[
+            dict(value="_dispatchConnStatusBuffer_Arr",type="Object[]"),
+            dict(value=timeoutInterval),#as module property
+            dict(value=1)# configure connections only in transport
+        ],
+        connection=dict(
+            writeTo=[dict(
+                type="com.github.airutech.cnetsTransports.types.connectionStatus",
+                blockId=dispatchConnStatusKernelId, #after transport kernel will be the protocolToBuffer
+                pinId=0
+            )],
+            readFrom=[dict(type="com.github.airutech.cnetsTransports.types.connectionStatus")]
+        )
+    )
+
+def initConStatusDispatcherKernel(dispatchConnStatusKernelId,pubConnStatusBufferId):
+    return dict(
+        id=dispatchConnStatusKernelId,
+        type="kernel",
+        name="_connStatusDispatcher",
+        path="com.github.airutech.cnetsTransports.connectionStatusDispatcher",
+        ver="[0.0.0,)",
+        args=[dict(value="_connectionStatusReceivers_writers")],
+        connection=dict(
+            writeTo=[dict(
+                type="com.github.airutech.cnetsTransports.types.connectionStatus",
+                blockId=pubConnStatusBufferId,
+                pinId=0
+            ),dict(
+                type="com.github.airutech.cnetsTransports.types.connectionStatus",
+                blockId="export",
+                pinId=0
+            )],
+            readFrom=[dict(type="com.github.airutech.cnetsTransports.types.connectionStatus")]
+        )
+    )
+
 def initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId):
     return dict(
         id=repSourceKernelId,
@@ -299,7 +347,7 @@ def initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId):
         )
     )
 
-def initTransportKernel(transportKernelId,pubConnStatusBufferId):
+def initTransportKernel(transportKernelId,dispatchConnStatusKernelId):
     return dict(
         id=transportKernelId,
         type="kernel",
@@ -313,13 +361,12 @@ def initTransportKernel(transportKernelId,pubConnStatusBufferId):
             dict(value="bindPort"),
             dict(value="null", name="sslContext"),
             dict(value="_nodesReceivers_writers"),
-            dict(value="_connectionStatusReceivers_writers"),
             dict(value="allReaders")
         ],
         connection=dict(
             writeTo=[dict(
                 type="com.github.airutech.cnetsTransports.types.connectionStatus",
-                blockId=pubConnStatusBufferId,
+                blockId=dispatchConnStatusKernelId,
                 pinId=0
             )],
             readFrom=[
@@ -401,7 +448,9 @@ def getGernetBlocks(a):
     connectionsBufferId = 1
     sendProtocolsBufferId = 2
     pubConnStatusBufferId = 3
-    repSourceKernelId = pubConnStatusBufferId+1 + 2*countNodesProcessors
+    dispatchConnStatusBufferId = pubConnStatusBufferId+1 + 2*countNodesProcessors
+    dispatchConnStatusKernelId = dispatchConnStatusBufferId+1
+    repSourceKernelId = dispatchConnStatusKernelId+1
     transportKernelId = repSourceKernelId+1 # id of first kernel in blocks, after all buffers
     ##############################################
 
@@ -414,9 +463,11 @@ def getGernetBlocks(a):
     for processorId in range(0, countNodesProcessors):
         out.append(initRecvProtocolsBuffer(pubConnStatusBufferId,transportKernelId, countNodesProcessors, timeoutInterval, processorId))
 
+    out.append(initConStatusDispatcherBuffer(dispatchConnStatusBufferId,dispatchConnStatusKernelId,timeoutInterval))
+    out.append(initConStatusDispatcherKernel(dispatchConnStatusKernelId,nodeRepositoryProtocolBufferId))
     out.append(initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId))
     #transport kernel
-    out.append(initTransportKernel(transportKernelId,pubConnStatusBufferId))
+    out.append(initTransportKernel(transportKernelId,dispatchConnStatusBufferId))
 
     leftCount = maxNodesCount
     perProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))

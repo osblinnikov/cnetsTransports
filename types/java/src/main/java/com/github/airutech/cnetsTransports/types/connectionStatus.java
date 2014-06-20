@@ -3,6 +3,7 @@ package com.github.airutech.cnetsTransports.types;
 public class connectionStatus {
   private int id;
   private boolean on;
+  private int nodeIndex;
 
   public void setId(int id) {
     this.id = id;
@@ -18,5 +19,19 @@ public class connectionStatus {
 
   public boolean isOn() {
     return on;
+  }
+
+  public void setNodeIndex(int nodeIndex) {
+    this.nodeIndex = nodeIndex;
+  }
+
+  public int getNodeIndex() {
+    return nodeIndex;
+  }
+
+  public void copyFrom(connectionStatus conStatusReceived) {
+    id = conStatusReceived.getId();
+    on = conStatusReceived.isOn();
+    nodeIndex = conStatusReceived.getNodeIndex();
   }
 }

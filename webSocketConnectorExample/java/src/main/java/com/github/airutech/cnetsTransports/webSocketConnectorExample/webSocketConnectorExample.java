@@ -6,6 +6,7 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
+import com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
@@ -15,17 +16,16 @@ import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnetsTransports.msgpackExample.msgpack.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
 public class webSocketConnectorExample implements RunnableStoppable{
-  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;int statsInterval;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;reader rSelect;selector readersSelector;
+  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;reader rSelect;selector readersSelector;
 
   private String[] subscribedBuffersNames = null;
   private writer[] allWriters = null;
   private reader[] allReaders = null;
   private deserializeStreamCallback[] allWriters_callbacks = null;
   private serializeStreamCallback[] allReaders_callbacks = null;
-  public webSocketConnectorExample(String serverUrl,int bindPort,int statsInterval,writer w0,writer w1,writer w2,writer w3,reader r0,reader r1,reader r2,reader r3){
+  public webSocketConnectorExample(String serverUrl,int bindPort,writer w0,writer w1,writer w2,writer w3,reader r0,reader r1,reader r2,reader r3){
     this.serverUrl = serverUrl;
     this.bindPort = bindPort;
-    this.statsInterval = statsInterval;
     this.w0 = w0;
     this.w1 = w1;
     this.w2 = w2;
@@ -53,6 +53,7 @@ public class webSocketConnectorExample implements RunnableStoppable{
 com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connector _connector;
   private void initialize(){
     allWriters = new writer[3];
+    allWriters_callbacks = new deserializeStreamCallback[3];
     allWriters[0] = w1;
     allWriters_callbacks[0] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
     allWriters[1] = w2;
@@ -61,6 +62,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     allWriters_callbacks[2] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
     subscribedBuffersNames = new String[3];
     allReaders = new reader[3];
+    allReaders_callbacks = new serializeStreamCallback[3];
     subscribedBuffersNames[0] = "exampleToSend0";
     allReaders[0] = r1;
     allReaders_callbacks[0] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
@@ -84,7 +86,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: 7f5ec8a509321590d592301c1c161b0c) */
+/*[[[end]]] (checksum: c38f9a8ee15f421e0c954653d828fca7) */
 
   private void onCreate(){
     readersSelector.onDestroy();
