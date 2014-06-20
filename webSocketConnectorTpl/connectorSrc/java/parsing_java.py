@@ -277,6 +277,9 @@ def connectBufferToReader(a, blockNum, i, w):
   if blockId == "export":
     raise Exception("Export readerWriter from buffer is forbidden! only kernels can do it [block id = "+str(blockNum)+"]")
   elif blockId != "internal":
+    if len(a.read_data["blocks"]) <= int(blockId):
+        print "aaaaaaaaaaaaaaaaaaaaaa!!!"
+        print blockId
     wblock = a.read_data["blocks"][int(blockId)]
     if wblock.has_key("type") and wblock["type"] == "buffer":
       raise Exception("Interconnections of buffers ["+str(blockNum)+" and "+str(blockId)+"] are forbidden")
