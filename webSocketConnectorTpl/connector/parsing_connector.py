@@ -3,7 +3,6 @@ import re
 from gernetHelpers import *
 import math
 
-
 def getReaderWriterArgumentsStrArr(readerWriterArguments):
   readerWriterArgumentsStrArr = []
   if readerWriterArguments[0]["name"] != "grid_id":

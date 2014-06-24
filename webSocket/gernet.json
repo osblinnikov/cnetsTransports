@@ -3,7 +3,7 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.gernet.plugins.kernel",
 "args": [{
-  "name": "subscribedBuffersNames",
+  "name": "publishedBuffersNames",
   "type": "string[]"
 },{
   "name": "maxNodesCount",
@@ -20,9 +20,6 @@
 },{
   "name": "nodesReceivers",
   "type": "writer[]"
-},{
-  "name": "buffersParameters",
-  "type": "reader[]"
 }],
 "depends":[{
   "path":"com.github.airutech.cnets.readerWriter",

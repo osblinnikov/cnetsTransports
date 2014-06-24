@@ -117,8 +117,8 @@ public class webSocketTest {
     Long[] clientInBufferIds = new Long[]{5L};
 
 //    WebSocketImpl.DEBUG = true;
-    webSocket serverObj = new webSocket(null,100, null, 10001, sslContext, null, null, null, outpr0, cr0, null);
-    webSocket clientObj = new webSocket(null,1, "ws://127.0.0.1:10001", -1, sslContext, null, null,null,clientoutpr0, clientcr0, null);
+    webSocket serverObj = new webSocket(null,100, null, 10001, sslContext, null, null, null, outpr0, cr0);
+    webSocket clientObj = new webSocket(null,1, "ws://127.0.0.1:10001", -1, sslContext, null, null,null,clientoutpr0, clientcr0);
 
 /*running kernels*/
     runnablesContainer runnables = new runnablesContainer();

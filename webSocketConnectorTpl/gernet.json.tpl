@@ -14,13 +14,17 @@
   "type": "int",
   "value": 2
 },{
+  "name": "countBuffersProcessors",
+  "type": "int",
+  "value": 2
+},{
   "name": "maxNodesCount",
   "type": "int",
   "value": 5
 },{
   "name": "buffersLengths",
   "type": "int",
-  "value": 5
+  "value": 8
 },{
   "name": "binBuffersSize",
   "type": "int",
@@ -56,6 +60,10 @@
  "path":"${_JAVA_PATH_}.${_NAME_}.connector",
  "ver":"[0.0.0,)",
  "args": [{
+    "name": "publishedBuffersNames",
+    "value": "publishedBuffersNames",
+    "comment": "this variable should be declared and initialized in the generator"
+  },{
     "name": "subscribedBuffersNames",
     "value": "subscribedBuffersNames",
     "comment": "this variable should be declared and initialized in the generator"

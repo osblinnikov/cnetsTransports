@@ -81,6 +81,8 @@ public class bufferToProtocol implements RunnableStoppable{
           node.setR0(readers[bufferIndx]);
           node.setDstBufferIndex(-1);
           node.setConnected(false);
+          /*TODO: need to think what do we need here, subscribers or publishers*/
+          System.out.printf("offset %d, length %d index %d readersLen %d\n",bufferIndexOffset,subscribedBuffersNames.length, bufferIndexOffset+bufferIndx, readers.length);
           node.setWriterName(subscribedBuffersNames[bufferIndexOffset+bufferIndx]);
         }
       }

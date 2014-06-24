@@ -1,7 +1,5 @@
 
 package com.github.airutech.cnetsTransports.webSocketConnectorExample.connector;
-import com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer;
-import com.github.airutech.cnetsTransports.msgpack.msgPackSerializer;
 import org.junit.Test;
 /*[[[cog
 import cogging as c
@@ -31,34 +29,11 @@ import com.github.airutech.cnets.selector.*;
 import no.eyasys.mobileAlarm.types.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
-/*[[[end]]] (checksum: b9fcd23c22c728eb203fc014ff4ab4e0) */
+/*[[[end]]] (checksum: b9fcd23c22c728eb203fc014ff4ab4e0)*/
 public class connectorTest {
   @Test
   public void connectorTest(){
-    writer w0 = null, w1 = null, w2 = null, w3 = null;
-    reader r0 = null, r1 = null, r2 = null, r3 = null;
-    writer[] allWriters = new writer[3];
-    allWriters[0] = w1;
-    msgPackDeserializer[] allWriters_callbacks = new msgPackDeserializer[3];
-    allWriters_callbacks[0] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    allWriters[1] = w2;
-    allWriters_callbacks[1] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    allWriters[2] = w3;
-    allWriters_callbacks[2] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    String[] subscribedBuffersNames = new String[3];
-    reader[] allReaders = new reader[3];
-    subscribedBuffersNames[0] = "exampleToSend0";
-    allReaders[0] = r1;
-    msgPackSerializer[] allReaders_callbacks = new msgPackSerializer[3];
-    allReaders_callbacks[0] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    subscribedBuffersNames[1] = "exampleToSend1";
-    allReaders[1] = r2;
-    allReaders_callbacks[1] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    subscribedBuffersNames[2] = "exampleToSend2";
-    allReaders[2] = r3;
-    allReaders_callbacks[2] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-
-    connector _connector = new connector(subscribedBuffersNames, allWriters, allReaders, allWriters_callbacks, allReaders_callbacks, "server url", -1, w0, r0);
+    connector classObj = new connector(new String[1],new String[1],new writer[1],new reader[1],new deserializeStreamCallback[1],new serializeStreamCallback[1],null,0,null,null);
   }
 }
 

@@ -3,6 +3,7 @@ p = reload(parsing_java)
 p.parsingGernet(a)%>${p.importBlocks(a)}
 public class ${a.className} implements RunnableStoppable{
 ${p.getProps(a)}
+  private String[] publishedBuffersNames = null;
   private String[] subscribedBuffersNames = null;
   private writer[] allWriters = null;
   private reader[] allReaders = null;

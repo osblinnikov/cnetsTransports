@@ -11,6 +11,9 @@ p.parsingGernet(a)
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl.connectorSrc",
 "args": [{
+  "name": "publishedBuffersNames",
+  "type": "string[]"
+},{
   "name": "subscribedBuffersNames",
   "type": "string[]"
 },{

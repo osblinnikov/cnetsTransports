@@ -17,7 +17,7 @@ import com.github.airutech.cnetsTransports.types.*;
 /*[[[end]]] (checksum: 55bb89016d67f065d23f5f005910a668)*/
 public class main{
   public static void main(String[] args){
-    webSocket classObj = new webSocket(null,0,null,0,null,null,null,null,null,null,null);
+    webSocket classObj = new webSocket(null,0,null,0,null,null,null,null,null,null);
     runnablesContainer runnables = classObj.getRunnables();
     runnables.launch(true);
     

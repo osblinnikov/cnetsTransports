@@ -18,6 +18,7 @@ import com.github.airutech.cnetsTransports.msgpack.*;
 public class webSocketConnectorExample implements RunnableStoppable{
   int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;reader rSelect;selector readersSelector;
 
+  private String[] publishedBuffersNames = null;
   private String[] subscribedBuffersNames = null;
   private writer[] allWriters = null;
   private reader[] allReaders = null;
@@ -52,24 +53,28 @@ public class webSocketConnectorExample implements RunnableStoppable{
   }
 com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connector _connector;
   private void initialize(){
+    subscribedBuffersNames = new String[3];
     allWriters = new writer[3];
     allWriters_callbacks = new deserializeStreamCallback[3];
+    subscribedBuffersNames[0] = "receivedExample0";
     allWriters[0] = w1;
     allWriters_callbacks[0] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
+    subscribedBuffersNames[1] = "receivedExample1";
     allWriters[1] = w2;
     allWriters_callbacks[1] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
+    subscribedBuffersNames[2] = "receivedExample2";
     allWriters[2] = w3;
     allWriters_callbacks[2] = new msgPackDeserializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    subscribedBuffersNames = new String[3];
+    publishedBuffersNames = new String[3];
     allReaders = new reader[3];
     allReaders_callbacks = new serializeStreamCallback[3];
-    subscribedBuffersNames[0] = "exampleToSend0";
+    publishedBuffersNames[0] = "exampleToSend0";
     allReaders[0] = r1;
     allReaders_callbacks[0] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    subscribedBuffersNames[1] = "exampleToSend1";
+    publishedBuffersNames[1] = "exampleToSend1";
     allReaders[1] = r2;
     allReaders_callbacks[1] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
-    subscribedBuffersNames[2] = "exampleToSend2";
+    publishedBuffersNames[2] = "exampleToSend2";
     allReaders[2] = r3;
     allReaders_callbacks[2] = new msgPackSerializer(new com.github.airutech.cnetsTransports.msgpackExample.msgpack.msgpack());
     
@@ -86,10 +91,10 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: c38f9a8ee15f421e0c954653d828fca7) */
+/*[[[end]]] (checksum: 051238f93d2972c6719b3c1bc03edd0a)*/
 
   private void onCreate(){
-    readersSelector.onDestroy();
+
   }
 
   private void onKernels(){

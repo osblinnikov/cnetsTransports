@@ -33,9 +33,10 @@ import no.eyasys.mobileAlarm.types.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
 public class connector implements RunnableStoppable{
-  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;int readersCount = 3;int writersCount = 3;connectionStatus[] _connectionStatusBuffer_forNodes_0_Arr;cnetsProtocol[] _inputProtocolBuffer_forNodes_0_Arr;byte[] _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers;connectionStatus[] _connectionStatusBuffer_forNodes_1_Arr;cnetsProtocol[] _inputProtocolBuffer_forNodes_1_Arr;byte[] _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers;reader[] _bufferToProtocol_0_readers;serializeStreamCallback[] _bufferToProtocol_0_readers_callbacks;reader[] _bufferToProtocol_1_readers;serializeStreamCallback[] _bufferToProtocol_1_readers_callbacks;writer[] _nodesReceivers_writers;writer[] _connectionStatusReceivers_writers;nodeRepositoryProtocol[] _nodeRepositoryProtocolBufferArr;cnetsProtocol[] _outputProtocolBuffer_Arr;byte[] _outputProtocolBuffer_Arr_BinaryBuffers;cnetsProtocol[] _connectionStatusBuffer_publish_Arr;byte[] _connectionStatusBuffer_publish_Arr_BinaryBuffers;cnetsConnections[] _connectionsBufferArr;com.github.airutech.cnetsTransports.types.connectionStatus[] _dispatchConnStatusBuffer_Arr;String[] subscribedBuffersNames;writer[] allWriters;reader[] allReaders;deserializeStreamCallback[] allWriters_callbacks;serializeStreamCallback[] allReaders_callbacks;String serverUrl;int bindPort;writer w0;reader r0;
+  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;int readersCount = 3;int writersCount = 3;connectionStatus[] _connectionStatusBuffer_forNodes_0_Arr;cnetsProtocol[] _inputProtocolBuffer_forNodes_0_Arr;byte[] _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers;connectionStatus[] _connectionStatusBuffer_forNodes_1_Arr;cnetsProtocol[] _inputProtocolBuffer_forNodes_1_Arr;byte[] _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers;reader[] _bufferToProtocol_0_readers;serializeStreamCallback[] _bufferToProtocol_0_readers_callbacks;reader[] _bufferToProtocol_1_readers;serializeStreamCallback[] _bufferToProtocol_1_readers_callbacks;writer[] _nodesReceivers_writers;writer[] _connectionStatusReceivers_writers;nodeRepositoryProtocol[] _nodeRepositoryProtocolBufferArr;cnetsProtocol[] _outputProtocolBuffer_Arr;byte[] _outputProtocolBuffer_Arr_BinaryBuffers;cnetsProtocol[] _connectionStatusBuffer_publish_Arr;byte[] _connectionStatusBuffer_publish_Arr_BinaryBuffers;cnetsConnections[] _connectionsBufferArr;com.github.airutech.cnetsTransports.types.connectionStatus[] _dispatchConnStatusBuffer_Arr;String[] publishedBuffersNames;String[] subscribedBuffersNames;writer[] allWriters;reader[] allReaders;deserializeStreamCallback[] allWriters_callbacks;serializeStreamCallback[] allReaders_callbacks;String serverUrl;int bindPort;writer w0;reader r0;
   
-  public connector(String[] subscribedBuffersNames,writer[] allWriters,reader[] allReaders,deserializeStreamCallback[] allWriters_callbacks,serializeStreamCallback[] allReaders_callbacks,String serverUrl,int bindPort,writer w0,reader r0){
+  public connector(String[] publishedBuffersNames,String[] subscribedBuffersNames,writer[] allWriters,reader[] allReaders,deserializeStreamCallback[] allWriters_callbacks,serializeStreamCallback[] allReaders_callbacks,String serverUrl,int bindPort,writer w0,reader r0){
+    this.publishedBuffersNames = publishedBuffersNames;
     this.subscribedBuffersNames = subscribedBuffersNames;
     this.allWriters = allWriters;
     this.allReaders = allReaders;
@@ -165,7 +166,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _nodeRepositoryProtocolBuffer;com.
     
     _connStatusDispatcher = new com.github.airutech.cnetsTransports.connectionStatusDispatcher.connectionStatusDispatcher(_connectionStatusReceivers_writers,_nodeRepositoryProtocolBufferw0,this.w0,_dispatchConnStatusBufferr0);
     _nodeRepositoryProtocolSource = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.source.source(subscribedBuffersNames,_nodeRepositoryProtocolBufferw0,_connectionStatusBuffer_publishr2);
-    _webSocket = new com.github.airutech.cnetsTransports.webSocket.webSocket(subscribedBuffersNames,maxNodesCount,serverUrl,bindPort,null,_nodesReceivers_writers,allReaders,_dispatchConnStatusBufferw0,_outputProtocolBufferr0,_connectionsBufferr0,_nodeRepositoryProtocolBufferr0);
+    _webSocket = new com.github.airutech.cnetsTransports.webSocket.webSocket(publishedBuffersNames,maxNodesCount,serverUrl,bindPort,null,_nodesReceivers_writers,_dispatchConnStatusBufferw0,_outputProtocolBufferr0,_connectionsBufferr0,_nodeRepositoryProtocolBufferr0);
     _protocolToBuffer_0 = new com.github.airutech.cnetsTransports.protocolToBuffer.protocolToBuffer(subscribedBuffersNames,allWriters,allWriters_callbacks,0,2,maxNodesCount,_connectionStatusBuffer_forNodes_0r0,_nodeRepositoryProtocolBufferr1,_inputProtocolBuffer_forNodes_0r0);
     _protocolToBuffer_1 = new com.github.airutech.cnetsTransports.protocolToBuffer.protocolToBuffer(subscribedBuffersNames,allWriters,allWriters_callbacks,3,2,maxNodesCount,_connectionStatusBuffer_forNodes_1r0,_nodeRepositoryProtocolBufferr2,_inputProtocolBuffer_forNodes_1r0);
     _bufferToProtocol_0 = new com.github.airutech.cnetsTransports.bufferToProtocol.bufferToProtocol(subscribedBuffersNames,_bufferToProtocol_0_readers,_bufferToProtocol_0_readers_callbacks,0,maxNodesCount,_outputProtocolBufferw0,_connectionStatusBuffer_publishr0,_nodeRepositoryProtocolBufferr3);
@@ -186,7 +187,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _nodeRepositoryProtocolBuffer;com.
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: 85f663eb53f6a423c622b8230784fafa)*/
+/*[[[end]]] (checksum: ec77e129eeef2a12c8fd36c2d229330a)*/
 
   private void onCreate(){
 

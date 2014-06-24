@@ -32,6 +32,6 @@ import com.github.airutech.cnets.types.*;
 /*[[[end]]] (checksum: b9fcd23c22c728eb203fc014ff4ab4e0)*/
 public class main{
   public static void main(String[] args){
-    connector classObj = new connector(new String[1],new writer[1],new reader[1],new deserializeStreamCallback[1],new serializeStreamCallback[1],null,0,null,null);
+    connector classObj = new connector(new String[1],new String[1],new writer[1],new reader[1],new deserializeStreamCallback[1],new serializeStreamCallback[1],null,0,null,null);
   }
 }

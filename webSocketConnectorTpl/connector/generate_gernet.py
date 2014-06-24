@@ -138,7 +138,7 @@ def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, c
     ))
     #connect to the next kernel after transport kernel
     for i in range(transportKernelId+1,transportKernelId+1+countNodesProcessors+countBuffersProcessors):
-        print "\n create connection "+str(i)+" "+str(transportKernelId)+" "+str(countNodesProcessors)+" "+str(countBuffersProcessors)
+        # print "\n create connection "+str(i)+" "+str(transportKernelId)+" "+str(countNodesProcessors)+" "+str(countBuffersProcessors)
         nodeRepositoryProtocolWriteTo.append(dict(
             type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
             blockId=i,
@@ -358,13 +358,12 @@ def initTransportKernel(transportKernelId,dispatchConnStatusKernelId):
         path="com.github.airutech.cnetsTransports.webSocket",
         ver="[0.0.0,)",
         args=[
-            dict(value="subscribedBuffersNames"),
+            dict(value="publishedBuffersNames"),
             dict(value="maxNodesCount"),
             dict(value="serverUrl"),
             dict(value="bindPort"),
             dict(value="null", name="sslContext"),
-            dict(value="_nodesReceivers_writers"),
-            dict(value="allReaders")
+            dict(value="_nodesReceivers_writers")
         ],
         connection=dict(
             writeTo=[dict(

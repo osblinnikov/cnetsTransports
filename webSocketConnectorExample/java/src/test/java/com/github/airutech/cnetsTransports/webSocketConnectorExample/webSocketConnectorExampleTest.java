@@ -20,7 +20,7 @@ import com.github.airutech.cnetsTransports.msgpack.*;
 public class webSocketConnectorExampleTest {
   @Test
   public void webSocketConnectorExampleTest(){
-//    webSocketConnectorExample classObj = new webSocketConnectorExample(null,0,null,null,null,null,null,null,null,null);
+    webSocketConnectorExample classObj = new webSocketConnectorExample(null,0,null,null,null,null,null,null,null,null);
   }
 }
 
