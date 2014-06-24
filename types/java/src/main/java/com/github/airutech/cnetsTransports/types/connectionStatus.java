@@ -34,4 +34,11 @@ public class connectionStatus {
     on = conStatusReceived.isOn();
     nodeIndex = conStatusReceived.getNodeIndex();
   }
+
+  public connectionStatus set(connectionStatus in){
+    id = in.id;
+    on = in.on;
+    nodeIndex = in.nodeIndex;
+    return this;
+  }
 }

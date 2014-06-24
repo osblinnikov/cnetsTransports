@@ -1,12 +1,12 @@
 <%
-    import sys
-    sys.path.insert(0, a.parserPath)
+import sys
+sys.path.insert(0, a.parserPath)
 
-    import parsing_java
+import parsing_java
 p = reload(parsing_java)
-    p.parsingGernet(a)
+p.parsingGernet(a)
 
-    %>
+%>
     package ${a.read_data["path"]};
     import ${a.read_data["path"]}.${a.className};
 /*[[[cog
