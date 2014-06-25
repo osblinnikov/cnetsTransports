@@ -6,7 +6,7 @@ public class bufferIndexOfNode {
   private reader r0;
   private int dstBufferIndex;
   private boolean connected;
-  private String writerName;
+  private String publishedName;
 
   public reader getR0() {
     return r0;
@@ -32,11 +32,11 @@ public class bufferIndexOfNode {
     return connected;
   }
 
-  public void setWriterName(String writerName) {
-    this.writerName = writerName;
+  public void setPublishedName(String publishedName) {
+    this.publishedName = publishedName;
   }
 
-  public String getWriterName() {
-    return writerName;
+  public String getPublishedName() {
+    return publishedName;
   }
 }

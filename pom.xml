@@ -19,8 +19,8 @@
     <module>bufferToProtocol/java</module>
     <module>Java-WebSocket</module>
     <module>webSocket/java</module>
-    <module>webSocketConnectorExample/connector/java</module>
-    <module>webSocketConnectorExample/java</module>
+    <!--<module>webSocketConnectorExample/connector/java</module>-->
+    <!--<module>webSocketConnectorExample/java</module>-->
     <module>connectionStatusDispatcher/java</module>
     <module>types/java</module>
     <module>msgpack/java</module>

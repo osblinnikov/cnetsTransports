@@ -66,8 +66,8 @@ import org.apache.commons.javaflow.bytecode.transformation.bcel.analyser.Instruc
 import org.apache.commons.javaflow.bytecode.transformation.bcel.analyser.LocalVariables;
 import org.apache.commons.javaflow.bytecode.transformation.bcel.analyser.OperandStack;
 import org.apache.commons.javaflow.bytecode.transformation.bcel.analyser.UninitializedObjectType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -84,7 +84,7 @@ import java.util.List;
  */
 public final class BcelClassTransformer implements ResourceTransformer {
 
-    private final static Log log = LogFactory.getLog(BcelClassTransformer.class);
+//    private final static Log log = LogFactory.getLog(BcelClassTransformer.class);
 
     private static final String STACK_RECORDER_CLASS = StackRecorder.class.getName();
     private static final ObjectType STACK_RECORDER_TYPE = new ObjectType(STACK_RECORDER_CLASS);
@@ -184,7 +184,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
         
         Repository.addClass(javaClazz);
         
-        log.debug("transforming class " + javaClazz.getClassName());
+//        log.debug("transforming class " + javaClazz.getClassName());
 
         //final JavaClass clazz = Repository.lookupClass(clazzName);
 
@@ -193,7 +193,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
             for( int i=0; i<intfs.length; i++ )
                 if(intfs[i].equals(CONTINUABLE_CLASS)) {
                     // no need to instrument further
-                    log.debug(javaClazz.getClassName()+" is already instrumented. Skipping");
+//                    log.debug(javaClazz.getClassName()+" is already instrumented. Skipping");
                     return original;
                 }
         }
@@ -257,7 +257,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
         try {
             out = new FileOutputStream(path);
             
-            log.debug("writing " + path);
+//            log.debug("writing " + path);
             
             out.write(orig);
             out.flush();
@@ -269,7 +269,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
                     out.close();
                 }
             } catch (final IOException e1) {
-                log.error(e1.getMessage(), e1);
+//                log.error(e1.getMessage(), e1);
             } finally {
                 out = null;
             }
@@ -278,7 +278,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
         try {
             out = new FileOutputStream(path + ".java");
 
-            log.debug("writing " + path + ".java");
+//            log.debug("writing " + path + ".java");
 
             final DecompilingVisitor v = new DecompilingVisitor(javaClazz, out);
             v.start();
@@ -290,7 +290,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
                     out.close();
                 }
             } catch (final IOException e1) {
-                log.error(e1.getMessage(), e1);
+//                log.error(e1.getMessage(), e1);
             } finally {
                 out = null;
             }
@@ -309,7 +309,7 @@ public final class BcelClassTransformer implements ResourceTransformer {
     }
 
     private void analyse(ClassGen clazz, MethodGen method, ControlFlowGraph cfg, ExecutionVisitor ev) {
-        log.debug("analyse " + method.getName());
+//        log.debug("analyse " + method.getName());
 
         final Frame vanillaFrame = createInitialFrame(method, clazz);
 

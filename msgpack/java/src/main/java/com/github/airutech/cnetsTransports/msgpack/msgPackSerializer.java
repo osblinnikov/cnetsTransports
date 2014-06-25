@@ -9,17 +9,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class msgPackSerializer implements serializeStreamCallback, Runnable, cnetsSerializeValue {
-  Continuation c = null;
+  private Continuation c = null;
 
-  cnetsProtocol outputMetaData = null;
-  cnetsMessagePackable callback = null;
-  Object data = null;
-  boolean isLastPacket = false;
+  private boolean isLastPacket = false;
+  private cnetsMessagePackable callback;
+  private Object data;
+  private cnetsProtocol outputMetaData = null;
 
   /***** PACKING *****/
-  ByteBuffer bufPack;
-  MessagePack msgpack = new MessagePack();
-  BufferPacker packer;
+  private ByteBuffer bufPack;
+  private MessagePack msgpack = new MessagePack();
+  private BufferPacker packer;
 
   public msgPackSerializer(cnetsMessagePackable callback){
     this.callback = callback;
@@ -29,10 +29,12 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   private void sendPacket(boolean isLastPacket){
     if(isLastPacket) {
       /*prevent receiver from waiting for more packets*/
-      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 1);
+      outputMetaData.packets_grid_size = outputMetaData.packet + 1;
+//      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 1);
     }else{
       /*keep receiver receiving packets*/
-      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
+      outputMetaData.packets_grid_size = outputMetaData.packet + 2;
+//      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
     }
     this.isLastPacket = isLastPacket;
     callback.fillNodeIds(outputMetaData,data);

@@ -444,7 +444,7 @@ def fillConnectorsNames(a):
         for i, v in enumerate(a.read_data["connection"]["writeTo"][1:]):
             out.append("subscribedBuffersNames["+str(i)+"] = \""+v["name"]+"\";")
             out.append("allWriters["+str(i)+"] = w"+str(i+1)+";")
-            out.append("allWriters_callbacks["+str(i)+"] = new msgPackDeserializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
+            out.append("allWriters_callbacks["+str(i)+"] = new com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
 
     if len(a.read_data["connection"]["readFrom"]) - 1 > 0:
         out.append("publishedBuffersNames = new String["+str(len(a.read_data["connection"]["readFrom"]) - 1)+"]"+";")
@@ -454,7 +454,7 @@ def fillConnectorsNames(a):
         for i, v in enumerate(a.read_data["connection"]["readFrom"][1:]):
             out.append("publishedBuffersNames["+str(i)+"] = \""+v["name"]+"\";")
             out.append("allReaders["+str(i)+"] = r"+str(i+1)+";")
-            out.append("allReaders_callbacks["+str(i)+"] = new msgPackSerializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
+            out.append("allReaders_callbacks["+str(i)+"] = new com.github.airutech.cnetsTransports.msgpack.msgPackSerializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
 
 
     return "\n    ".join(out)

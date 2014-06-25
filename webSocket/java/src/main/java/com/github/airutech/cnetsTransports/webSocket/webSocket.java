@@ -85,7 +85,7 @@ public class webSocket implements RunnableStoppable{
       for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++){
         nodeBufIndex node = nodes[i * publishedBuffersNames.length + bufferIndex];
         node.setDstBufferIndex(-1);
-        node.setWriterName(publishedBuffersNames[bufferIndex]);
+        node.setPublishedName(publishedBuffersNames[bufferIndex]);
       }
     }
   }
@@ -164,7 +164,7 @@ public class webSocket implements RunnableStoppable{
       for(int bufferIndx=0; bufferIndx<publishedBuffersNames.length; bufferIndx++){
         nodeBufIndex node = nodes[internalNodeIndex * publishedBuffersNames.length + bufferIndx];
         node.setDstBufferIndex(-1);
-        if(node.getWriterName().equals(names[i])){
+        if(node.getPublishedName().equals(names[i])){
           node.setDstBufferIndex(i);
           break;
         }

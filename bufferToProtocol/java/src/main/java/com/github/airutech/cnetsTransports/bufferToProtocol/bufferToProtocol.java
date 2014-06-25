@@ -15,10 +15,10 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class bufferToProtocol implements RunnableStoppable{
-  String[] subscribedBuffersNames;reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
+  String[] publishedBuffersNames;reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public bufferToProtocol(String[] subscribedBuffersNames,reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,int maxNodesCount,writer w0,reader r0,reader r1){
-    this.subscribedBuffersNames = subscribedBuffersNames;
+  public bufferToProtocol(String[] publishedBuffersNames,reader[] readers,serializeStreamCallback[] callbacks,int bufferIndexOffset,int maxNodesCount,writer w0,reader r0,reader r1){
+    this.publishedBuffersNames = publishedBuffersNames;
     this.readers = readers;
     this.callbacks = callbacks;
     this.bufferIndexOffset = bufferIndexOffset;
@@ -50,7 +50,7 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 9aea641a15f65dcd3202022e017c1996) */
+/*[[[end]]] (checksum: cbcd253d29938a6880ec052c40d9d4e5)*/
 
   private long timeStart;
   private bufferIndexOfNode[] nodes = null;
@@ -82,8 +82,8 @@ public class bufferToProtocol implements RunnableStoppable{
           node.setDstBufferIndex(-1);
           node.setConnected(false);
           /*TODO: need to think what do we need here, subscribers or publishers*/
-          System.out.printf("offset %d, length %d index %d readersLen %d\n",bufferIndexOffset,subscribedBuffersNames.length, bufferIndexOffset+bufferIndx, readers.length);
-          node.setWriterName(subscribedBuffersNames[bufferIndexOffset+bufferIndx]);
+          System.out.printf("offset %d, length %d index %d readersLen %d\n",bufferIndexOffset,publishedBuffersNames.length, bufferIndexOffset+bufferIndx, readers.length);
+          node.setPublishedName(publishedBuffersNames[bufferIndexOffset + bufferIndx]);
         }
       }
     }
@@ -123,7 +123,7 @@ public class bufferToProtocol implements RunnableStoppable{
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++){
         bufferIndexOfNode node = nodes[internalNodeIndex * readers.length + bufferIndx];
-        if(node.getWriterName().equals(names[i])){
+        if(node.getPublishedName().equals(names[i])){
           //tryToFinishWriting(node);
           node.setDstBufferIndex(i);
           node.setConnected(true);

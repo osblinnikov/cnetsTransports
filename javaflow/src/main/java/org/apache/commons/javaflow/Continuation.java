@@ -19,8 +19,8 @@ package org.apache.commons.javaflow;
 import java.io.Serializable;
 import org.apache.commons.javaflow.bytecode.StackRecorder;
 import org.apache.commons.javaflow.utils.ReflectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 /**
  * Snapshot of a thread execution state.
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class Continuation implements Serializable {
 
-    private static final Log log = LogFactory.getLog(Continuation.class);
+//    private static final Log log = LogFactory.getLog(Continuation.class);
     private static final long serialVersionUID = 2L;
     
     private final StackRecorder stackRecorder;
@@ -122,9 +122,9 @@ public final class Continuation implements Serializable {
             throw new IllegalArgumentException("target is null");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("starting new flow from " + ReflectionUtils.getClassName(pTarget) + "/" + ReflectionUtils.getClassLoaderName(pTarget));
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("starting new flow from " + ReflectionUtils.getClassName(pTarget) + "/" + ReflectionUtils.getClassLoaderName(pTarget));
+//        }
 
         return continueWith(new Continuation(new StackRecorder(pTarget)), pContext);
     }
@@ -163,9 +163,9 @@ public final class Continuation implements Serializable {
             throw new IllegalArgumentException("continuation parameter must not be null.");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("continueing with continuation " + ReflectionUtils.getClassName(pOldContinuation) + "/" + ReflectionUtils.getClassLoaderName(pOldContinuation));
-        }
+//        if (log.isDebugEnabled()) {
+//            log.debug("continueing with continuation " + ReflectionUtils.getClassName(pOldContinuation) + "/" + ReflectionUtils.getClassLoaderName(pOldContinuation));
+//        }
 
         while(true) {
             try {

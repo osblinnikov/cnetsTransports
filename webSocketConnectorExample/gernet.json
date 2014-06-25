@@ -66,6 +66,10 @@
  "path":"com.github.airutech.cnetsTransports.webSocketConnectorExample.connector",
  "ver":"[0.0.0,)",
  "args": [{
+    "name": "publishedBuffersNames",
+    "value": "publishedBuffersNames",
+    "comment": "this variable should be declared and initialized in the generator"
+  },{
    "name": "subscribedBuffersNames",
    "value": "subscribedBuffersNames",
    "comment": "this variable should be declared and initialized in the generator"

@@ -25,12 +25,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 public final class ReflectionUtils {
     
-    private final static Log log = LogFactory.getLog(ReflectionUtils.class);
+//    private final static Log log = LogFactory.getLog(ReflectionUtils.class);
     
 	public interface Matcher {
         boolean matches(final String pName);
@@ -76,7 +76,7 @@ public final class ReflectionUtils {
             final Indexer pIndexer
             ) {
         
-        log.debug("discovering fields on " + pClazz.getName());
+//        log.debug("discovering fields on " + pClazz.getName());
         
         final Map<String, Object> result = new HashMap<String, Object>();
 
@@ -88,7 +88,7 @@ public final class ReflectionUtils {
                 if (pMatcher.matches(fname)) {
                     pIndexer.put(result, fname, fields[i]);
                     
-                    log.debug("discovered field " + fname + " -> " + fields[i]);
+//                    log.debug("discovered field " + fname + " -> " + fields[i]);
                 }
             }
             current = current.getSuperclass();
@@ -119,7 +119,7 @@ public final class ReflectionUtils {
             final Indexer pIndexer
             ) {
         
-        log.debug("discovering methods on " + pClazz.getName());
+//        log.debug("discovering methods on " + pClazz.getName());
         
         final Map<String, Object> result = new HashMap<String, Object>();
 
@@ -131,7 +131,7 @@ public final class ReflectionUtils {
                 if (pMatcher.matches(mname)) {
                     pIndexer.put(result, mname, methods[i]);
 
-                    log.debug("discovered method " + mname + " -> " + methods[i]);
+//                    log.debug("discovered method " + mname + " -> " + methods[i]);
                 }
             }
             current = current.getSuperclass();

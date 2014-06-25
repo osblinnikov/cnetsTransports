@@ -9,17 +9,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class msgPackDeserializer implements deserializeStreamCallback, Runnable, cnetsDeserializeValue {
-  Continuation c = null;
+  private Continuation c = null;
 
-  boolean isLastPacket = false;
+  private boolean isLastPacket = false;
   private cnetsMessagePackable callback;
   private Object data;
   private cnetsProtocol inputMetaData = null;
 
   /***** PACKING *****/
-  ByteBuffer bufPack;
-  MessagePack msgpack = new MessagePack();
-  BufferUnpacker unpacker;
+  private ByteBuffer bufPack;
+  private MessagePack msgpack = new MessagePack();
+  private BufferUnpacker unpacker;
 
   public msgPackDeserializer(cnetsMessagePackable callback){
     this.callback = callback;

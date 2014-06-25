@@ -3,10 +3,6 @@ package com.github.airutech.cnetsTransports.protocolToBuffer;
 import com.github.airutech.cnets.readerWriter.writer;
 import com.github.airutech.cnetsTransports.types.deserializeStreamCallback;
 
-import java.text.AttributedCharacterIterator;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-
 public class bufferOfNode {
   private long bunchId;
   private long timeStart;
@@ -14,10 +10,9 @@ public class bufferOfNode {
   private boolean init;
   private Object bufferObj;
   private int dstBufferIndex;
-  private int ownBufferIndex;
   private int nodeId;
   private deserializeStreamCallback callback;
-  private String writerName;
+  private String subscribedName;
 
   bufferOfNode(){
   }
@@ -80,14 +75,6 @@ public class bufferOfNode {
     this.nodeId = nodeId;
   }
 
-  public int getOwnBufferIndex() {
-    return ownBufferIndex;
-  }
-
-  public void setOwnBufferIndex(int ownBufferIndex) {
-    this.ownBufferIndex = ownBufferIndex;
-  }
-
   public void setCallback(deserializeStreamCallback callback) {
     this.callback = callback;
   }
@@ -96,11 +83,11 @@ public class bufferOfNode {
     return callback;
   }
 
-  public String getWriterName() {
-    return writerName;
+  public String getSubscribedName() {
+    return subscribedName;
   }
 
-  public void setWriterName(String writerName) {
-    this.writerName = writerName;
+  public void setSubscribedName(String subscribedName) {
+    this.subscribedName = subscribedName;
   }
 }

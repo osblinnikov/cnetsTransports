@@ -18,8 +18,8 @@ package org.apache.commons.javaflow.bytecode;
 
 import org.apache.commons.javaflow.utils.ReflectionUtils;
 import org.apache.commons.javaflow.ContinuationDeath;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.LogFactory;
 
 /**
  * Adds additional behaviors necessary for stack capture/restore
@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class StackRecorder extends Stack {
 
-    private static final Log log = LogFactory.getLog(StackRecorder.class);
+//    private static final Log log = LogFactory.getLog(StackRecorder.class);
     private static final long serialVersionUID = 2L;
 
     private static final ThreadLocal<StackRecorder> threadMap = new ThreadLocal<StackRecorder>();
@@ -71,7 +71,7 @@ public final class StackRecorder extends Stack {
     }
 
     public static Object suspend(final Object value) {
-        log.debug("suspend()");
+//        log.debug("suspend()");
 
         final StackRecorder stackRecorder = get();
         if(stackRecorder == null) {
@@ -95,12 +95,12 @@ public final class StackRecorder extends Stack {
             this.context = context;
             
             if (isRestoring) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Restoring state of " + ReflectionUtils.getClassName(runnable) + "/" + ReflectionUtils.getClassLoaderName(runnable));
-                }
+//                if (log.isDebugEnabled()) {
+//                    log.debug("Restoring state of " + ReflectionUtils.getClassName(runnable) + "/" + ReflectionUtils.getClassLoaderName(runnable));
+//                }
             }
             
-            log.debug("calling runnable");
+//            log.debug("calling runnable");
             runnable.run();
 
             if (isCapturing) {
@@ -122,10 +122,10 @@ public final class StackRecorder extends Stack {
             // this isn't an error, so no need to log
             throw cd;
         } catch(final Error e) {
-            log.error(e.getMessage(), e);
+//            log.error(e.getMessage(), e);
             throw e;
         } catch(final RuntimeException e) {
-            log.error(e.getMessage(), e);
+//            log.error(e.getMessage(), e);
             throw e;
         } finally {
             this.context = null;

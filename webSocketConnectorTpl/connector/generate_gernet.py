@@ -257,7 +257,7 @@ def initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countB
         args=[
             dict(value="_connectionStatusBuffer_publish_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
-            dict(value=countBuffersProcessors)# configure connections only in transport
+            dict(value=countBuffersProcessors + 1)# configure connections only in transport, + 1 for repSourceKernelId
         ],
         connection=dict(
             writeTo=writeToList,
@@ -413,7 +413,7 @@ def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processo
         path="com.github.airutech.cnetsTransports.bufferToProtocol",
         ver="[0.0.0,)",
         args=[
-            dict(value="subscribedBuffersNames"),
+            dict(value="publishedBuffersNames"),
             dict(value="_bufferToProtocol_"+str(processorId)+"_readers"),
             dict(value="_bufferToProtocol_"+str(processorId)+"_readers_callbacks"),
             dict(value=bufferIndexOffset),

@@ -8,8 +8,8 @@ public class cnetsProtocol {
   private long bufferIndex;
   private long timeStart;
   private long bunchId;
-  private long packet;
-  private long packets_grid_size;
+  public long packet;
+  public long packets_grid_size;
   private int[] nodeUniqueIds; /*it's not going to be serialized*/
   private boolean published; /*it's not going to be serialized*/
 
