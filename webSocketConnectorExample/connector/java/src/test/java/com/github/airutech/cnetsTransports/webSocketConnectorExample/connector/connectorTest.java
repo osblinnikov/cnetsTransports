@@ -26,10 +26,9 @@ import com.github.airutech.cnetsTransports.bufferToProtocol.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
-import no.eyasys.mobileAlarm.types.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
-/*[[[end]]] (checksum: b9fcd23c22c728eb203fc014ff4ab4e0)*/
+/*[[[end]]] (checksum: c29d6c0aafb05b03c168c85cecf2feb3)*/
 public class connectorTest {
   @Test
   public void connectorTest(){

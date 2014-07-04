@@ -5,6 +5,9 @@
 "args": [{
   "name": "connectionStatusReceivers",
   "type": "writer[]"
+},{
+  "name": "maxNodesCount",
+  "type": "int"
 }],
 "depends":[{
   "path":"com.github.airutech.cnets.readerWriter",

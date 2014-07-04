@@ -64,7 +64,12 @@ public class protocolToBuffer implements RunnableStoppable{
     if(writers==null || subscribedBuffersNames==null){return;}
     assert writers.length == subscribedBuffersNames.length;
     if(protocolToBuffersGridSize <= 0){return;}
-    nodesStored = (int)Math.ceil(maxNodesCount/protocolToBuffersGridSize);
+
+    nodesStored = (int)Math.floor((double)maxNodesCount/(double)protocolToBuffersGridSize);
+    if(nodesIndexOffset+nodesStored*2 > maxNodesCount){/*in case this is last nodes processor, we need to set it to ceil value*/
+      nodesStored = (int)Math.ceil((double)maxNodesCount/(double)protocolToBuffersGridSize);
+    }
+
     nodes = new bufferOfNode[nodesStored * writers.length];
     for(int i=0; i<nodes.length; i++){
       nodes[i] = new bufferOfNode();
@@ -102,17 +107,20 @@ public class protocolToBuffer implements RunnableStoppable{
       checkTimedOutBuffers();
       return;
     }
-
-    switch ((int) r.getNested_buffer_id()) {
-      case 0:
-        processStatus((connectionStatus) r.getData());
-        break;
-      case 1:
-        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
-        break;
-      case 2:
-        processData((cnetsProtocol) r.getData());
-        break;
+    try {
+      switch ((int) r.getNested_buffer_id()) {
+        case 0:
+          processStatus((connectionStatus) r.getData());
+          break;
+        case 1:
+          processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
+          break;
+        case 2:
+          processData((cnetsProtocol) r.getData());
+          break;
+      }
+    }catch (Exception e){
+      e.printStackTrace();
     }
     rSelect.readFinished();
   }
@@ -140,6 +148,9 @@ public class protocolToBuffer implements RunnableStoppable{
     for (int bufferIndx = 0; bufferIndx < writers.length; bufferIndx++) {
       bufferOfNode node = nodes[internalNodeIndex * writers.length + bufferIndx];
       tryToFinishWriting(node);
+      if(!data.isOn()){
+        node.setDstBufferIndex(-1);
+      }
     }
   }
 
@@ -154,7 +165,7 @@ public class protocolToBuffer implements RunnableStoppable{
 
   private void processData(cnetsProtocol currentlyReceivedProtocol){
     if (currentlyReceivedProtocol == null) {return;}
-    
+    System.out.println("protocolToBuffer: processData\n");
     /* trying to find the local index for the received index */
     if(currentlyReceivedProtocol.getNodeUniqueIds()[0] < 0){
       System.err.printf("protocolToBuffer: processData: incoming nodeUid=%d is out of allowed range [0, %d)\n",currentlyReceivedProtocol.getNodeUniqueIds()[0],maxNodesCount);
@@ -171,7 +182,7 @@ public class protocolToBuffer implements RunnableStoppable{
     for (int bufferIndx = 0; bufferIndx < writers.length; bufferIndx++) {
       node = nodes[internalNodeIndex * writers.length + bufferIndx];
       /*compare received dst buffer index and our local dst buffer index for the node*/
-      if(currentlyReceivedProtocol.getBufferIndex() == node.getDstBufferIndex()){
+      if(currentlyReceivedProtocol.getBufferIndex() == 0 || currentlyReceivedProtocol.getBufferIndex() == node.getDstBufferIndex()){
         break;
       }
       node = null;
@@ -197,7 +208,7 @@ public class protocolToBuffer implements RunnableStoppable{
     }
     /*check if the bunch from the past*/
     if (node.getTimeStart() != currentlyReceivedProtocol.getTimeStart() || node.getBunchId() > currentlyReceivedProtocol.getBunchId()) {
-      System.out.printf("nodesRepository: processData: bunch from the past or reboot detected\n");
+      System.out.printf("protocolToBuffer: processData: bunch from the past or reboot detected\n");
       return;
     }
     /*update local bunches hash*/
@@ -211,6 +222,7 @@ public class protocolToBuffer implements RunnableStoppable{
     /*send bytes statistics*/
     r2.incrementBytesCounter(currentlyReceivedProtocol.getData().remaining());
 
+    System.out.println(".protocolToBuffer recv from "+node.getDstBufferIndex());
     /*Stateful deserialization into the provided object node.getBufferObj()*/
     boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
     if(isLastPacket){
@@ -219,11 +231,12 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update){
+    System.out.printf("protocolToBuffer: processRepositoryUpdate\n");
     int id = update.nodeId;
     int internalNodeIndex = (id%maxNodesCount);
     if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}
     internalNodeIndex = internalNodeIndex%nodesStored;
-    String[] names = update.bufferNames;
+    String[] names = update.publishedNames;
     /*searching locally names equal to remote buffer names*/
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<writers.length; bufferIndx++){
@@ -231,6 +244,7 @@ public class protocolToBuffer implements RunnableStoppable{
         if(node.getSubscribedName().equals(names[i])){
           tryToFinishWriting(node);
           node.setDstBufferIndex(i);
+          node.setNodeId(id);
           break;
         }
       }

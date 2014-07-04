@@ -81,8 +81,7 @@ public class bufferToProtocol implements RunnableStoppable{
           node.setR0(readers[bufferIndx]);
           node.setDstBufferIndex(-1);
           node.setConnected(false);
-          /*TODO: need to think what do we need here, subscribers or publishers*/
-          System.out.printf("offset %d, length %d index %d readersLen %d\n",bufferIndexOffset,publishedBuffersNames.length, bufferIndexOffset+bufferIndx, readers.length);
+//          System.out.printf("offset %d, length %d index %d readersLen %d\n",bufferIndexOffset,publishedBuffersNames.length, bufferIndexOffset+bufferIndx, readers.length);
           node.setPublishedName(publishedBuffersNames[bufferIndexOffset + bufferIndx]);
         }
       }
@@ -100,26 +99,33 @@ public class bufferToProtocol implements RunnableStoppable{
 
     bufferReadData r = rSelect.readNextWithMeta(-1);
     if (r.getData() == null) {return;}
-
-    switch ((int) r.getNested_buffer_id()) {
-      case 0:
-        processStatus((connectionStatus) r.getData());
-        break;
-      case 1:
-        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
-        break;
-      default:
-        processBufferObject(r.getData(), (int)r.getNested_buffer_id() - 2);/*shift -2 for compensation of first two readers items*/
-        break;
+    try {
+      switch ((int) r.getNested_buffer_id()) {
+        case 0:
+          processStatus((connectionStatus) r.getData());
+          break;
+        case 1:
+          processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
+          break;
+        default:
+          System.out.printf("bufferToProtocol: processBufferObject %d\n", (int) r.getNested_buffer_id() - 2);
+          processBufferObject(r.getData(), (int) r.getNested_buffer_id() - 2);/*shift -2 for compensation of first two readers items*/
+          break;
+      }
+    }catch (Exception e){
+      e.printStackTrace();
     }
     rSelect.readFinished();
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update) {
+    System.out.printf("bufferToProtocol: processRepositoryUpdate\n");
     /*we store all nodes but not all buffers, only our own buffers*/
     int internalNodeIndex = (update.nodeId%maxNodesCount);//%protocolToBuffersGridSize;
-    String[] names = update.bufferNames;
+    if(internalNodeIndex < 0){System.err.printf("bufferToProtocol: received update, nodeId = %d\n", update.nodeId); return;}
+    String[] names = update.subscribedNames;
     /*searching locally names equal to remote buffer names*/
+    if(names == null){System.err.println("bufferToProtocol: bufferNames are null"); return;}
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<readers.length; bufferIndx++){
         bufferIndexOfNode node = nodes[internalNodeIndex * readers.length + bufferIndx];
@@ -127,6 +133,7 @@ public class bufferToProtocol implements RunnableStoppable{
           //tryToFinishWriting(node);
           node.setDstBufferIndex(i);
           node.setConnected(true);
+          node.setReceivedRepo(true);
           break;
         }
       }
@@ -164,9 +171,12 @@ public class bufferToProtocol implements RunnableStoppable{
 
       /*** packets logic: callback should increase packet number, when needed ***/
       do{
+        /*make the buffer writable*/
+        writeProtocol.getData().clear();
         writeProtocol.reserveForHeader();
         writeProtocol.setPacket(packet);
         writeProtocol.setPackets_grid_size(packets_count);
+        System.out.println(".bufferToProtocol send "+(bufferIndexOffset + localBufferIndex));
         isLastPacket = callbacks[localBufferIndex].serializeNext(bufferObj, writeProtocol);
         packets_count = writeProtocol.getPackets_grid_size();
         packet = writeProtocol.getPacket();
@@ -188,7 +198,7 @@ public class bufferToProtocol implements RunnableStoppable{
       if(nodeUniqueIds[i] < 0){return false;}
       int nodeIndex = nodeUniqueIds[i] % maxNodesCount;
       bufferIndexOfNode node = nodes[nodeIndex * readers.length + localBufferIndex];
-      if (node.isConnected() && node.getDstBufferIndex() >= 0) {
+      if ((bufferIndexOffset + localBufferIndex == 0) || (node.isReceivedRepo() && node.getDstBufferIndex() >= 0)) {
         return true;
       }
     }

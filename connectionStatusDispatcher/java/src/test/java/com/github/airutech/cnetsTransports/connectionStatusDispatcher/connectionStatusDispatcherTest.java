@@ -18,7 +18,7 @@ import com.github.airutech.cnetsTransports.types.*;
 public class connectionStatusDispatcherTest {
   @Test
   public void connectionStatusDispatcherTest(){
-    connectionStatusDispatcher classObj = new connectionStatusDispatcher(new writer[1],null,null,null);
+    connectionStatusDispatcher classObj = new connectionStatusDispatcher(new writer[1],0,null,null,null);
   }
 }
 

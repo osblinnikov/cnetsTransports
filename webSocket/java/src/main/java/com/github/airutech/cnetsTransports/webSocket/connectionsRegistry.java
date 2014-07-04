@@ -16,11 +16,11 @@ public class connectionsRegistry {
   }
   private Lock connectionsLock = new ReentrantLock();
   private queue connectionsIdsQueue = null;
-  private queue newConnections = null;
+//  private queue newConnections = null;
   private conContainer[] arrContainers = null;
   public connectionsRegistry(int capacity){
     connectionsIdsQueue = new queue(capacity);
-    newConnections = new queue(capacity);
+//    newConnections = new queue(capacity);
     arrContainers = new conContainer[capacity];
     for(int i=0 ; i<capacity; i++){
       try {
@@ -33,14 +33,14 @@ public class connectionsRegistry {
     }
   }
 
-  public webSocketConnection nextNewConnection(){
-    try {
-      int id = (int)newConnections.dequeue();
-      return arrContainers[id].connection;
-    } catch (QueueEmptyException e) {
-      return null;
-    }
-  }
+//  public webSocketConnection nextNewConnection(){
+//    try {
+//      int id = (int)newConnections.dequeue();
+//      return arrContainers[id].connection;
+//    } catch (QueueEmptyException e) {
+//      return null;
+//    }
+//  }
 
   public boolean addConnection(String keyCode, webSocketConnection connection){
     connectionsLock.lock();
@@ -59,11 +59,11 @@ public class connectionsRegistry {
       arrContainers[id].keyCode = keyCode;
       arrContainers[id].uniqueId += arrContainers.length;
       if(arrContainers[id].uniqueId<0){arrContainers[id].uniqueId = id;}
-      try {
-        newConnections.enqueue(new Integer(id));
-      } catch (QueueFullException e) {
-        e.printStackTrace();
-      }
+//      try {
+//        newConnections.enqueue(new Integer(id));
+//      } catch (QueueFullException e) {
+//        e.printStackTrace();
+//      }
       res = true;
     }else{
       System.err.printf("addConnection: socket container already registered\n");
@@ -91,14 +91,14 @@ public class connectionsRegistry {
     return true;
   }
 
-  public webSocketConnection findConnection(String keyCode){
-    if(keyCode==null){
-      return null;
-    }
-    int id = findConnectionId(keyCode);
-    if(id<0){return null;}
-    return arrContainers[id].connection;
-  }
+//  public webSocketConnection findConnection(String keyCode){
+//    if(keyCode==null){
+//      return null;
+//    }
+//    int id = findConnectionId(keyCode);
+//    if(id<0){return null;}
+//    return arrContainers[id].connection;
+//  }
 
   public int findUniqueConnectionId(String hashKey) {
     int id = findConnectionId(hashKey);
@@ -109,7 +109,7 @@ public class connectionsRegistry {
     return uid;
   }
 
-  public int findConnectionId(String keyCode){
+  private int findConnectionId(String keyCode){
     if(keyCode==null){
       return -1;
     }
@@ -142,6 +142,7 @@ public class connectionsRegistry {
       int nodeIndx = nodeId%arrContainers.length;
       if(arrContainers[nodeIndx].uniqueId != nodeId){
         System.err.printf("sendToNode: node unique %d id do not match %d\n",arrContainers[nodeIndx].uniqueId,nodeId);
+        connectionsLock.unlock();
         return;
       }
       if(arrContainers[nodeIndx].connection != null) {

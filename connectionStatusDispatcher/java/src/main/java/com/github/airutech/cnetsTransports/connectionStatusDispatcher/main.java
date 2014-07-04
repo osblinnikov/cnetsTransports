@@ -17,6 +17,6 @@ import com.github.airutech.cnetsTransports.types.*;
 /*[[[end]]] (checksum: 55bb89016d67f065d23f5f005910a668)*/
 public class main{
   public static void main(String[] args){
-    connectionStatusDispatcher classObj = new connectionStatusDispatcher(new writer[1],null,null,null);
+    connectionStatusDispatcher classObj = new connectionStatusDispatcher(new writer[1],0,null,null,null);
   }
 }

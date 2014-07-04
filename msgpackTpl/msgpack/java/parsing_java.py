@@ -440,35 +440,27 @@ def serializeWith(a):
     t, isObject, isArray, serializableType = filterTypes_java(v["type"])
     if isArray:
         t = t[:-2]
-    t = ".".join((t.split(".")[:-1]))
     if serializableType:
       if len(v["type"])>2 and isArray:
         out += '''
-    if (!s.serializeValue((int)that.'''+v["name"]+'''.length)) { return false; }
-    if (that.'''+v["name"]+''' != null){
+      if (!s.serializeValue((int)that.'''+v["name"]+'''.length)) { return false; }
       for(int i=0; i<that.'''+v["name"]+'''.length; i++) {
         if (!s.serializeValue(that.'''+v["name"]+'''[i])) { return false; }
-      }
-    }'''
+      }'''
       else:
         out += '''
-    if(!s.serializeValue(that.'''+v["name"]+''')){ return false; }'''
+      if(!s.serializeValue(that.'''+v["name"]+''')){ return false; }'''
     else:
+      tPrefix = ".".join((t.split(".")[:-1]))
       if len(v["type"])>2 and isArray:
         out += '''
-    if (!s.serializeValue((int)that.'''+v["name"]+'''.length)) { return false; }
-    if(that.'''+v["name"]+''' != null){
+      if (!s.serializeValue((int)that.'''+v["name"]+'''.length)) { return false; }
       for(int i=0; i<that.'''+v["name"]+'''.length; i++) {
-        if(that.'''+v["name"]+'''[i] != null){
-          if (!(new '''+t+".msgpack.msgpack()).serializeWith(s,that."+v["name"]+'''[i])) { return false;}
-        }
-      }
-    }'''
+        if (!(new '''+tPrefix+".msgpack.msgpack()).serializeWith(s,that."+v["name"]+'''[i])) { return false;}
+      }'''
       else:
         out += '''
-    if(that.'''+v["name"]+''' != null){
-      if (!(new '''+t+".msgpack.msgpack()).serializeWith(s,that."+v["name"]+''')) { return false;}
-    }'''
+      if (!(new '''+tPrefix+".msgpack.msgpack()).serializeWith(s,that."+v["name"]+''')) { return false;}'''
   return out
 
 def deserializeWith(a):
@@ -477,35 +469,27 @@ def deserializeWith(a):
     t, isObject, isArray, serializableType = filterTypes_java(v["type"])
     if isArray:
         t = t[:-2]
-    t = ".".join((t.split(".")[:-1]))
     if serializableType:
       if len(v["type"])>2 and isArray:
         out += '''
-      if (that.'''+v["name"]+''' != null){
-        for(int i=0, lastI = d.deserializeValue((int)that.'''+v["name"]+'''.length); i<lastI; i++) {
-          if(i<that.'''+v["name"]+'''.length){
-            that.'''+v["name"]+'''[i] = d.deserializeValue(that.'''+v["name"]+'''[i]);
-          }
-        }
+      that.'''+v["name"]+''' = new '''+t+'''[d.deserializeValue(int.class)];
+      for(int i=0; i<that.'''+v["name"]+'''.length; i++) {
+        that.'''+v["name"]+'''[i] = d.deserializeValue('''+t+'''.class);
       }'''
       else:
         out += '''
-      that.'''+v["name"]+''' = d.deserializeValue(that.'''+v["name"]+''');'''
+      that.'''+v["name"]+''' = d.deserializeValue('''+t+'''.class);'''
     else:
+      tPrefix = ".".join((t.split(".")[:-1]))
       if len(v["type"])>2 and isArray:
         out += '''
-      if(that.'''+v["name"]+''' != null){
-        for(int i=0, lastI = d.deserializeValue((int)that.'''+v["name"]+'''.length); i<lastI; i++) {
-          if(i<that.'''+v["name"]+'''.length && that.'''+v["name"]+'''[i] != null){
-            if (!(new '''+t+".msgpack.msgpack()).deserializeWith(d,that."+v["name"]+'''[i])) { return false;}
-          }
-        }
+      that.'''+v["name"]+''' = new '''+t+'''[d.deserializeValue(int.class)];
+      for(int i=0; i<that.'''+v["name"]+'''.length; i++) {
+        that.'''+v["name"]+'''[i] = new '''+t+'''();
+        if (!(new '''+tPrefix+".msgpack.msgpack()).deserializeWith(d,that."+v["name"]+'''[i])) { return false;}
       }'''
       else:
         out+= '''
-      if(that.'''+v["name"]+''' != null){
-        if (!(new '''+t+".msgpack.msgpack()).deserializeWith(d,that."+v["name"]+''')) { return false;}
-      }'''
-
+      if (!(new '''+tPrefix+".msgpack.msgpack()).deserializeWith(d,that."+v["name"]+''')) { return false;}'''
 
   return out

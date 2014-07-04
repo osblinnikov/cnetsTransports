@@ -19,7 +19,7 @@ import com.github.airutech.cnets.mapBuffer.*;
 public class sourceTest {
   @Test
   public void sourceTest(){
-    source classObj = new source(new String[1],null,null);
+    source classObj = new source(new String[1],new String[1],null,null);
   }
 }
 

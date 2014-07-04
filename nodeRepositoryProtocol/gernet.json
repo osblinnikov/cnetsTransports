@@ -3,7 +3,10 @@
 "ver":"0.0.0",
 "type":"com.github.airutech.gernet.plugins.structure",
 "args": [{
-  "name":"bufferNames",
+  "name":"subscribedNames",
+  "type":"string[]"
+},{
+  "name":"publishedNames",
   "type":"string[]"
 }],
 "props": [],

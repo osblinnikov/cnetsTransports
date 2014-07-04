@@ -16,13 +16,17 @@ public class webSocketConnection {
     this.client = client;
   }
   public void send(ByteBuffer bb){
-    bb.position(0);
+    /*in case we already read the buffer fully*/
+    bb.rewind();
     if(client!=null){
       client.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(new byte[1]),false);/*necessary because websockets implementation has bug with binary data receiving*/
       client.sendFragmentedFrame(Framedata.Opcode.BINARY, bb, true);
     }else if(server!=null){
       server.sendFragmentedFrame(Framedata.Opcode.BINARY, ByteBuffer.wrap(new byte[1]),false);/*necessary because websockets implementation has bug with binary data receiving*/
       server.sendFragmentedFrame(Framedata.Opcode.BINARY, bb,true);
+    }
+    if(bb.remaining() != 0){
+      System.err.printf("webSocketConnection: it should be allowed to reuse buffer immediately, but obviously it is not allowed!\n");
     }
   }
 }

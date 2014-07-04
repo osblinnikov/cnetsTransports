@@ -37,7 +37,7 @@ p.parsingGernet(a)
 }],
 "connection":{
   "writeTo": [{
-    "type": "no.eyasys.mobileAlarm.types.connectionStatus",
+    "type": "com.github.airutech.cnetsTransports.types.connectionStatus",
     "name": "currentConnectionsStatus"
   }],
   "readFrom": [{

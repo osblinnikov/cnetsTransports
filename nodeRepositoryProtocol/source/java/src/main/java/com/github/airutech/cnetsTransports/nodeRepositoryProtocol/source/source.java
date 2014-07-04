@@ -15,9 +15,10 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class source implements RunnableStoppable{
-  String[] subscribedBuffersNames;writer w0;reader r0;
+  String[] publishedBuffersNames;String[] subscribedBuffersNames;writer w0;reader r0;
   
-  public source(String[] subscribedBuffersNames,writer w0,reader r0){
+  public source(String[] publishedBuffersNames,String[] subscribedBuffersNames,writer w0,reader r0){
+    this.publishedBuffersNames = publishedBuffersNames;
     this.subscribedBuffersNames = subscribedBuffersNames;
     this.w0 = w0;
     this.r0 = r0;
@@ -36,7 +37,7 @@ public class source implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 2c7a99139b459f8ac092a50ca5e4387f)*/
+/*[[[end]]] (checksum: 7a83d3943b0ab24e49e19436b07b2024)*/
 
   private void onCreate(){
 
@@ -53,18 +54,23 @@ public class source implements RunnableStoppable{
 
   @Override
   public void run(){
+    Thread.currentThread().setName("nodeRepositoryProtocol.source");
     connectionStatus connectionStatus = (com.github.airutech.cnetsTransports.types.connectionStatus) r0.readNext(-1);
     if(connectionStatus==null){return;}
 
-    if(connectionStatus.isOn()) {
+    if(connectionStatus.isOn() && !connectionStatus.isReceivedRepo()) {
+      /*isReceivedRepo() needed because we will receive two messages: first one (when not received repo yet)
+        and second one, when finally receive it*/
 
       nodeRepositoryProtocol nodeRepositoryProtocol = null;
       while (nodeRepositoryProtocol == null) {
         nodeRepositoryProtocol = (com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol) w0.writeNext(-1);
       }
 
-      nodeRepositoryProtocol.bufferNames = subscribedBuffersNames;
+      nodeRepositoryProtocol.subscribedNames = subscribedBuffersNames;
+      nodeRepositoryProtocol.publishedNames = publishedBuffersNames;
       nodeRepositoryProtocol.nodeId = connectionStatus.getId();
+//      System.out.println(".source send cnt=" + subscribedBuffersNames.length);
 
       w0.writeFinished();
     }

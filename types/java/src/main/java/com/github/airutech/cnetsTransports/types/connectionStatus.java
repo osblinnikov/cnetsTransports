@@ -3,7 +3,7 @@ package com.github.airutech.cnetsTransports.types;
 public class connectionStatus {
   private int id;
   private boolean on;
-  private int nodeIndex;
+  private boolean receivedRepo;
 
   public void setId(int id) {
     this.id = id;
@@ -21,24 +21,18 @@ public class connectionStatus {
     return on;
   }
 
-  public void setNodeIndex(int nodeIndex) {
-    this.nodeIndex = nodeIndex;
+  public void setReceivedRepo(boolean receivedRepo) {
+    this.receivedRepo = receivedRepo;
   }
 
-  public int getNodeIndex() {
-    return nodeIndex;
-  }
-
-  public void copyFrom(connectionStatus conStatusReceived) {
-    id = conStatusReceived.getId();
-    on = conStatusReceived.isOn();
-    nodeIndex = conStatusReceived.getNodeIndex();
+  public boolean isReceivedRepo() {
+    return receivedRepo;
   }
 
   public connectionStatus set(connectionStatus in){
     id = in.id;
     on = in.on;
-    nodeIndex = in.nodeIndex;
+    receivedRepo = in.receivedRepo;
     return this;
   }
 }

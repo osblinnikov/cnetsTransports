@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -76,6 +77,11 @@ public class webSocket implements RunnableStoppable{
   private void onCreate(){
     conManager = new connectionsRegistry(maxNodesCount);
     if(publishedBuffersNames == null){return;}
+    if(nodesReceivers != null) {
+      if(maxNodesCount < nodesReceivers.length){
+        System.err.printf("webSocket: onCreate: maxNodesCount < nodesReceivers.length\n");
+      }
+    }
     /*local storage for all nodes and all localBuffers*/
     nodes = new nodeBufIndex[maxNodesCount*publishedBuffersNames.length];
     for(int i=0; i<nodes.length; i++){
@@ -84,6 +90,7 @@ public class webSocket implements RunnableStoppable{
     for(int i=0; i<maxNodesCount; i++){
       for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++){
         nodeBufIndex node = nodes[i * publishedBuffersNames.length + bufferIndex];
+        node.setConnected(false);
         node.setDstBufferIndex(-1);
         node.setPublishedName(publishedBuffersNames[bufferIndex]);
       }
@@ -124,20 +131,36 @@ public class webSocket implements RunnableStoppable{
   }
 
   private void sendToNodes(cnetsProtocol writeProtocol) {
+    if(writeProtocol.getNodeUniqueIds() == null){
+      writeProtocol.setNodeUniqueIds(new int[1]);
+    }
+    System.out.println(".webSocket send from "+writeProtocol.getBufferIndex()+" to "+writeProtocol.isPublished()+" "+ Arrays.toString(writeProtocol.getNodeUniqueIds()));
     writeProtocol.serialize();
+
+    /*Make The Buffer To Be readable*/
+    writeProtocol.getData().flip();
+
     if(writeProtocol.isPublished()) {
+      boolean sentAtLeastOnce = false;
       for (int i = 0; i < maxNodesCount; i++) {
         nodeBufIndex node = nodes[i * publishedBuffersNames.length + (int)writeProtocol.getBufferIndex()];
-        if(node.getDstBufferIndex()>=0){
+        if(writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex()>=0){
+          sentAtLeastOnce = true;
+          System.out.println(".webSocket sending from  "+writeProtocol.isPublished());
           conManager.sendToNode(node.getNodeUniqueId(), writeProtocol.getData());
         }
+      }
+      if(!sentAtLeastOnce){
+        sentAtLeastOnce = false;
+        System.out.println(".webSocket not sent even once");
       }
     }else{
       for(int i=0; i<writeProtocol.getNodeUniqueIds().length; i++) {
         if(writeProtocol.getNodeUniqueIds()[i] < 0){break;}
         int nodeIndex = writeProtocol.getNodeUniqueIds()[i] % maxNodesCount;
         nodeBufIndex node = nodes[nodeIndex * publishedBuffersNames.length + (int) writeProtocol.getBufferIndex()];
-        if (node.getDstBufferIndex() >= 0) {
+        if (writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex() >= 0) {
+          System.out.println(".webSocket sending from  "+writeProtocol.isPublished());
           conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData());
         } else {
           System.err.printf("webSocket: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
@@ -157,18 +180,23 @@ public class webSocket implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update) {
-    int internalNodeIndex = (update.nodeId%maxNodesCount);
-    String[] names = update.bufferNames;
+    System.out.printf("webSocket: processRepositoryUpdate\n");
+    String[] names = update.subscribedNames;
     /*searching locally names equal to remote buffer names*/
+    if(names == null){System.err.println("webSocket: bufferNames are null"); return;}
+    boolean isNotLateRepoUpdate = false;
     for(int i=0; i<names.length; i++){
       for(int bufferIndx=0; bufferIndx<publishedBuffersNames.length; bufferIndx++){
-        nodeBufIndex node = nodes[internalNodeIndex * publishedBuffersNames.length + bufferIndx];
-        node.setDstBufferIndex(-1);
-        if(node.getPublishedName().equals(names[i])){
+        nodeBufIndex node = nodes[(update.nodeId%maxNodesCount) * publishedBuffersNames.length + bufferIndx];
+        if(node.isConnected() && node.getNodeUniqueId() == update.nodeId && node.getPublishedName().equals(names[i])){
           node.setDstBufferIndex(i);
+          isNotLateRepoUpdate = true;
           break;
         }
       }
+    }
+    if(isNotLateRepoUpdate){
+      sendConnStatus(update.nodeId, true, true);
     }
   }
 
@@ -247,36 +275,41 @@ public class webSocket implements RunnableStoppable{
 
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     conManager.addConnection(hashKey,webSocket);
-    int nodeIndex = conManager.findConnectionId(hashKey);
     int id = conManager.findUniqueConnectionId(hashKey);
-
+    if(id < 0){return;}
+    if(publishedBuffersNames == null){return;}
     for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
-      nodes[id * publishedBuffersNames.length + bufferIndex].setNodeUniqueId(id);
-      nodes[id * publishedBuffersNames.length + bufferIndex].setDstBufferIndex(-1);
+      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length + bufferIndex];
+      node.setNodeUniqueId(id);
+      node.setConnected(true);
     }
-    sendConnStatus(nodeIndex, id, true);
+    sendConnStatus(id, true, false);
   }
 
   public void onClose(String hashKey) {
     int id = conManager.findUniqueConnectionId(hashKey);
-    int nodeIndex = conManager.findConnectionId(hashKey);
+    if(id < 0){return;}
     conManager.removeConnection(hashKey);
+    if(publishedBuffersNames == null){return;}
     for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
-      nodes[id * publishedBuffersNames.length+bufferIndex].setDstBufferIndex(-1);
+      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length+bufferIndex];
+      if(node.isConnected()) {
+        node.setDstBufferIndex(-1);
+      }
+      node.setConnected(false);
     }
-    sendConnStatus(nodeIndex, id, false);
+    sendConnStatus(id, false, false);
   }
 
-  private void sendConnStatus(int nodeIndex, int id, boolean status){
-    connectionStatus conStatus = null;
+  private void sendConnStatus(int id, boolean status, boolean receivedRepo){
     if(w0 != null) {
-      conStatus = null;
+      connectionStatus conStatus = null;
       while (conStatus == null) {
         conStatus = (connectionStatus) w0.writeNext(-1);
       }
-      conStatus.setNodeIndex(nodeIndex);
       conStatus.setId(id);
       conStatus.setOn(status);
+      conStatus.setReceivedRepo(receivedRepo);
       w0.writeFinished();
     }
   }
@@ -286,13 +319,18 @@ public class webSocket implements RunnableStoppable{
   }
 
   public void onMessage(String hashKey, ByteBuffer msg) {
-    int nodeIndex = conManager.findConnectionId(hashKey);
-    if(nodeIndex<0){
+    int id = conManager.findUniqueConnectionId(hashKey);
+    if(id<0){
       System.err.println("webSocket: onMessage: connection for "+hashKey+" was not found");
       return;
     }
     if(nodesReceivers == null) {return;}
-    writer receiver = nodesReceivers[nodeIndex%nodesReceivers.length];
+    int nodesStored = (int)Math.floor((double)maxNodesCount/(double)nodesReceivers.length);
+    int processorId = (id%maxNodesCount)/nodesStored;
+    if(processorId >= nodesReceivers.length){
+      processorId = nodesReceivers.length - 1;//for the last element it is required
+    }
+    writer receiver = nodesReceivers[processorId];
     cnetsProtocol receivedProtocol = null;
     while(receivedProtocol == null) {
       receivedProtocol = (cnetsProtocol) receiver.writeNext(-1);
@@ -300,8 +338,12 @@ public class webSocket implements RunnableStoppable{
     receivedProtocol.setData(msg);
 
     receivedProtocol.deserialize();
-
-    receivedProtocol.getNodeUniqueIds()[0] = nodeIndex;
+    System.out.println(".webSocket recv from "+receivedProtocol.getBufferIndex());
+    System.out.printf("%d %d %d\n",receivedProtocol.getBufferIndex(), receivedProtocol.getBunchId(), receivedProtocol.getPacket());
+    if(receivedProtocol.getNodeUniqueIds() == null){
+      receivedProtocol.setNodeUniqueIds(new int[1]);
+    }
+    receivedProtocol.getNodeUniqueIds()[0] = id;
 
     receiver.writeFinished();
   }

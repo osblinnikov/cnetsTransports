@@ -18,6 +18,6 @@ import com.github.airutech.cnets.mapBuffer.*;
 /*[[[end]]] (checksum: 0bbbb2f4d23f192792f45a9d3e00db1c)*/
 public class main{
   public static void main(String[] args){
-    source classObj = new source(new String[1],null,null);
+    source classObj = new source(new String[1], new String[1],null,null);
   }
 }

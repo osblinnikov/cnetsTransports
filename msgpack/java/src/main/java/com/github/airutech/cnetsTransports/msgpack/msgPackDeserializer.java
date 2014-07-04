@@ -57,14 +57,15 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   }
 
   @Override
-  public <T> T deserializeValue(T value) throws IOException {
+  public <T> T deserializeValue(Class<T> t) throws IOException {
     int lastPosition = bufPack.position();
+    T value;
     try {
-      value = unpacker.read(value);
-    }catch (IOException e) {
+      value = unpacker.read(t);
+    } catch (IOException e) {
       bufPack.position(lastPosition);
       suspend(false);
-      value = unpacker.read(value);
+      value = unpacker.read(t);
     }
     return value;
   }

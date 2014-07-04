@@ -115,7 +115,7 @@ public class msgpackTest {
     }
 /*For test*/
     dataObject.testValue = 0;
-    dataObject.testArr[9] = 111;
+    dataObject.testArr[9] = "111";
 
     msgPackDeserializer deserializer = new msgPackDeserializer(new TestMessage());
 

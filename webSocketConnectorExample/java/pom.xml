@@ -78,12 +78,6 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>no.eyasys.mobileAlarm</groupId>
-    <artifactId>types</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
@@ -107,7 +101,13 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <version>0.0.0</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 54820c0292729f0e0b18fc17f34e4f59)-->
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports.nodeRepositoryProtocol</groupId>
+    <artifactId>msgpack</artifactId>
+    <version>0.0.0</version>
+    <scope>compile</scope>
+</dependency>
+<!--[[[end]]] (checksum: 14968c3ed54044ee1582b8025d61f4c7)-->
     </dependencies>
 
     <build>

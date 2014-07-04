@@ -6,7 +6,9 @@ public class ${a.className}  implements cnetsMessagePackable {
   @Override
   public boolean serializeWith(cnetsSerializeValue s, Object target){
     ${a.targetClassName} that = (${a.targetClassName})target;
+    try {
 ${p.serializeWith(a)}
+    } catch (Exception e) {e.printStackTrace();return false;}
     return true;
   }
 
@@ -15,6 +17,6 @@ ${p.serializeWith(a)}
     ${a.targetClassName} that = (${a.targetClassName})target;
     try {
 ${p.deserializeWith(a)}
-    } catch (IOException e) {return false;}
+    } catch (Exception e) {e.printStackTrace();return false;}
     return true;
   }

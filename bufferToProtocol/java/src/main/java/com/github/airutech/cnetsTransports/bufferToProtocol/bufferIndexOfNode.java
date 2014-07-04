@@ -7,6 +7,7 @@ public class bufferIndexOfNode {
   private int dstBufferIndex;
   private boolean connected;
   private String publishedName;
+  private boolean receivedRepo;
 
   public reader getR0() {
     return r0;
@@ -38,5 +39,13 @@ public class bufferIndexOfNode {
 
   public String getPublishedName() {
     return publishedName;
+  }
+
+  public void setReceivedRepo(boolean receivedRepo) {
+    this.receivedRepo = receivedRepo;
+  }
+
+  public boolean isReceivedRepo() {
+    return receivedRepo;
   }
 }

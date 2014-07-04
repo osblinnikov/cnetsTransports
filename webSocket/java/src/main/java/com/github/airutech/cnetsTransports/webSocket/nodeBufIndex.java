@@ -1,31 +1,44 @@
 package com.github.airutech.cnetsTransports.webSocket;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class nodeBufIndex {
-  private int dstBufferIndex;
-  private String publishedName;
-  private int nodeUniqueId;
+  private AtomicInteger dstBufferIndex = new AtomicInteger(0);
+  private AtomicReference<String> publishedName = new AtomicReference<String>(null);
+  private AtomicInteger nodeUniqueId = new AtomicInteger(0);
+  private AtomicBoolean isConnected = new AtomicBoolean(false);
 
   public void setDstBufferIndex(int dstBufferIndex) {
-    this.dstBufferIndex = dstBufferIndex;
+    this.dstBufferIndex.set(dstBufferIndex);
   }
 
   public int getDstBufferIndex() {
-    return dstBufferIndex;
+    return dstBufferIndex.get();
   }
 
   public void setPublishedName(String publishedName) {
-    this.publishedName = publishedName;
+    this.publishedName.set(publishedName);
   }
 
   public String getPublishedName() {
-    return publishedName;
+    return publishedName.get();
   }
 
   public int getNodeUniqueId() {
-    return nodeUniqueId;
+    return nodeUniqueId.get();
   }
 
   public void setNodeUniqueId(int nodeUniqueId) {
-    this.nodeUniqueId = nodeUniqueId;
+    this.nodeUniqueId.set(nodeUniqueId);
+  }
+
+  public boolean isConnected() {
+    return isConnected.get();
+  }
+
+  public void setConnected(boolean isConnected) {
+    this.isConnected.set(isConnected);
   }
 }

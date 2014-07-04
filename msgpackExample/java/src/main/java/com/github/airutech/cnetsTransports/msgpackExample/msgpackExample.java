@@ -8,7 +8,11 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 public class msgpackExample{
   public int testInt;public float[] testFloatArr;public com.github.airutech.cnetsTransports.msgpackExample.msgpackExample testNestedExample = null;public double[] testDoubleArr;public com.github.airutech.cnetsTransports.msgpackExample.msgpackExample[] testNestedExampleArr;
-  
+
+  public msgpackExample(){
+    onCreate();
+    initialize();
+  }
   public msgpackExample(double[] testDoubleArr,com.github.airutech.cnetsTransports.msgpackExample.msgpackExample[] testNestedExampleArr){
     this.testDoubleArr = testDoubleArr;
     this.testNestedExampleArr = testNestedExampleArr;
@@ -23,7 +27,7 @@ public class msgpackExample{
     onKernels();
     
   }
-/*[[[end]]] (checksum: 44c469dbc77690bb8a3ec5a098ba1eae)*/
+/*[[[end]]] (checksum: 6d99a8bfcc8a23fbc10328d6cbb86c6a)*/
 
   private void onCreate(){
 

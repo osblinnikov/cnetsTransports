@@ -10,7 +10,7 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 public class nodeRepositoryProtocolTest {
   @Test
   public void nodeRepositoryProtocolTest(){
-    nodeRepositoryProtocol classObj = new nodeRepositoryProtocol(new String[1]);
+    nodeRepositoryProtocol classObj = new nodeRepositoryProtocol(new String[1], new String[1]);
   }
 }
 

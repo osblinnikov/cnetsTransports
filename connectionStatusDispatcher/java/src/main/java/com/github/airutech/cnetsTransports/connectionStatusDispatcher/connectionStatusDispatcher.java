@@ -14,10 +14,11 @@ import com.github.airutech.cnets.mapBuffer.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.types.*;
 public class connectionStatusDispatcher implements RunnableStoppable{
-  writer[] connectionStatusReceivers;writer w0;writer w1;reader r0;
+  writer[] connectionStatusReceivers;int maxNodesCount;writer w0;writer w1;reader r0;
   
-  public connectionStatusDispatcher(writer[] connectionStatusReceivers,writer w0,writer w1,reader r0){
+  public connectionStatusDispatcher(writer[] connectionStatusReceivers,int maxNodesCount,writer w0,writer w1,reader r0){
     this.connectionStatusReceivers = connectionStatusReceivers;
+    this.maxNodesCount = maxNodesCount;
     this.w0 = w0;
     this.w1 = w1;
     this.r0 = r0;
@@ -36,7 +37,7 @@ public class connectionStatusDispatcher implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: 4d263d56e38eda598348d25e4d6b4761)*/
+/*[[[end]]] (checksum: daa2dd6a53956a82edec74ec28b186fc)*/
 
   private void onCreate(){
 
@@ -53,12 +54,18 @@ public class connectionStatusDispatcher implements RunnableStoppable{
 
   @Override
   public void run(){
+    Thread.currentThread().setName("connectionStatusDispatcher");
     connectionStatus conStatusReceived = (connectionStatus) r0.readNext(-1);
     if(conStatusReceived == null){return;}
 
     /*send to the specific, responsible for the node protocolToBuffer*/
     if(connectionStatusReceivers != null) {
-      writer w = connectionStatusReceivers[conStatusReceived.getNodeIndex() % connectionStatusReceivers.length];
+      int nodesStored = (int)Math.floor((double)maxNodesCount/(double)connectionStatusReceivers.length);
+      int processorId = (conStatusReceived.getId()%maxNodesCount)/nodesStored;
+      if(processorId >= connectionStatusReceivers.length){
+        processorId = connectionStatusReceivers.length - 1;//for the last element it is required
+      }
+      writer w = connectionStatusReceivers[processorId];
       resendTo(w,conStatusReceived);
     }
 
@@ -74,7 +81,7 @@ public class connectionStatusDispatcher implements RunnableStoppable{
     if(w == null || conStatusReceived == null){return;}
     connectionStatus conStatus = null;
     while (conStatus == null) {conStatus = (connectionStatus) w.writeNext(-1);}
-    conStatus.copyFrom(conStatusReceived);
+    conStatus.set(conStatusReceived);
     w.writeFinished();
   }
 

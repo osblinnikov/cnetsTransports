@@ -39,12 +39,12 @@ def getGernetProps(a):
 
             out.append(dict(
                 name="_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr",
-                type="connectionStatus[]",
+                type="com.github.airutech.cnetsTransports.types.connectionStatus[]",
                 size=buffersLengths
             ))
             out.append(dict(
                 name="_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr",
-                type="cnetsProtocol[]",
+                type="com.github.airutech.cnetsTransports.types.cnetsProtocol[]",
                 size=buffersLengths
             ))
             out.append(dict(
@@ -54,9 +54,9 @@ def getGernetProps(a):
             ))
 
     if countBuffersProcessors > 0:
-        buffersPerProcessorCeil = int(math.ceil(float(readersCount)/countBuffersProcessors))
+        buffersPerProcessorCeil = int(math.ceil(float(readersCount)/(countBuffersProcessors + 1))) # + 1 for reader of  Repository Protocol
         buffersLeftCount = readersCount
-        for processorId in range(0, countBuffersProcessors):
+        for processorId in range(0, countBuffersProcessors + 1):# + 1 for reader of  Repository Protocol
             if buffersLeftCount <= 0:
                 break
             if buffersLeftCount < buffersPerProcessorCeil:
@@ -70,7 +70,7 @@ def getGernetProps(a):
             ))
             out.append(dict(
                 name="_bufferToProtocol_"+str(processorId)+"_readers_callbacks",
-                type="serializeStreamCallback[]",
+                type="com.github.airutech.cnetsTransports.types.serializeStreamCallback[]",
                 size=buffersPerProcessorCeil
             ))
 
@@ -86,13 +86,18 @@ def getGernetProps(a):
         size=countNodesProcessors
     ))
     out.append(dict(
-        name="_nodeRepositoryProtocolBufferArr",
-        type="nodeRepositoryProtocol[]",
+        name="_localNodeRepositoryProtocolBufferArr",
+        type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[]",
+        size=2
+    ))
+    out.append(dict(
+        name="_dstNodeRepositoryProtocolBufferArr",
+        type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[]",
         size=2
     ))
     out.append(dict(
         name="_outputProtocolBuffer_Arr",
-        type="cnetsProtocol[]",
+        type="com.github.airutech.cnetsTransports.types.cnetsProtocol[]",
         size=buffersLengths
     ))
     out.append(dict(
@@ -102,20 +107,15 @@ def getGernetProps(a):
     ))
     out.append(dict(
         name="_connectionStatusBuffer_publish_Arr",
-        type="cnetsProtocol[]",
+        type="com.github.airutech.cnetsTransports.types.connectionStatus[]",
         size=buffersLengths
-    ))
-    out.append(dict(
-        name="_connectionStatusBuffer_publish_Arr_BinaryBuffers",
-        type="byte[]",
-        size=binBuffersSize*buffersLengths
     ))
 
-    out.append(dict(
-        name="_connectionsBufferArr",
-        type="cnetsConnections[]",
-        size=buffersLengths
-    ))
+    # out.append(dict(
+    #     name="_connectionsBufferArr",
+    #     type="com.github.airutech.cnetsTransports.types.cnetsConnections[]",
+    #     size=buffersLengths
+    # ))
     
     out.append(dict(
         name="_dispatchConnStatusBuffer_Arr",
@@ -125,8 +125,7 @@ def getGernetProps(a):
 
     return json.dumps(out)
 
-
-def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval):
+def initDstNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval):
     #############
     nodeRepositoryProtocolWriteTo = []
 
@@ -149,13 +148,53 @@ def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, c
     return dict(
         id=nodeRepositoryProtocolBufferId,
         type="buffer",
-        name="_nodeRepositoryProtocolBuffer",
+        name="_dstNodeRepositoryProtocolBuffer",
         path="com.github.airutech.cnets.mapBuffer",
         ver="[0.0.0,)",
         args=[
-            dict(value="_nodeRepositoryProtocolBufferArr",type="Object[]"),
+            dict(value="_dstNodeRepositoryProtocolBufferArr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
             dict(value=countNodesProcessors + countBuffersProcessors + 1)# +1 for transportKernel
+        ],
+        connection=dict(
+            writeTo=nodeRepositoryProtocolWriteTo,
+            readFrom=[
+                # dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol")
+            ]
+        )
+    )
+
+
+def initLocalNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval):
+    #############
+    nodeRepositoryProtocolWriteTo = []
+
+    # #add transportKernel connection
+    # nodeRepositoryProtocolWriteTo.append(dict(
+    #     type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
+    #     blockId=transportKernelId,
+    #     pinId=2
+    # ))
+    # #connect to the next kernel after transport kernel
+    # for i in range(transportKernelId+1,transportKernelId+1+countNodesProcessors+countBuffersProcessors):
+    #     # print "\n create connection "+str(i)+" "+str(transportKernelId)+" "+str(countNodesProcessors)+" "+str(countBuffersProcessors)
+    #     nodeRepositoryProtocolWriteTo.append(dict(
+    #         type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
+    #         blockId=i,
+    #         pinId=1
+    #     ))
+    # #create buffer for nodeRepository
+
+    return dict(
+        id=nodeRepositoryProtocolBufferId,
+        type="buffer",
+        name="_localNodeRepositoryProtocolBuffer",
+        path="com.github.airutech.cnets.mapBuffer",
+        ver="[0.0.0,)",
+        args=[
+            dict(value="_localNodeRepositoryProtocolBufferArr",type="Object[]"),
+            dict(value=timeoutInterval),#as module property
+            dict(value=1)# +1 for transportKernel        //countNodesProcessors + countBuffersProcessors +
         ],
         connection=dict(
             writeTo=nodeRepositoryProtocolWriteTo,
@@ -163,29 +202,29 @@ def initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, c
         )
     )
 
-def initConnectionsBuffer(connectionsBufferId, transportKernelId, timeoutInterval):
-    return dict(
-        id=connectionsBufferId,
-        type="buffer",
-        name="_connectionsBuffer",
-        path="com.github.airutech.cnets.mapBuffer",
-        ver="[0.0.0,)",
-        args=[
-            dict(value="_connectionsBufferArr",type="Object[]"),
-            dict(value=timeoutInterval),#as module property
-            dict(value=1)# configure connections only in transport
-        ],
-        connection=dict(
-            writeTo=[dict(
-                type="com.github.airutech.cnetsTransports.types.cnetsConnections",
-                blockId=transportKernelId,
-                pinId=1
-            )],
-            readFrom=[dict(
-                type="com.github.airutech.cnetsTransports.types.cnetsConnections"
-            )]
-        )
-    )
+# def initConnectionsBuffer(connectionsBufferId, transportKernelId, timeoutInterval):
+#     return dict(
+#         id=connectionsBufferId,
+#         type="buffer",
+#         name="_connectionsBuffer",
+#         path="com.github.airutech.cnets.mapBuffer",
+#         ver="[0.0.0,)",
+#         args=[
+#             dict(value="_connectionsBufferArr",type="Object[]"),
+#             dict(value=timeoutInterval),#as module property
+#             dict(value=1)# configure connections only in transport
+#         ],
+#         connection=dict(
+#             writeTo=[dict(
+#                 type="com.github.airutech.cnetsTransports.types.cnetsConnections",
+#                 blockId=transportKernelId,
+#                 pinId=1
+#             )],
+#             readFrom=[dict(
+#                 type="com.github.airutech.cnetsTransports.types.cnetsConnections"
+#             )]
+#         )
+#     )
 
 def initSendProtocolsBuffer(sendProtocolsBufferId, countBuffersProcessors, transportKernelId, timeoutInterval):
     readFromList = []
@@ -273,7 +312,7 @@ def initRecvProtocolsBuffer(pubConnStatusBufferId, transportKernelId, countNodes
         path="com.github.airutech.cnets.mapBuffer",
         ver="[0.0.0,)",
         args=[
-            dict(value="_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr",type="Object[]"),
+            dict(value="_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr",type="Object[]"),
             dict(value=timeoutInterval),#as module property
             dict(value=1)# configure connections only in transport
         ],
@@ -317,7 +356,7 @@ def initConStatusDispatcherKernel(dispatchConnStatusKernelId,pubConnStatusBuffer
         name="_connStatusDispatcher",
         path="com.github.airutech.cnetsTransports.connectionStatusDispatcher",
         ver="[0.0.0,)",
-        args=[dict(value="_connectionStatusReceivers_writers")],
+        args=[dict(value="_connectionStatusReceivers_writers"), dict(value="maxNodesCount")],
         connection=dict(
             writeTo=[dict(
                 type="com.github.airutech.cnetsTransports.types.connectionStatus",
@@ -336,10 +375,10 @@ def initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId):
     return dict(
         id=repSourceKernelId,
         type="kernel",
-        name="_nodeRepositoryProtocolSource",
+        name="_localNodeRepositoryProtocolSource",
         path="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.source",
         ver="[0.0.0,)",
-        args=[dict(value="subscribedBuffersNames")],
+        args=[dict(value="publishedBuffersNames"),dict(value="subscribedBuffersNames")],
         connection=dict(
             writeTo=[dict(
                 type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol",
@@ -373,14 +412,14 @@ def initTransportKernel(transportKernelId,dispatchConnStatusKernelId):
             )],
             readFrom=[
                 dict(type="com.github.airutech.cnetsTransports.types.cnetsProtocol"),
-                dict(type="com.github.airutech.cnetsTransports.types.cnetsConnections"),
+                dict(type="com.github.airutech.cnetsTransports.types.cnetsConnections",blockId="export",pinId=0),
                 dict(type="com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol")
             ]
         )
     )
 
 def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount):
-    nodesIndexOffset = int(math.ceil(float(maxNodesCount)/countNodesProcessors))*processorId
+    nodesIndexOffset = int(math.floor(float(maxNodesCount)/countNodesProcessors))*processorId
     return dict(
         id=transportKernelId+1+processorId,
         type="kernel",
@@ -446,8 +485,9 @@ def getGernetBlocks(a):
     ##############################################
     ### Forecast of the first transport kernel ###
 
-    nodeRepositoryProtocolBufferId = 0
-    connectionsBufferId = 1
+    localNodeRepositoryProtocolBufferId = 0
+    dstNodeRepositoryProtocolBufferId = 1
+    # connectionsBufferId = 1
     sendProtocolsBufferId = 2
     pubConnStatusBufferId = 3
     dispatchConnStatusBufferId = pubConnStatusBufferId+1 + 2*countNodesProcessors
@@ -456,8 +496,9 @@ def getGernetBlocks(a):
     transportKernelId = repSourceKernelId+1 # id of first kernel in blocks, after all buffers
     ##############################################
 
-    out.append(initNodeRepositoryBuffer(nodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval))
-    out.append(initConnectionsBuffer(connectionsBufferId,transportKernelId, timeoutInterval))
+    out.append(initLocalNodeRepositoryBuffer(localNodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval))
+    out.append(initDstNodeRepositoryBuffer(dstNodeRepositoryProtocolBufferId,transportKernelId, countNodesProcessors, countBuffersProcessors, timeoutInterval))
+    # out.append(initConnectionsBuffer(connectionsBufferId,transportKernelId, timeoutInterval))
     out.append(initSendProtocolsBuffer(sendProtocolsBufferId,countBuffersProcessors, transportKernelId, timeoutInterval))
     out.append(initPublishConnStatusBuffer(pubConnStatusBufferId, transportKernelId, countBuffersProcessors, countNodesProcessors, timeoutInterval,repSourceKernelId))
     for processorId in range(0, countNodesProcessors):
@@ -466,8 +507,8 @@ def getGernetBlocks(a):
         out.append(initRecvProtocolsBuffer(pubConnStatusBufferId,transportKernelId, countNodesProcessors, timeoutInterval, processorId))
 
     out.append(initConStatusDispatcherBuffer(dispatchConnStatusBufferId,dispatchConnStatusKernelId,timeoutInterval))
-    out.append(initConStatusDispatcherKernel(dispatchConnStatusKernelId,nodeRepositoryProtocolBufferId))
-    out.append(initNodeRepSourceKernel(repSourceKernelId,nodeRepositoryProtocolBufferId))
+    out.append(initConStatusDispatcherKernel(dispatchConnStatusKernelId,pubConnStatusBufferId))
+    out.append(initNodeRepSourceKernel(repSourceKernelId,localNodeRepositoryProtocolBufferId))
     #transport kernel
     out.append(initTransportKernel(transportKernelId,dispatchConnStatusBufferId))
 

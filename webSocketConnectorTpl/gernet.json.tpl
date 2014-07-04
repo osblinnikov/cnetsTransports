@@ -44,14 +44,20 @@
   "path":"com.github.airutech.cnets.selector",
   "ver": "[0.0.0,)"
 },{
-  "path":"no.eyasys.mobileAlarm.types",
-  "ver": "[0.0.0,)"
-},{
   "path":"com.github.airutech.cnetsTransports.types",
   "ver": "[0.0.0,)"
 },{
   "path":"com.github.airutech.cnets.types",
   "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.msgpackExample.msgpack",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.msgpack",
+  "ver":"0.0.0"
+},{
+  "path":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack",
+  "ver":"0.0.0"
 }],
 "blocks":[{
  "id":0,
@@ -92,7 +98,7 @@
   }],
  "connection":{
     "writeTo": [{
-      "type": "no.eyasys.mobileAlarm.types.connectionStatus",
+      "type": "com.github.airutech.cnetsTransports.types.connectionStatus",
       "name": "currentConnectionsStatus",
       "blockId":"export",
       "pinId":0
@@ -107,7 +113,7 @@
 }],
 "connection":{
   "writeTo": [{
-    "type": "no.eyasys.mobileAlarm.types.connectionStatus",
+    "type": "com.github.airutech.cnetsTransports.types.connectionStatus",
     "name": "currentConnectionsStatus"
   }],
   "readFrom": [{
