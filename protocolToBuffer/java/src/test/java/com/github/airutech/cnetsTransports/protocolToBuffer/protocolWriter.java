@@ -42,7 +42,7 @@ public class protocolWriter implements RunnableStoppable {
       protocol.setTimeStart(timeStart);
       protocol.setBufferIndex(0);
       protocol.setBunchId(packIterator/2);
-      protocol.setPacket(packIterator%2);
+      protocol.setPacket(packIterator%2L);
       protocol.setPackets_grid_size(2);
       if(d.getData() == null) {
         d.setData(ByteBuffer.wrap(new byte[bufSize]));

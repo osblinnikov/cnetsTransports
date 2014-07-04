@@ -26,7 +26,7 @@ public class WSClient extends WebSocketClient {
 
   @Override
   public void onMessage(String s) {
-    System.out.println("client onMessage "+s);
+//    System.out.println("client onMessage "+s);
     parent.onMessage("" + this, s);
   }
 
@@ -35,7 +35,7 @@ public class WSClient extends WebSocketClient {
     if(fragment.getPayloadData().limit()==1){/*necessary because websockets implementation has bug with binary data receiving*/
       return;
     }
-    System.out.println("on Fragment in client");
+//    System.out.println("on Fragment in client");
     parent.onMessage("" + this, fragment.getPayloadData());
   }
 

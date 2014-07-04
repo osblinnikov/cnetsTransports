@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class cnetsProtocol {
-  ByteBuffer bb = null;
+  private ByteBuffer bb = null;
   private long bufferIndex;
   private long timeStart;
   private long bunchId;

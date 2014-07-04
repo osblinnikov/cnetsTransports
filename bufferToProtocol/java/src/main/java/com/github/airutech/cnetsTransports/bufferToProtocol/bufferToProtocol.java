@@ -108,7 +108,7 @@ public class bufferToProtocol implements RunnableStoppable{
           processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
           break;
         default:
-          System.out.printf("bufferToProtocol: processBufferObject %d\n", (int) r.getNested_buffer_id() - 2);
+//          System.out.printf("bufferToProtocol: processBufferObject %d\n", (int) r.getNested_buffer_id() - 2);
           processBufferObject(r.getData(), (int) r.getNested_buffer_id() - 2);/*shift -2 for compensation of first two readers items*/
           break;
       }
@@ -119,7 +119,7 @@ public class bufferToProtocol implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update) {
-    System.out.printf("bufferToProtocol: processRepositoryUpdate\n");
+//    System.out.printf("bufferToProtocol: processRepositoryUpdate\n");
     /*we store all nodes but not all buffers, only our own buffers*/
     int internalNodeIndex = (update.nodeId%maxNodesCount);//%protocolToBuffersGridSize;
     if(internalNodeIndex < 0){System.err.printf("bufferToProtocol: received update, nodeId = %d\n", update.nodeId); return;}
@@ -176,7 +176,7 @@ public class bufferToProtocol implements RunnableStoppable{
         writeProtocol.reserveForHeader();
         writeProtocol.setPacket(packet);
         writeProtocol.setPackets_grid_size(packets_count);
-        System.out.println(".bufferToProtocol send "+(bufferIndexOffset + localBufferIndex));
+//        System.out.println(".bufferToProtocol send "+(bufferIndexOffset + localBufferIndex));
         isLastPacket = callbacks[localBufferIndex].serializeNext(bufferObj, writeProtocol);
         packets_count = writeProtocol.getPackets_grid_size();
         packet = writeProtocol.getPacket();

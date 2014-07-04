@@ -25,10 +25,15 @@ import org.apache.commons.javaflow.helper.ClassTransformerClassLoader;
 import org.apache.commons.javaflow.rewrite.BlackRed;
 import org.apache.commons.javaflow.rewrite.ClassAccess1;
 import org.apache.commons.javaflow.rewrite.ClassAccess2;
+import org.apache.commons.javaflow.rewrite.ClassAccess3;
+import org.apache.commons.javaflow.rewrite.ConstructorInvocation;
 import org.apache.commons.javaflow.rewrite.CounterFlow;
 import org.apache.commons.javaflow.rewrite.DefaultConstructor;
+import org.apache.commons.javaflow.rewrite.NestedSynchronized;
 import org.apache.commons.javaflow.rewrite.NewObject;
 import org.apache.commons.javaflow.rewrite.NoReference;
+import org.apache.commons.javaflow.rewrite.NullLocalVariable;
+import org.apache.commons.javaflow.rewrite.NullVariableMethodFlow;
 import org.apache.commons.javaflow.rewrite.RewriteBugs;
 import org.apache.commons.javaflow.rewrite.Simple;
 import org.apache.commons.javaflow.rewrite.SimpleSerializable;
@@ -40,34 +45,40 @@ import org.apache.commons.javaflow.suite.VerificationTestCase;
 
 public final class AsmTestSuite extends TestSuite {
 
-	public static Test suite() throws Exception {
+    @SuppressWarnings("unchecked")
+    public static Test suite() throws Exception {
 
-		// LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", SimpleLog.class.getName());
-		// System.setProperty("org.apache.commons.logging.simplelog.defaultlog", "debug");
-		
-    	final ClassTransformerClassLoader classloader =
+        // LogFactory.getFactory().setAttribute("org.apache.commons.logging.Log", SimpleLog.class.getName());
+        // System.setProperty("org.apache.commons.logging.simplelog.defaultlog", "debug");
+        
+        final ClassTransformerClassLoader classloader =
             new ClassTransformerClassLoader(
-            		new AsmClassTransformer(),
-            		new Class[] { // instrument
-            			BlackRed.class,
-            			ClassAccess1.class,
-            			ClassAccess2.class,
-            			CounterFlow.class,
-            			DefaultConstructor.class,
-            			Simple.class,
-            			NewObject.class,
-            			NoReference.class,
-            			SimpleSerializable.class,
-            			RewriteBugs.class,
-            			SimpleTryCatch.class,
-            			SimpleSynchronized.class,
-            			Stack.class,	
-            			}, 
-            		new Class[] { // load
-            			VerificationTestCase.class,
-            			SerializationTestCase.class
-            			}  
-            		);
+                new AsmClassTransformer(),
+                new Class[] { // instrument
+                    BlackRed.class,
+                    ClassAccess1.class,
+                    ClassAccess2.class,
+                    ClassAccess3.class,
+                    CounterFlow.class,
+                    ConstructorInvocation.class,
+                    DefaultConstructor.class,
+                    NestedSynchronized.class,
+                    NewObject.class,
+                    NoReference.class,
+                    NullVariableMethodFlow.class,
+                    NullLocalVariable.class,
+                    RewriteBugs.class,
+                    Simple.class,
+                    SimpleSerializable.class,
+                    SimpleSynchronized.class,
+                    SimpleTryCatch.class,
+                    Stack.class,
+                    },  
+                new Class[] { // load
+                    VerificationTestCase.class,
+                    SerializationTestCase.class
+                    }  
+                );
         
         final TestSuite suite = new TestSuite();
         suite.setName("ASM");
@@ -75,5 +86,4 @@ public final class AsmTestSuite extends TestSuite {
         suite.addTestSuite((Class<? extends TestCase>)classloader.loadClass(SerializationTestCase.class.getName()));
         return suite;
     }
-
 }

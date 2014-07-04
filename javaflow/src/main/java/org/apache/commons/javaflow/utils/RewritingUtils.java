@@ -30,12 +30,12 @@ import java.util.jar.JarOutputStream;
 
 import org.apache.commons.javaflow.bytecode.transformation.asm.AsmClassTransformer;
 import org.apache.commons.javaflow.bytecode.transformation.ResourceTransformer;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public final class RewritingUtils {
 
-//    private final static Log log = LogFactory.getLog(RewritingUtils.class);
+    private final static Log log = LogFactory.getLog(RewritingUtils.class);
 
     public interface Matcher {
         boolean isMatching( final String name );
@@ -99,9 +99,9 @@ public final class RewritingUtils {
             if (name.endsWith(".class")) {
                 if (pMatcher.isMatching(name)) {
 
-//                    if (log.isDebugEnabled()) {
-//                        log.debug("transforming " + name);
-//                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("transforming " + name);
+                    }
 
                     final byte[] original = toByteArray(pInput);
 
@@ -130,7 +130,7 @@ public final class RewritingUtils {
 
             int length = copy(pInput,pOutput);
 
-//            log.debug("copied " + name + "(" + length + ")");
+            log.debug("copied " + name + "(" + length + ")");
         }
 
         pInput.close();

@@ -20,16 +20,15 @@ import java.util.List;
 
 import org.apache.commons.javaflow.bytecode.StackRecorder;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
 
-public final class ContinuationMethodAdapter extends MethodAdapter implements Opcodes {
+public final class ContinuationMethodAdapter extends MethodVisitor implements Opcodes {
 
     private static final String STACK_RECORDER = Type.getInternalName(StackRecorder.class);
     private static final String POP_METHOD = "pop";
@@ -49,7 +48,7 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
 
 
     public ContinuationMethodAdapter(ContinuationMethodAnalyzer a) {
-        super(a.mv);
+        super(Opcodes.ASM4, a.mv);
         this.canalyzer = a;
         this.analyzer = a.analyzer;
         this.labels = a.labels;
@@ -90,10 +89,10 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
 
         // switch cases
         for (int i = 0; i < fsize; i++) {
-            Label frameLabel = (Label) labels.get(i);
+            Label frameLabel = labels.get(i);
             mv.visitLabel(restoreLabels[i]);
 
-            MethodInsnNode mnode = (MethodInsnNode) nodes.get(i);
+            MethodInsnNode mnode = nodes.get(i);
             Frame frame = analyzer.getFrames()[canalyzer.getIndex(mnode)];
 
             // for each local variable store the value in locals popping it from the stack!
@@ -132,9 +131,9 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
             if (frame instanceof MonitoringFrame) {
                 int[] monitoredLocals = ((MonitoringFrame) frame).getMonitored();
                 // System.out.println(System.identityHashCode(frame)+" AMonitored locals "+monitoredLocals.length);
-                for (int j = 0; j < monitoredLocals.length; j++) {
+                for (int monitoredLocal : monitoredLocals) {
                     // System.out.println(System.identityHashCode(frame)+" AMonitored local "+monitoredLocals[j]);
-                    mv.visitVarInsn(ALOAD, monitoredLocals[j]);
+                    mv.visitVarInsn(ALOAD, monitoredLocal);
                     mv.visitInsn(MONITORENTER);
                 }
             }
@@ -177,9 +176,8 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
             }
 
             // Create null types for the parameters of the method invocation
-            Type[] paramTypes = Type.getArgumentTypes(mnode.desc);
-            for (int j = 0; j < paramTypes.length; j++) {
-                pushDefault(paramTypes[j]);
+            for (Type paramType : Type.getArgumentTypes(mnode.desc)) {
+                pushDefault(paramType);
             }
 
             // continue to the next method
@@ -193,7 +191,7 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
 
     public void visitLabel(Label label) {
         if (currentIndex < labels.size() && label == labels.get(currentIndex)) {
-            int i = canalyzer.getIndex((AbstractInsnNode)nodes.get(currentIndex));
+            int i = canalyzer.getIndex(nodes.get(currentIndex));
             currentFrame = analyzer.getFrames()[i];
         }
         mv.visitLabel(label);
@@ -276,15 +274,21 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
             }
 
             mv.visitVarInsn(ALOAD, stackRecorderVar);
-            mv.visitIntInsn(BIPUSH, currentIndex);  // TODO optimize to iconst_0...
+            if(currentIndex >= 128) {
+              // if > 127 then it's a SIPUSH, not a BIPUSH...
+              mv.visitIntInsn(SIPUSH, currentIndex);
+            } else {
+              // TODO optimize to iconst_0...
+              mv.visitIntInsn(BIPUSH, currentIndex);  
+            }
             mv.visitMethodInsn(INVOKEVIRTUAL, STACK_RECORDER, "pushInt", "(I)V");
 
             if (currentFrame instanceof MonitoringFrame) {
                 int[] monitoredLocals = ((MonitoringFrame) currentFrame).getMonitored();
                 // System.out.println(System.identityHashCode(currentFrame)+" Monitored locals "+monitoredLocals.length);
-                for (int j = 0; j < monitoredLocals.length; j++) {
+                for (int monitoredLocal : monitoredLocals) {
                     // System.out.println(System.identityHashCode(currentFrame)+" Monitored local "+monitoredLocals[j]);
-                    mv.visitVarInsn(ALOAD, monitoredLocals[j]);
+                    mv.visitVarInsn(ALOAD, monitoredLocal);
                     mv.visitInsn(MONITOREXIT);
                 }
             }
@@ -310,12 +314,14 @@ public final class ContinuationMethodAdapter extends MethodAdapter implements Op
     }
 
     static boolean isNull(BasicValue value) {
-      if (null == value)
-        return true;
-      if (!value.isReference())
-        return false;
-      final Type type = value.getType();
-      return "Lnull;".equals(type.getDescriptor()); 
+        if (null == value) {
+            return true;
+        }
+        if (!value.isReference()) {
+            return false;
+        }
+        final Type type = value.getType();
+        return "Lnull;".equals(type.getDescriptor()); 
     }
 
     void pushDefault(Type type) {

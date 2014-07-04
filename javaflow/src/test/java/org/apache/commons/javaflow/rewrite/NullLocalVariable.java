@@ -16,23 +16,17 @@
  */
 package org.apache.commons.javaflow.rewrite;
 
-import junit.framework.Assert;
+public class NullLocalVariable implements Runnable {
+    @SuppressWarnings("null")
+    public void method1() {
+        Integer result = null;
+        if (result != 0) {
+            result = 1;
+        }
+    }
 
-/**
- * Test that allocates a lot of new objects. Javaflow performs some tricky
- * instrumentation on new object allocations, especially when it has arguments.
- * Nesting object allocations makes it even more interesting.
- */
-public final class NewObject implements Runnable {
-  static char[] ch = { 'a', 'b', 'c'};
-  
-  public void run() {
-
-    String s = new String( new String( new String( ch, 0, ch.length).toCharArray(), 0, ch.length));
-    // String s = new String( new String( ch).toCharArray());
-
-    Assert.assertEquals( s, "abc");
-  }
-
+    @SuppressWarnings("unused")
+    public void run() {
+        NullLocalVariable bug1 = new NullLocalVariable();
+    }
 }
-

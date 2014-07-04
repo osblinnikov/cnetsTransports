@@ -60,8 +60,8 @@ public class connectionStatusDispatcher implements RunnableStoppable{
 
     /*send to the specific, responsible for the node protocolToBuffer*/
     if(connectionStatusReceivers != null) {
-      int nodesStored = (int)Math.floor((double)maxNodesCount/(double)connectionStatusReceivers.length);
-      int processorId = (conStatusReceived.getId()%maxNodesCount)/nodesStored;
+      double nodesStored = Math.floor((double)maxNodesCount/(double)connectionStatusReceivers.length);
+      int processorId = (int)Math.floor((double)(conStatusReceived.getId()%maxNodesCount)/nodesStored);
       if(processorId >= connectionStatusReceivers.length){
         processorId = connectionStatusReceivers.length - 1;//for the last element it is required
       }

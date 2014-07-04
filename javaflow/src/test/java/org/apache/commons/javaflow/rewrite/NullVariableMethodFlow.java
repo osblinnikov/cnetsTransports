@@ -39,8 +39,9 @@ public class NullVariableMethodFlow implements Runnable {
             x = session.getProperty("b");
         }
 
-        if (y == null)
+        if (y == null) {
             y = x;
+        }
 
         return y;
     }

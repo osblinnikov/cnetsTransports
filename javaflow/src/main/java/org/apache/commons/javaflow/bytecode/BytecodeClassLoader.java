@@ -16,17 +16,17 @@
  */
 package org.apache.commons.javaflow.bytecode;
 
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Opcodes;
 
 public class BytecodeClassLoader extends ClassLoader {
 
-    class NameClassAdapter extends ClassAdapter {
+    class NameClassAdapter extends ClassVisitor {
         private String className;
 
         public NameClassAdapter() {
-            super(new EmptyVisitor());
+            super(Opcodes.ASM4);
         }
         
         public void visit( int version, int access, String name, String signature, String superName, String[] interfaces ) {

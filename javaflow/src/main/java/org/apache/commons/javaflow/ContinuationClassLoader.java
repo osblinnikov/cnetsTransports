@@ -18,8 +18,8 @@ package org.apache.commons.javaflow;
 
 import org.apache.commons.javaflow.bytecode.transformation.ResourceTransformer;
 import org.apache.commons.javaflow.bytecode.transformation.asm.AsmClassTransformer;
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,7 +46,7 @@ import java.util.List;
  */
 public final class ContinuationClassLoader extends URLClassLoader {
 
-//    private final static Log log = LogFactory.getLog(ContinuationClassLoader.class);
+    private final static Log log = LogFactory.getLog(ContinuationClassLoader.class);
 
     private final ResourceTransformer transformer;
 
@@ -191,7 +191,7 @@ public final class ContinuationClassLoader extends URLClassLoader {
      */
     public Class<?> forceLoadClass(String classname)
          throws ClassNotFoundException {
-//        log.debug("force loading " + classname);
+        log.debug("force loading " + classname);
 
         Class<?> theClass = findLoadedClass(classname);
 
@@ -275,23 +275,23 @@ public final class ContinuationClassLoader extends URLClassLoader {
         if (isParentFirst(classname)) {
             try {
                 theClass = getParent().loadClass(classname);
-//                log.debug("Class " + classname + " loaded from parent loader "
-//                    + "(parentFirst)");
+                log.debug("Class " + classname + " loaded from parent loader "
+                    + "(parentFirst)");
             } catch (ClassNotFoundException cnfe) {
                 theClass = findClass(classname);
-//                log.debug("Class " + classname + " loaded from ant loader "
-//                    + "(parentFirst)");
+                log.debug("Class " + classname + " loaded from ant loader "
+                    + "(parentFirst)");
             }
         } else {
             try {
                 theClass = findClass(classname);
-//                log.debug("Class " + classname + " loaded from ant loader");
+                log.debug("Class " + classname + " loaded from ant loader");
             } catch (ClassNotFoundException cnfe) {
                 if (ignoreBase) {
                     throw cnfe;
                 }
                 theClass = getParent().loadClass(classname);
-//                log.debug("Class " + classname + " loaded from parent loader");
+                log.debug("Class " + classname + " loaded from parent loader");
             }
         }
 
@@ -347,21 +347,21 @@ public final class ContinuationClassLoader extends URLClassLoader {
      */
     private Class<?> getClassFromStream(InputStream stream, String classname) throws IOException, SecurityException {
 
-    	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-	        
-        	int bytesRead;
-	        byte[] buffer = new byte[BUFFER_SIZE];
-	
-	        while ((bytesRead = stream.read(buffer, 0, BUFFER_SIZE)) != -1) {
-	            baos.write(buffer, 0, bytesRead);
-	        }
-	
-	        byte[] classData = baos.toByteArray();
-	        return defineClassFromData(classData, classname);
-        
+
+            int bytesRead;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            while ((bytesRead = stream.read(buffer, 0, BUFFER_SIZE)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+
+            byte[] classData = baos.toByteArray();
+            return defineClassFromData(classData, classname);
+
         } finally {
-        	baos.close();
+            baos.close();
         }
     }
 
@@ -377,7 +377,7 @@ public final class ContinuationClassLoader extends URLClassLoader {
      *                                   on this loader's classpath.
      */
     public Class<?> findClass(final String name) throws ClassNotFoundException {
-//        log.debug("Finding class " + name);
+        log.debug("Finding class " + name);
 
         // locate the class file
         String classFileName = name.replace('.', '/') + ".class";

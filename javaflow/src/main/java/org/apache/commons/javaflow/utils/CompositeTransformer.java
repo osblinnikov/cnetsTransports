@@ -30,8 +30,8 @@ public class CompositeTransformer implements ResourceTransformer {
     }
 
     public byte[] transform(byte[] image) {
-        for (int i = 0; i < transformers.length; i++) {
-            image = transformers[i].transform(image);
+        for (ResourceTransformer transformer : transformers) {
+            image = transformer.transform(image);
         }
         return image;
     }

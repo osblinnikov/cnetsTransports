@@ -14,8 +14,8 @@ def getGernetProps(a):
     maxNodesCount = findPropValueByName(a,"maxNodesCount")
     buffersLengths = findPropValueByName(a,"buffersLengths")
     binBuffersSize = findPropValueByName(a,"binBuffersSize")
-    readersCount = len(a.read_data["connection"]["readFrom"]) - 1
-    writersCount = len(a.read_data["connection"]["writeTo"]) - 1
+    readersCount = len(a.read_data["connection"]["readFrom"]) - 1 + 1 #-1 for connection buffer, +1 for node Repository
+    writersCount = len(a.read_data["connection"]["writeTo"]) - 1 + 1 #-1 for status, +1 for node Repository
 
     out = []
 
@@ -28,15 +28,7 @@ def getGernetProps(a):
     out.append(dict(name="writersCount",type="int",value=writersCount))
 
     if countNodesProcessors > 0:
-        nodesLeftCount = maxNodesCount
-        nodesPerProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))
         for processorId in range(0, countNodesProcessors):
-            if nodesLeftCount <= 0:
-                break
-            if nodesLeftCount < nodesPerProcessorCeil:
-                nodesPerProcessorCeil = nodesLeftCount
-            nodesLeftCount = nodesLeftCount - nodesPerProcessorCeil
-
             out.append(dict(
                 name="_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr",
                 type="com.github.airutech.cnetsTransports.types.connectionStatus[]",
@@ -54,24 +46,21 @@ def getGernetProps(a):
             ))
 
     if countBuffersProcessors > 0:
-        buffersPerProcessorCeil = int(math.ceil(float(readersCount)/(countBuffersProcessors + 1))) # + 1 for reader of  Repository Protocol
-        buffersLeftCount = readersCount
-        for processorId in range(0, countBuffersProcessors + 1):# + 1 for reader of  Repository Protocol
-            if buffersLeftCount <= 0:
-                break
-            if buffersLeftCount < buffersPerProcessorCeil:
-                buffersPerProcessorCeil = buffersLeftCount
-            buffersLeftCount = buffersLeftCount - buffersPerProcessorCeil
+        PerProcessorFloor = int(math.floor(float(readersCount)/(countBuffersProcessors)))
+        PerProcessorLast = readersCount - PerProcessorFloor*(countBuffersProcessors-1)
+        for processorId in range(0, countBuffersProcessors):
+            if processorId == countBuffersProcessors - 1:
+                PerProcessorFloor = PerProcessorLast
 
             out.append(dict(
                 name="_bufferToProtocol_"+str(processorId)+"_readers",
                 type="reader[]",
-                size=buffersPerProcessorCeil
+                size=PerProcessorFloor
             ))
             out.append(dict(
                 name="_bufferToProtocol_"+str(processorId)+"_readers_callbacks",
                 type="com.github.airutech.cnetsTransports.types.serializeStreamCallback[]",
-                size=buffersPerProcessorCeil
+                size=PerProcessorFloor
             ))
 
 
@@ -418,8 +407,7 @@ def initTransportKernel(transportKernelId,dispatchConnStatusKernelId):
         )
     )
 
-def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount):
-    nodesIndexOffset = int(math.floor(float(maxNodesCount)/countNodesProcessors))*processorId
+def initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount,nodesIndexOffset):
     return dict(
         id=transportKernelId+1+processorId,
         type="kernel",
@@ -513,28 +501,13 @@ def getGernetBlocks(a):
     out.append(initTransportKernel(transportKernelId,dispatchConnStatusBufferId))
 
     if countNodesProcessors>0:
-        leftCount = maxNodesCount
-        perProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))
+        PerProcessorFloor = int(math.floor(float(maxNodesCount)/(countNodesProcessors)))
         for processorId in range(0, countNodesProcessors):
-            if leftCount <= 0:
-                break
-            if leftCount < perProcessorCeil:
-                perProcessorCeil = leftCount
-            leftCount = leftCount - perProcessorCeil
-            out.append(initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount))
-
+            out.append(initProtocolToBufferKernel(transportKernelId, countNodesProcessors, processorId, maxNodesCount,PerProcessorFloor*processorId))
 
     if countBuffersProcessors> 0:
-        leftCount = readersCount
-        perProcessorCeil = int(math.ceil(float(readersCount)/countBuffersProcessors))
-        bufferIndexOffset = 0
+        PerProcessorFloor = int(math.floor(float(readersCount)/(countBuffersProcessors)))
         for processorId in range(0, countBuffersProcessors):
-            if leftCount <= 0:
-                break
-            if leftCount < perProcessorCeil:
-                perProcessorCeil = leftCount
-            leftCount = leftCount - perProcessorCeil
-            out.append(initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, sendProtocolsBufferId, bufferIndexOffset))
-            bufferIndexOffset += perProcessorCeil
+            out.append(initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processorId, sendProtocolsBufferId, PerProcessorFloor*processorId))
 
     return json.dumps(out)

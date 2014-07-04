@@ -66,8 +66,8 @@ public class protocolToBuffer implements RunnableStoppable{
     if(protocolToBuffersGridSize <= 0){return;}
 
     nodesStored = (int)Math.floor((double)maxNodesCount/(double)protocolToBuffersGridSize);
-    if(nodesIndexOffset+nodesStored*2 > maxNodesCount){/*in case this is last nodes processor, we need to set it to ceil value*/
-      nodesStored = (int)Math.ceil((double)maxNodesCount/(double)protocolToBuffersGridSize);
+    if(nodesIndexOffset + nodesStored*2 > maxNodesCount){/*in case this is last nodes processor, we need to set it to ceil value*/
+      nodesStored = maxNodesCount - nodesIndexOffset;
     }
 
     nodes = new bufferOfNode[nodesStored * writers.length];
@@ -165,7 +165,7 @@ public class protocolToBuffer implements RunnableStoppable{
 
   private void processData(cnetsProtocol currentlyReceivedProtocol){
     if (currentlyReceivedProtocol == null) {return;}
-    System.out.println("protocolToBuffer: processData\n");
+//    System.out.println("protocolToBuffer: processData\n");
     /* trying to find the local index for the received index */
     if(currentlyReceivedProtocol.getNodeUniqueIds()[0] < 0){
       System.err.printf("protocolToBuffer: processData: incoming nodeUid=%d is out of allowed range [0, %d)\n",currentlyReceivedProtocol.getNodeUniqueIds()[0],maxNodesCount);
@@ -208,7 +208,7 @@ public class protocolToBuffer implements RunnableStoppable{
     }
     /*check if the bunch from the past*/
     if (node.getTimeStart() != currentlyReceivedProtocol.getTimeStart() || node.getBunchId() > currentlyReceivedProtocol.getBunchId()) {
-      System.out.printf("protocolToBuffer: processData: bunch from the past or reboot detected\n");
+      System.err.printf("protocolToBuffer: processData: bunch from the past or reboot detected\n");
       return;
     }
     /*update local bunches hash*/
@@ -222,7 +222,7 @@ public class protocolToBuffer implements RunnableStoppable{
     /*send bytes statistics*/
     r2.incrementBytesCounter(currentlyReceivedProtocol.getData().remaining());
 
-    System.out.println(".protocolToBuffer recv from "+node.getDstBufferIndex());
+//    System.out.println(".protocolToBuffer recv from "+node.getDstBufferIndex());
     /*Stateful deserialization into the provided object node.getBufferObj()*/
     boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
     if(isLastPacket){
@@ -231,7 +231,7 @@ public class protocolToBuffer implements RunnableStoppable{
   }
 
   private void processRepositoryUpdate(nodeRepositoryProtocol update){
-    System.out.printf("protocolToBuffer: processRepositoryUpdate\n");
+//    System.out.printf("protocolToBuffer: processRepositoryUpdate\n");
     int id = update.nodeId;
     int internalNodeIndex = (id%maxNodesCount);
     if(internalNodeIndex<nodesIndexOffset || internalNodeIndex>=nodesIndexOffset+nodesStored){return;}

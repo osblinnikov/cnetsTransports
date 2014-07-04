@@ -9,4 +9,4 @@ and migration mechanism was borrowed from the discontinued
 Brakes research project. The javaflow project would like
 to thank the Brakes team for their efforts in this space.
 
-http://www.cs.kuleuven.ac.be/cwis/research/distrinet/public/research/showproject.php?ABBREV=brakes
+http://people.cs.kuleuven.be/~eddy.truyen/BRAKES/brakes.html

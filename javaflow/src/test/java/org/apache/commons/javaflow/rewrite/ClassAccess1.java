@@ -18,7 +18,7 @@ package org.apache.commons.javaflow.rewrite;
 
 import org.apache.commons.javaflow.Continuation;
 
-@SuppressWarnings({ "unchecked", "unused" })
+@SuppressWarnings({ "unused", "rawtypes" })
 public final class ClassAccess1 implements Runnable {
 
     public void run() {

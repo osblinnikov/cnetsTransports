@@ -32,7 +32,7 @@ import com.github.airutech.cnets.selector.*;
 import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
 public class connector implements RunnableStoppable{
-  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;int readersCount = 3;int writersCount = 3;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_0_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_0_Arr;byte[] _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_1_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_1_Arr;byte[] _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers;reader[] _bufferToProtocol_0_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_0_readers_callbacks;reader[] _bufferToProtocol_1_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_1_readers_callbacks;reader[] _bufferToProtocol_2_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_2_readers_callbacks;writer[] _nodesReceivers_writers;writer[] _connectionStatusReceivers_writers;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _localNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _dstNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _outputProtocolBuffer_Arr;byte[] _outputProtocolBuffer_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_publish_Arr;com.github.airutech.cnetsTransports.types.connectionStatus[] _dispatchConnStatusBuffer_Arr;String[] publishedBuffersNames;String[] subscribedBuffersNames;writer[] allWriters;reader[] allReaders;deserializeStreamCallback[] allWriters_callbacks;serializeStreamCallback[] allReaders_callbacks;String serverUrl;int bindPort;writer w0;reader r0;
+  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;int readersCount = 4;int writersCount = 4;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_0_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_0_Arr;byte[] _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_1_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_1_Arr;byte[] _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers;reader[] _bufferToProtocol_0_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_0_readers_callbacks;reader[] _bufferToProtocol_1_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_1_readers_callbacks;writer[] _nodesReceivers_writers;writer[] _connectionStatusReceivers_writers;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _localNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _dstNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _outputProtocolBuffer_Arr;byte[] _outputProtocolBuffer_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_publish_Arr;com.github.airutech.cnetsTransports.types.connectionStatus[] _dispatchConnStatusBuffer_Arr;String[] publishedBuffersNames;String[] subscribedBuffersNames;writer[] allWriters;reader[] allReaders;deserializeStreamCallback[] allWriters_callbacks;serializeStreamCallback[] allReaders_callbacks;String serverUrl;int bindPort;writer w0;reader r0;
   
   public connector(String[] publishedBuffersNames,String[] subscribedBuffersNames,writer[] allWriters,reader[] allReaders,deserializeStreamCallback[] allWriters_callbacks,serializeStreamCallback[] allReaders_callbacks,String serverUrl,int bindPort,writer w0,reader r0){
     this.publishedBuffersNames = publishedBuffersNames;
@@ -50,20 +50,18 @@ public class connector implements RunnableStoppable{
     this.maxNodesCount = 5;
     this.buffersLengths = 8;
     this.binBuffersSize = 128;
-    this.readersCount = 3;
-    this.writersCount = 3;
+    this.readersCount = 4;
+    this.writersCount = 4;
     this._connectionStatusBuffer_forNodes_0_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
     this._inputProtocolBuffer_forNodes_0_Arr = new com.github.airutech.cnetsTransports.types.cnetsProtocol[8];
     this._inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers = new byte[1024];
     this._connectionStatusBuffer_forNodes_1_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
     this._inputProtocolBuffer_forNodes_1_Arr = new com.github.airutech.cnetsTransports.types.cnetsProtocol[8];
     this._inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers = new byte[1024];
-    this._bufferToProtocol_0_readers = new reader[1];
-    this._bufferToProtocol_0_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[1];
-    this._bufferToProtocol_1_readers = new reader[1];
-    this._bufferToProtocol_1_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[1];
-    this._bufferToProtocol_2_readers = new reader[1];
-    this._bufferToProtocol_2_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[1];
+    this._bufferToProtocol_0_readers = new reader[2];
+    this._bufferToProtocol_0_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[2];
+    this._bufferToProtocol_1_readers = new reader[2];
+    this._bufferToProtocol_1_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[2];
     this._nodesReceivers_writers = new writer[2];
     this._connectionStatusReceivers_writers = new writer[2];
     this._localNodeRepositoryProtocolBufferArr = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[2];
@@ -168,7 +166,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     _protocolToBuffer_0 = new com.github.airutech.cnetsTransports.protocolToBuffer.protocolToBuffer(subscribedBuffersNames,allWriters,allWriters_callbacks,0,2,maxNodesCount,_connectionStatusBuffer_forNodes_0r0,_dstNodeRepositoryProtocolBufferr1,_inputProtocolBuffer_forNodes_0r0);
     _protocolToBuffer_1 = new com.github.airutech.cnetsTransports.protocolToBuffer.protocolToBuffer(subscribedBuffersNames,allWriters,allWriters_callbacks,2,2,maxNodesCount,_connectionStatusBuffer_forNodes_1r0,_dstNodeRepositoryProtocolBufferr2,_inputProtocolBuffer_forNodes_1r0);
     _bufferToProtocol_0 = new com.github.airutech.cnetsTransports.bufferToProtocol.bufferToProtocol(publishedBuffersNames,_bufferToProtocol_0_readers,_bufferToProtocol_0_readers_callbacks,0,maxNodesCount,_outputProtocolBufferw0,_connectionStatusBuffer_publishr0,_dstNodeRepositoryProtocolBufferr3);
-    _bufferToProtocol_1 = new com.github.airutech.cnetsTransports.bufferToProtocol.bufferToProtocol(publishedBuffersNames,_bufferToProtocol_1_readers,_bufferToProtocol_1_readers_callbacks,2,maxNodesCount,_outputProtocolBufferw0,_connectionStatusBuffer_publishr1,_dstNodeRepositoryProtocolBufferr4);
+    _bufferToProtocol_1 = new com.github.airutech.cnetsTransports.bufferToProtocol.bufferToProtocol(publishedBuffersNames,_bufferToProtocol_1_readers,_bufferToProtocol_1_readers_callbacks,1,maxNodesCount,_outputProtocolBufferw0,_connectionStatusBuffer_publishr1,_dstNodeRepositoryProtocolBufferr4);
   }
   public runnablesContainer getRunnables(){
     
@@ -185,7 +183,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: a9e3710bae11646c90749279d10d47e1)*/
+/*[[[end]]] (checksum: f2bab10dc08eea4a0f91f67b9bb53a91)*/
 
   private void onCreate(){
 

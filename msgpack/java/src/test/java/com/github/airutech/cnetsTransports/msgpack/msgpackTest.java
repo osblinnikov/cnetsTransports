@@ -95,7 +95,7 @@ public class msgpackTest {
     dataObject.testValue = 10001;
     msgPackSerializer serializer = new msgPackSerializer(new TestMessage());
     cnetsProtocol protocol = new cnetsProtocol(0,0);
-    protocol.setPacket(0);
+    protocol.setPacket(0L);
     protocol.setPackets_grid_size(1);
     protocol.setBufferIndex(0);
     protocol.setBunchId(0);

@@ -41,9 +41,9 @@ public class TransformingResourceStore implements ResourceStore {
         // FIXME: make the matching configurable
         //if (resourceName.endsWith(".class")) {
             byte[] in = resourceData;
-            
-            for(int i=0; i<transformers.length; i++) {
-                out = transformers[i].transform(in);
+
+            for (ResourceTransformer transformer : transformers) {
+                out = transformer.transform(in);
                 in = out;
             }
         //}

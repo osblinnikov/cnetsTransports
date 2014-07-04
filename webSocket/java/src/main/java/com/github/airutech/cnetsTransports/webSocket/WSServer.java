@@ -31,7 +31,7 @@ public class WSServer extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket ws, String s) {
-    System.out.println("server onMessage " + s);
+//    System.out.println("server onMessage " + s);
     parent.onMessage("" + ws, s);
   }
 
@@ -40,7 +40,7 @@ public class WSServer extends WebSocketServer {
     if(fragment.getPayloadData().limit()==1){/*necessary because websockets implementation has bug with binary data receiving*/
       return;
     }
-    System.out.println("on Fragment in server");
+//    System.out.println("on Fragment in server");
     parent.onMessage("" + ws, fragment.getPayloadData());
   }
 

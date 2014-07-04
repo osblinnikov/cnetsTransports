@@ -119,6 +119,7 @@
   "readFrom": [{
     "type": "com.github.airutech.cnetsTransports.types.cnetsConnections",
     "name": "connectionConfig"
-  }]
+  }],
+  "noSelectors": true
 }
 }

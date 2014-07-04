@@ -28,48 +28,48 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public final class BlackRed implements Runnable, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 
-	public void run() {
-		// new Black( new Red( new Black( new Suspend()))).run();
-		new Black( new Suspend()).run();
-	}
+    public void run() {
+        // new Black( new Red( new Black( new Suspend()))).run();
+        new Black( new Suspend()).run();
+    }
 
 
-	class Black implements Runnable {
-		final Runnable r;
+    class Black implements Runnable {
+        final Runnable r;
 
-		public Black( Runnable r) {
-			this.r = r;
-		}
+        public Black( Runnable r) {
+            this.r = r;
+        }
 
-		public void run() {
+        public void run() {
             String s = "foo"; // have some random variable
-			r.run();
-		}
-	}
+            r.run();
+        }
+    }
 
 
-	class Red implements Runnable {
-		final Runnable r;
+    class Red implements Runnable {
+        final Runnable r;
 
-		public Red( Runnable r) {
-			this.r = r;
-		}
+        public Red( Runnable r) {
+            this.r = r;
+        }
 
-		public void run() {
-			int i = 5; // have some random variable
-			r.run();
-		}
-	}
+        public void run() {
+            int i = 5; // have some random variable
+            r.run();
+        }
+    }
 
 
-	class Suspend implements Runnable {
-		public void run() {
-			Continuation.suspend();
-		}
-	}
+    class Suspend implements Runnable {
+        public void run() {
+            Continuation.suspend();
+        }
+    }
 
 }
 

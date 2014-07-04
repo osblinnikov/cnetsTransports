@@ -18,7 +18,6 @@ package org.apache.commons.javaflow.rewrite;
 
 import org.apache.commons.javaflow.Continuation;
 
-@SuppressWarnings("unchecked")
 public final class ClassAccess3 implements Runnable {
 
     /*
@@ -56,6 +55,7 @@ public final class ClassAccess3 implements Runnable {
         TRYCATCHBLOCK L2 L3 L4 ClassNotFoundException
      */
   
+    @SuppressWarnings("rawtypes")
     static Class class$0;
   
     public void run() {
@@ -63,7 +63,7 @@ public final class ClassAccess3 implements Runnable {
         // final Class clazz2 = this.getClass();
         // if(class$0==null) {
           try {
-            class$0 = Class.forName("asm.data.ClassAccess2");
+            class$0 = Class.forName("org.apache.commons.javaflow.rewrite.ClassAccess2");
           } catch(ClassNotFoundException ex) {
             throw new NoClassDefFoundError(ex.getMessage());
           }

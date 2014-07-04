@@ -20,27 +20,27 @@ import org.apache.commons.javaflow.Continuation;
 
 public final class SimpleSynchronized implements Runnable {
 
-	public boolean a = false;
-	public boolean b = false;
-	public boolean c = false;
-	public boolean d = false;
-	public boolean e = false;
-	public boolean f = false;
+    public boolean a = false;
+    public boolean b = false;
+    public boolean c = false;
+    public boolean d = false;
+    public boolean e = false;
+    public boolean f = false;
 
-	private Object o = new Object();
-	
-	public void run() {		
-		a = true;
-		Continuation.suspend();
-		b = true;
-		synchronized(o) {
-			c = true;
-			Continuation.suspend();
-			d = true;
-		}
-		e = true;
-		Continuation.suspend();
-		f = true;		
+    private Object o = new Object();
+
+    public void run() {
+        a = true;
+        Continuation.suspend();
+        b = true;
+        synchronized(o) {
+            c = true;
+            Continuation.suspend();
+            d = true;
+        }
+        e = true;
+        Continuation.suspend();
+        f = true;
     }
 
 }

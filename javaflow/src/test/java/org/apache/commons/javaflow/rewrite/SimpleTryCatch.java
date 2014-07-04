@@ -20,36 +20,36 @@ import org.apache.commons.javaflow.Continuation;
 
 public final class SimpleTryCatch implements Runnable {
 
-	public boolean a = false;
-	public boolean b = false;
-	public boolean c = false;
-	public boolean d = false;
-	public boolean e = false;
-	public boolean f = false;
+    public boolean a = false;
+    public boolean b = false;
+    public boolean c = false;
+    public boolean d = false;
+    public boolean e = false;
+    public boolean f = false;
 
-	private final boolean throwException;
-	
-	public SimpleTryCatch(final boolean pThrowException) {
-		throwException = pThrowException;
-	}
-	
-	public void run() {
-    	try {
-    		a = true;
-    		Continuation.suspend();
-    		if (throwException) {
-    			throw new Exception("exception");
-    		}
-    		b = true;
-    	} catch(Exception e) {
-    		c = true;
-    		Continuation.suspend();
-    		d = true;
-    	} finally {
-    		e = true;
-    		Continuation.suspend();
-    		f = true;
-    	}    	
+    private final boolean throwException;
+    
+    public SimpleTryCatch(final boolean pThrowException) {
+        throwException = pThrowException;
+    }
+    
+    public void run() {
+        try {
+            a = true;
+            Continuation.suspend();
+            if (throwException) {
+                throw new Exception("exception");
+            }
+            b = true;
+        } catch(Exception e) {
+            c = true;
+            Continuation.suspend();
+            d = true;
+        } finally {
+            e = true;
+            Continuation.suspend();
+            f = true;
+        }       
     }
 
 }

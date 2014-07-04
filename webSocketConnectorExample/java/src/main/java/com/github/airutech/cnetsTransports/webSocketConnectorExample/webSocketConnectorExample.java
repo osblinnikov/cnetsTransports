@@ -16,7 +16,7 @@ import com.github.airutech.cnetsTransports.msgpackExample.msgpack.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack.*;
 public class webSocketConnectorExample implements RunnableStoppable{
-  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;reader rSelect;selector readersSelector;
+  int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;
 
   private String[] publishedBuffersNames = null;
   private String[] subscribedBuffersNames = null;
@@ -41,13 +41,6 @@ public class webSocketConnectorExample implements RunnableStoppable{
     this.buffersLengths = 8;
     this.binBuffersSize = 128;
     this.timeoutInterval = 1000L;
-    reader[] arrReaders = new reader[4];
-    arrReaders[0] = r0;
-    arrReaders[1] = r1;
-    arrReaders[2] = r2;
-    arrReaders[3] = r3;
-    this.readersSelector = new selector(arrReaders);
-    this.rSelect = readersSelector.getReader(0,-1);
     onCreate();
     initialize();
   }
@@ -96,7 +89,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: 40e9d66bf366becfa63b422b863e9faa)*/
+/*[[[end]]] (checksum: a9a974c5299e6f3317e430a126a189a3)*/
 
   private void onCreate(){
 

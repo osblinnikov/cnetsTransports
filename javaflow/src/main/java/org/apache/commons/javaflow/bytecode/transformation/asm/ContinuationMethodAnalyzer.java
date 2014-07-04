@@ -54,7 +54,7 @@ public class ContinuationMethodAnalyzer extends MethodNode implements Opcodes {
     public int stackRecorderVar;
 
     public ContinuationMethodAnalyzer(String className, ClassVisitor cv, MethodVisitor mv, int access, String name, String desc, String signature, String[] exceptions) {
-        super(access, name, desc, signature, exceptions);
+        super(Opcodes.ASM4, access, name, desc, signature, exceptions);
         this.className = className;
         this.cv = cv;
         this.mv = mv;
@@ -315,8 +315,8 @@ public class ContinuationMethodAnalyzer extends MethodNode implements Opcodes {
     boolean needsFrameGuard(int opcode, String owner, String name, String desc) {
         /* TODO: need to customize a way enchancer skips classes/methods
             if (owner.startsWith("java/")) {
-            	System.out.println("SKIP:: " + owner + "." + name + desc);
-            	return false;
+                System.out.println("SKIP:: " + owner + "." + name + desc);
+                return false;
             }
         */
 

@@ -21,15 +21,7 @@ def initializeProperties(a):
     out.append("int i,l,rIter;")
 
     if countNodesProcessors>0:
-        nodesLeftCount = maxNodesCount
-        nodesPerProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))
         for processorId in range(0, countNodesProcessors):
-            if nodesLeftCount <= 0:
-                break
-            if nodesLeftCount < nodesPerProcessorCeil:
-                nodesPerProcessorCeil = nodesLeftCount
-            nodesLeftCount = nodesLeftCount - nodesPerProcessorCeil
-
             out.append("for(i=0; i<_connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr.length; i++){")
             out.append("  _connectionStatusBuffer_forNodes_"+str(processorId)+"_Arr[i] = new connectionStatus();")
             out.append("}")
@@ -83,30 +75,15 @@ def initializePropertiesAfterBuffers(a):
 
     out = []
     if countNodesProcessors>0:
-        nodesLeftCount = maxNodesCount
-        nodesPerProcessorCeil = int(math.ceil(float(maxNodesCount)/countNodesProcessors))
         for processorId in range(0, countNodesProcessors):
-            if nodesLeftCount <= 0:
-                break
-            if nodesLeftCount < nodesPerProcessorCeil:
-                nodesPerProcessorCeil = nodesLeftCount
-            nodesLeftCount = nodesLeftCount - nodesPerProcessorCeil
             out.append("_nodesReceivers_writers["+str(processorId)+"] = _inputProtocolBuffer_forNodes_"+str(processorId)+".getWriter(0);")
             out.append("_connectionStatusReceivers_writers["+str(processorId)+"] = _connectionStatusBuffer_forNodes_"+str(processorId)+".getWriter(0);")
 
     if countBuffersProcessors>0:
-        buffersPerProcessorCeil = int(math.ceil(float(readersCount)/countBuffersProcessors))
-        buffersLeftCount = readersCount
         out.append("allWriters[0] = _dstNodeRepositoryProtocolBuffer.getWriter(0);")
         out.append("allReaders[0] = _localNodeRepositoryProtocolBuffer.getReader(0);")
         out.append("rIter = 0;")
         for processorId in range(0, countBuffersProcessors):
-            if buffersLeftCount <= 0:
-                break
-            if buffersLeftCount < buffersPerProcessorCeil:
-                buffersPerProcessorCeil = buffersLeftCount
-            buffersLeftCount = buffersLeftCount - buffersPerProcessorCeil
-
             out.append("for(i=0; i<_bufferToProtocol_"+str(processorId)+"_readers.length; i++){")
             out.append("  _bufferToProtocol_"+str(processorId)+"_readers[i] = allReaders[rIter];")
             out.append("  _bufferToProtocol_"+str(processorId)+"_readers_callbacks[i] = allReaders_callbacks[rIter];")

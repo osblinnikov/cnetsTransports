@@ -14,41 +14,34 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   private boolean isLastPacket = false;
   private cnetsMessagePackable callback;
   private Object data;
-  private cnetsProtocol outputMetaData = null;
+  private cnetsProtocol outputMetaData;
 
   /***** PACKING *****/
-  private ByteBuffer bufPack;
   private MessagePack msgpack = new MessagePack();
   private BufferPacker packer;
 
-  public msgPackSerializer(cnetsMessagePackable callback){
-    this.callback = callback;
-    assert callback != null;
+  public msgPackSerializer(cnetsMessagePackable cb){
+    callback = cb;
+//    assert callback != null;
   }
 
-  private void sendPacket(boolean isLastPacket){
-    if(isLastPacket) {
-      /*prevent receiver from waiting for more packets*/
-      outputMetaData.packets_grid_size = outputMetaData.packet + 1;
-//      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 1);
-    }else{
-      /*keep receiver receiving packets*/
-      outputMetaData.packets_grid_size = outputMetaData.packet + 2;
-//      outputMetaData.setPackets_grid_size(outputMetaData.getPacket() + 2);
-    }
-    this.isLastPacket = isLastPacket;
-    callback.fillNodeIds(outputMetaData,data);
+  private void sendPacket(boolean lastPacket){
+    //getter and setter is not working in android for some reason... there is VerifyError exception thrown on calling the constructor of current class
+    outputMetaData.packets_grid_size = lastPacket? outputMetaData.packet + 1: outputMetaData.packet + 2;
+
+    isLastPacket = lastPacket;
+    callback.fillNodeIds(outputMetaData, data);
     Continuation.suspend();
-    assert data != null && outputMetaData != null;
+//    assert data != null && outputMetaData != null;
   }
 
   @Override
   public <T> boolean serializeValue(T value){
-    int lastPosition = bufPack.position();
+    int lastPosition = outputMetaData.getData().position();
     try {
       packer.write(value);
     }catch (IOException e) {
-      bufPack.position(lastPosition);
+      outputMetaData.getData().position(lastPosition);
       sendPacket(false);
       try {
         packer.write(value);
@@ -63,15 +56,14 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
   }
 
   @Override
-  public boolean serializeNext( Object data, cnetsProtocol outputMetaData) {
-    assert this.outputMetaData == null || data == this.data;
-    assert data != null && outputMetaData != null;
+  public boolean serializeNext( Object bufDataObj, cnetsProtocol output) {
+//    assert this.outputMetaData == null || data == this.data;
+//    assert data != null && outputMetaData != null;
 
-    this.data = data;
-    this.outputMetaData = outputMetaData;
+    data = bufDataObj;
+    outputMetaData = output;
 
-    bufPack = outputMetaData.getData();
-    packer = msgpack.createBufferPacker(bufPack);
+    packer = msgpack.createBufferPacker(outputMetaData.getData());
 
     isLastPacket = false;
 
@@ -81,7 +73,7 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
       c = Continuation.continueWith(c);
     }
 
-    this.outputMetaData = null;
+    outputMetaData = null;
 
     return isLastPacket;
   }

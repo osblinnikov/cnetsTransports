@@ -25,7 +25,6 @@ import java.util.jar.JarOutputStream;
 
 import org.apache.commons.javaflow.bytecode.transformation.ResourceTransformer;
 import org.apache.commons.javaflow.bytecode.transformation.asm.AsmClassTransformer;
-import org.apache.commons.javaflow.bytecode.transformation.bcel.BcelClassTransformer;
 import org.apache.commons.javaflow.utils.RewritingUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -36,7 +35,6 @@ import org.apache.tools.ant.types.FileSet;
 /**
  * Ant task that enhances class files with javaflow instrumentation.
  */
-@SuppressWarnings("deprecation")
 public class AntRewriteTask extends MatchingTask {
 
     private ResourceTransformer transformer;
@@ -71,13 +69,10 @@ public class AntRewriteTask extends MatchingTask {
      * of the other (and this option will be removed then.)
      *
      * @param name
-     *      either "BCEL" or "ASM". Case insensitive.
+     *      "ASM". Case insensitive.
      */
     public void setMode(String name) {
-        name = name.toLowerCase();
-        if(name.equals("bcel")) {
-            transformer = new BcelClassTransformer(srcDir);
-        } else if(name.equals("asm")) {
+        if(name.equalsIgnoreCase("asm")) {
             transformer = new AsmClassTransformer();
         } else {
             throw new BuildException("Unrecognized mode: "+name);
@@ -117,9 +112,7 @@ public class AntRewriteTask extends MatchingTask {
         }
 
         try {
-            for (int i = 0; i < fileNames.length; i++) {
-                final String fileName = fileNames[i];
-                
+            for (final String fileName : fileNames) {
                 final File source = new File(srcDir, fileName);
                 final File destination = new File(dstDir, fileName);
                 
@@ -158,6 +151,5 @@ public class AntRewriteTask extends MatchingTask {
         } catch (IOException e) {
             throw new BuildException(e);
         }
-
     }
 }
