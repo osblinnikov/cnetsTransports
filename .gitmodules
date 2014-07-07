@@ -4,3 +4,6 @@
 [submodule "msgpack-java"]
 	path = msgpack-java
 	url = https://github.com/airutech/msgpack-java.git
+[submodule "javaflow-maven-plugin"]
+	path = javaflow-maven-plugin
+	url = https://github.com/airutech/javaflow-maven-plugin.git

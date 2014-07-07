@@ -26,6 +26,6 @@
     <module>msgpack/java</module>
     <module>msgpack-java</module>
     <module>javaflow</module>
-    <!--<module>javaflow-maven-plugin</module>-->
+    <module>javaflow-maven-plugin</module>
   </modules>
 </project>
