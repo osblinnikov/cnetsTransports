@@ -135,10 +135,6 @@ public class webSocket implements RunnableStoppable{
       writeProtocol.setNodeUniqueIds(new int[1]);
     }
     System.out.println(".webSocket send from "+writeProtocol.getBufferIndex()+" to "+writeProtocol.isPublished()+" "+ Arrays.toString(writeProtocol.getNodeUniqueIds()));
-    writeProtocol.serialize();
-
-    /*Make The Buffer To Be readable*/
-    writeProtocol.getData().flip();
 
     if(writeProtocol.isPublished()) {
 //      boolean sentAtLeastOnce = false;
@@ -147,7 +143,7 @@ public class webSocket implements RunnableStoppable{
         if(writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex()>=0){
 //          sentAtLeastOnce = true;
 //          System.out.println(".webSocket sending from  "+writeProtocol.isPublished());
-          conManager.sendToNode(node.getNodeUniqueId(), writeProtocol.getData());
+          conManager.sendToNode(node.getNodeUniqueId(), writeProtocol.getData().duplicate());
         }
       }
 //      if(!sentAtLeastOnce){
@@ -161,7 +157,7 @@ public class webSocket implements RunnableStoppable{
         nodeBufIndex node = nodes[nodeIndex * publishedBuffersNames.length + (int) writeProtocol.getBufferIndex()];
         if (writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex() >= 0) {
 //          System.out.println(".webSocket sending from  "+writeProtocol.isPublished());
-          conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData());
+          conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData().duplicate());
         } else {
           System.err.printf("webSocket: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
                   "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +

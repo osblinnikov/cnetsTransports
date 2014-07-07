@@ -29,7 +29,7 @@ def initializeProperties(a):
             out.append("l = _inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr_BinaryBuffers.length/_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr.length;")
             out.append("for(i=0; i<_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr.length; i++){")
             out.append("  _inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr[i] = new cnetsProtocol();")
-            out.append("  _inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr_BinaryBuffers, i*l, l));")
+            out.append("  _inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_"+str(processorId)+"_Arr_BinaryBuffers, i*l, l).slice());")
             out.append("}")
 
     # this._bufferToProtocol_0_readers = new reader[2];
@@ -56,7 +56,7 @@ def initializeProperties(a):
     out.append("l = _outputProtocolBuffer_Arr_BinaryBuffers.length/_outputProtocolBuffer_Arr.length;")
     out.append("for(i=0; i<_outputProtocolBuffer_Arr.length; i++){")
     out.append("  _outputProtocolBuffer_Arr[i] = new com.github.airutech.cnetsTransports.types.cnetsProtocol();")
-    out.append("  _outputProtocolBuffer_Arr[i].setData(ByteBuffer.wrap(_outputProtocolBuffer_Arr_BinaryBuffers, i*l, l));")
+    out.append("  _outputProtocolBuffer_Arr[i].setData(ByteBuffer.wrap(_outputProtocolBuffer_Arr_BinaryBuffers, i*l, l).slice());")
     out.append("}")
 
     out.append("for(i=0; i<_dispatchConnStatusBuffer_Arr.length; i++){")

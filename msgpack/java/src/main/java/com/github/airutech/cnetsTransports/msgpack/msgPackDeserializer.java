@@ -46,8 +46,10 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
     isLastPacket = false;
 
     if(c==null){
+      System.out.println("startWith deserializer "+callback);
       c = Continuation.startWith(this);
     }else{
+      System.out.println("continueWith deserializer "+callback);
       c = Continuation.continueWith(c);
     }
 
@@ -76,7 +78,8 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
       if(callback.deserializeWith(this,data)){
         suspend(true);
       }else{
-        return;
+        System.out.println("deserializer run error in "+callback);
+        Continuation.suspend();
       }
     }
   }

@@ -68,8 +68,10 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
     isLastPacket = false;
 
     if(c==null){
+      System.out.println("startWith serializer "+callback);
       c = Continuation.startWith(this);
     }else{
+      System.out.println("continueWith serializer "+callback);
       c = Continuation.continueWith(c);
     }
 
@@ -84,7 +86,8 @@ public class msgPackSerializer implements serializeStreamCallback, Runnable, cne
       if(callback.serializeWith(this,data)){
         sendPacket(true);
       }else{
-        return;
+        System.out.println("serializer run error in "+callback);
+        Continuation.suspend();
       }
     }
   }

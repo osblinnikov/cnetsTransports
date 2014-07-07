@@ -83,7 +83,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     l = _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers.length/_inputProtocolBuffer_forNodes_0_Arr.length;
     for(i=0; i<_inputProtocolBuffer_forNodes_0_Arr.length; i++){
       _inputProtocolBuffer_forNodes_0_Arr[i] = new cnetsProtocol();
-      _inputProtocolBuffer_forNodes_0_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers, i*l, l));
+      _inputProtocolBuffer_forNodes_0_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers, i*l, l).slice());
     }
     for(i=0; i<_connectionStatusBuffer_forNodes_1_Arr.length; i++){
       _connectionStatusBuffer_forNodes_1_Arr[i] = new connectionStatus();
@@ -91,7 +91,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     l = _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers.length/_inputProtocolBuffer_forNodes_1_Arr.length;
     for(i=0; i<_inputProtocolBuffer_forNodes_1_Arr.length; i++){
       _inputProtocolBuffer_forNodes_1_Arr[i] = new cnetsProtocol();
-      _inputProtocolBuffer_forNodes_1_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers, i*l, l));
+      _inputProtocolBuffer_forNodes_1_Arr[i].setData(ByteBuffer.wrap(_inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers, i*l, l).slice());
     }
     for(i=0; i<_dstNodeRepositoryProtocolBufferArr.length; i++){
       _dstNodeRepositoryProtocolBufferArr[i] = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol();
@@ -105,7 +105,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     l = _outputProtocolBuffer_Arr_BinaryBuffers.length/_outputProtocolBuffer_Arr.length;
     for(i=0; i<_outputProtocolBuffer_Arr.length; i++){
       _outputProtocolBuffer_Arr[i] = new com.github.airutech.cnetsTransports.types.cnetsProtocol();
-      _outputProtocolBuffer_Arr[i].setData(ByteBuffer.wrap(_outputProtocolBuffer_Arr_BinaryBuffers, i*l, l));
+      _outputProtocolBuffer_Arr[i].setData(ByteBuffer.wrap(_outputProtocolBuffer_Arr_BinaryBuffers, i*l, l).slice());
     }
     for(i=0; i<_dispatchConnStatusBuffer_Arr.length; i++){
       _dispatchConnStatusBuffer_Arr[i] = new com.github.airutech.cnetsTransports.types.connectionStatus();
@@ -183,7 +183,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: f2bab10dc08eea4a0f91f67b9bb53a91)*/
+/*[[[end]]] (checksum: 010db48b4bf77dcedfb4d7cab8b75ea4)*/
 
   private void onCreate(){
 

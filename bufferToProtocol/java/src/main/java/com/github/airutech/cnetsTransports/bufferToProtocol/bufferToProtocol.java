@@ -185,6 +185,11 @@ public class bufferToProtocol implements RunnableStoppable{
       /****/
       if(isAllowedToSend) {
         w0.incrementBytesCounter(writeProtocol.getData().position() - cnetsProtocol.fullSize());//length without header
+
+        writeProtocol.serialize();
+        /*Make The Buffer To Be readable*/
+        writeProtocol.getData().flip();
+
         w0.writeFinished();
         /*to get yet another buffer for writing*/
         writeProtocol = null;
