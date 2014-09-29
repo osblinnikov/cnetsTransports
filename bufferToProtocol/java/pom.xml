@@ -60,14 +60,20 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.airutech.cnetsTransports</groupId>
-            <artifactId>nodeRepositoryProtocol</artifactId>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>selector</artifactId>
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.airutech.cnets</groupId>
-            <artifactId>types</artifactId>
+            <artifactId>queue</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnetsTransports</groupId>
+            <artifactId>nodeRepositoryProtocol</artifactId>
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
@@ -79,19 +85,13 @@
         </dependency>
         <dependency>
             <groupId>com.github.airutech.cnets</groupId>
-            <artifactId>queue</artifactId>
-            <version>[0.0.0,)</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.airutech.cnets</groupId>
             <artifactId>runnablesContainer</artifactId>
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.airutech.cnets</groupId>
-            <artifactId>selector</artifactId>
+            <artifactId>types</artifactId>
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
@@ -101,7 +101,7 @@
             <version>[0.0.0,)</version>
             <scope>compile</scope>
         </dependency>
-<!--[[[end]]] (checksum: 40b15a5a661bca89119eeb97f996281a)-->
+<!--[[[end]]] (checksum: 2c5ba7139732d59314d5c5f83bb973b5)-->
     </dependencies>
 
     <build>

@@ -59,14 +59,8 @@
 
 
       <dependency>
-          <groupId>com.github.airutech.cnets</groupId>
-          <artifactId>readerWriter</artifactId>
-          <version>[0.0.0,)</version>
-          <scope>compile</scope>
-      </dependency>
-      <dependency>
-          <groupId>com.github.airutech.cnets</groupId>
-          <artifactId>runnablesContainer</artifactId>
+          <groupId>com.github.airutech.cnetsTransports</groupId>
+          <artifactId>types</artifactId>
           <version>[0.0.0,)</version>
           <scope>compile</scope>
       </dependency>
@@ -83,24 +77,30 @@
           <scope>compile</scope>
       </dependency>
       <dependency>
-          <groupId>com.github.airutech.cnets</groupId>
-          <artifactId>mapBuffer</artifactId>
-          <version>[0.0.0,)</version>
-          <scope>compile</scope>
-      </dependency>
-      <dependency>
           <groupId>com.github.airutech.cnetsTransports</groupId>
           <artifactId>nodeRepositoryProtocol</artifactId>
           <version>[0.0.0,)</version>
           <scope>compile</scope>
       </dependency>
       <dependency>
-          <groupId>com.github.airutech.cnetsTransports</groupId>
-          <artifactId>types</artifactId>
+          <groupId>com.github.airutech.cnets</groupId>
+          <artifactId>readerWriter</artifactId>
           <version>[0.0.0,)</version>
           <scope>compile</scope>
       </dependency>
-<!--[[[end]]] (checksum: cd8c7573c1f61f7ab231a71041cabcad)-->
+      <dependency>
+          <groupId>com.github.airutech.cnets</groupId>
+          <artifactId>runnablesContainer</artifactId>
+          <version>[0.0.0,)</version>
+          <scope>compile</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.github.airutech.cnets</groupId>
+          <artifactId>mapBuffer</artifactId>
+          <version>[0.0.0,)</version>
+          <scope>compile</scope>
+      </dependency>
+<!--[[[end]]] (checksum: ad830ed6fa1b587fdc2b34c3b3d96236)-->
     </dependencies>
 
     <build>

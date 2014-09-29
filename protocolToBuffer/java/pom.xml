@@ -54,38 +54,8 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 <dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>types</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>nodeRepositoryProtocol</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>types</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>readerWriter</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>queue</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>runnablesContainer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -97,11 +67,41 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 </dependency>
 <dependency>
     <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>queue</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>nodeRepositoryProtocol</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>readerWriter</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>runnablesContainer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>types</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
     <artifactId>mapBuffer</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 9e379ed5236fcf007f53922d352fa9e3)-->
+<!--[[[end]]] (checksum: 8643c7abbf8fd1926d932ba630f14703)-->
     </dependencies>
 
     <build>
