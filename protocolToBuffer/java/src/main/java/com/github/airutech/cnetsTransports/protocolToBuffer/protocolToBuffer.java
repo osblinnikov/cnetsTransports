@@ -188,19 +188,23 @@ public class protocolToBuffer implements RunnableStoppable{
       node = null;
     }
     if(node == null){
-      System.err.printf("protocolToBuffer: processData: incoming data, has buffer id which is not correspond to any buffer in repository\n");
+      System.err.printf("protocolToBuffer: processData: incoming data, has buffer id which is not correspond to any buffer in repository\n" +
+          "Info: id=%d maxNodesCount=%d internalNodeIndex=%d writers.length=%d currentlyReceivedProtocol.getBufferIndex()=%d\n", id, maxNodesCount, internalNodeIndex, writers.length,currentlyReceivedProtocol.getBufferIndex());
       return;
     }
     deserializeForNode(currentlyReceivedProtocol, node);
   }
 
   void deserializeForNode(cnetsProtocol currentlyReceivedProtocol, bufferOfNode node){
-    /*check the node reboot*/
+    /*check the node reset*/
     if (!node.isInit()
         || node.getTimeStart() < currentlyReceivedProtocol.getTimeStart()
         || Math.abs(node.getTimeStart() - currentlyReceivedProtocol.getTimeStart()) > Long.MAX_VALUE / 2
-        ){
-      /*reboot detected*/
+    ){
+      /*reset detected*/
+      System.out.printf("protocolToBuffer: deserializeForNode: reset detected\n " +
+          "Info: node.timeStart=%d protocol.timeStart=%d\n",
+          node.getTimeStart(),currentlyReceivedProtocol.getTimeStart());
       tryToFinishWriting(node);
       node.setInit(true);
       node.setTimeStart(currentlyReceivedProtocol.getTimeStart());
@@ -208,7 +212,7 @@ public class protocolToBuffer implements RunnableStoppable{
     }
     /*check if the bunch from the past*/
     if (node.getTimeStart() != currentlyReceivedProtocol.getTimeStart() || node.getBunchId() > currentlyReceivedProtocol.getBunchId()) {
-      System.err.printf("protocolToBuffer: processData: bunch from the past or reboot detected\n");
+      System.err.printf("protocolToBuffer: deserializeForNode: bunch from the past or reboot detected\n");
       return;
     }
     /*update local bunches hash*/
@@ -217,6 +221,9 @@ public class protocolToBuffer implements RunnableStoppable{
     /*get next buffer for writing*/
     while(node.getBufferObj() == null) {
       node.setBufferObj(node.getW0().writeNext(-1));
+      if(node.getBufferObj() == null){
+        System.err.printf("protocolToBuffer: deserializeForNode: Infinite trying writeNext(): one another try iteration is failed\n");
+      }
     }
 
     /*send bytes statistics*/
@@ -224,6 +231,7 @@ public class protocolToBuffer implements RunnableStoppable{
 
 //    System.out.println(".protocolToBuffer recv from "+node.getDstBufferIndex());
     /*Stateful deserialization into the provided object node.getBufferObj()*/
+    /*ALL PACKETS LOGIC IS UP TO DESERIALIZER*/
     boolean isLastPacket = node.getCallback().deserializeNext(node.getBufferObj(), currentlyReceivedProtocol);
     if(isLastPacket){
       tryToFinishWriting(node);
@@ -255,6 +263,8 @@ public class protocolToBuffer implements RunnableStoppable{
     if(node.getBufferObj()!=null){
       node.getW0().writeFinished();
       node.setBufferObj(null);
+      /*in case of duplicate bunch*/
+      node.setBunchId(node.getBunchId()+1);
     }
   }
 

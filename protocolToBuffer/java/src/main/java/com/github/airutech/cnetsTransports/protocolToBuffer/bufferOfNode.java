@@ -90,4 +90,5 @@ public class bufferOfNode {
   public void setSubscribedName(String subscribedName) {
     this.subscribedName = subscribedName;
   }
+
 }

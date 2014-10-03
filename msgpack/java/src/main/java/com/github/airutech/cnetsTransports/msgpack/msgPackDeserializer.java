@@ -12,6 +12,8 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   private Continuation c = null;
 
   private boolean isLastPacket = false;
+  private long previousPacketId = -1;
+  private long curBunchId = 0;
   private cnetsMessagePackable callback;
   private Object data;
   private cnetsProtocol inputMetaData = null;
@@ -20,6 +22,7 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   private ByteBuffer bufPack;
   private MessagePack msgpack = new MessagePack();
   private BufferUnpacker unpacker;
+  private boolean errorDetected = false;
 
   public msgPackDeserializer(cnetsMessagePackable cb){
     callback = cb;
@@ -28,7 +31,13 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
 
   private void suspend(boolean lastPacket) {
     isLastPacket = lastPacket;
-    callback.fromNodeId(inputMetaData.getNodeUniqueIds()[0], data);
+    if(inputMetaData==null) {
+      System.err.printf("msgPackDeserializer: suspend: inputMetaData==null\n");
+    }else if(inputMetaData.getNodeUniqueIds() == null){
+      System.err.printf("msgPackDeserializer: suspend: inputMetaData.getNodeUniqueIds() == null\n");
+    }else{
+      callback.fromNodeId(inputMetaData.getNodeUniqueIds()[0], data);
+    }
     Continuation.suspend();
   }
 
@@ -45,16 +54,47 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
 
     isLastPacket = false;
 
-    if(c==null){
-      System.out.println("startWith deserializer "+callback);
+    if(c == null && inputMetaData.getPacket() != 0) {
+      System.err.printf("continueWith deserializer " + callback + " c==null && inputMetaData.getPacket() != 0\n");
+      inputMetaData = null;
+      return false;
+    }
+
+    if(input.getPacket() != 0 && curBunchId != input.getBunchId()) {
+      System.err.printf("continueWith deserializer " + callback + " input.getPacket()!=0 && curBunchId (%d) != input.getBunchId() (%d)\n", curBunchId, input.getBunchId());
+      c = null;/*we received not the first packet, but bunch is not that one which we are currently receiving - need to drop currently receiving bunch*/
+      inputMetaData = null;
+      return false;
+    }
+
+    if(c != null && input.getPacket() - 1 != previousPacketId) {
+      System.err.printf("continueWith deserializer "+callback+" input.getPacket() (%d) != previousPacketId + 1 (%d)\n",input.getPacket(),previousPacketId + 1);
+      if(input.getPacket() - 1 > previousPacketId) {
+        c = null;/*reset only in case of lost packets between previousPacketId and input.getPacket()*/
+      }
+      inputMetaData = null;
+      return false;
+    }
+
+    curBunchId = input.getBunchId();
+    if (c == null) {
       c = Continuation.startWith(this);
-    }else{
-      System.out.println("continueWith deserializer "+callback);
+    } else {
       c = Continuation.continueWith(c);
     }
 
-    inputMetaData = null;
+    if(errorDetected){
+      c = null;
+      inputMetaData = null;
+      return false;
+    }
 
+    previousPacketId = inputMetaData.getPacket();
+
+    inputMetaData = null;
+    if(isLastPacket){
+      previousPacketId = -1;
+    }
     return isLastPacket;
   }
 
@@ -75,10 +115,12 @@ public class msgPackDeserializer implements deserializeStreamCallback, Runnable,
   @Override
   public void run() {
     while(true) {
+      errorDetected = false;
       if(callback.deserializeWith(this,data)){
         suspend(true);
       }else{
-        System.out.println("deserializer run error in "+callback);
+        System.err.println("deserializer run error in "+callback);
+        errorDetected = true;
         Continuation.suspend();
       }
     }
