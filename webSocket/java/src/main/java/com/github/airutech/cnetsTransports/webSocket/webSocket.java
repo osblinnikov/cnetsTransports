@@ -134,7 +134,7 @@ public class webSocket implements RunnableStoppable{
     if(writeProtocol.getNodeUniqueIds() == null){
       writeProtocol.setNodeUniqueIds(new int[1]);
     }
-    System.out.println(".webSocket send from "+writeProtocol.getBufferIndex()+" to "+writeProtocol.isPublished()+" "+ Arrays.toString(writeProtocol.getNodeUniqueIds()));
+//    System.out.println(".webSocket send from "+writeProtocol.getBufferIndex()+" to "+writeProtocol.isPublished()+" "+ Arrays.toString(writeProtocol.getNodeUniqueIds()));
 
     if(writeProtocol.isPublished()) {
 //      boolean sentAtLeastOnce = false;
@@ -327,6 +327,7 @@ public class webSocket implements RunnableStoppable{
       processorId = nodesReceivers.length - 1;//for the last element it is required
     }
     writer receiver = nodesReceivers[processorId];
+    if(receiver == null){return;}
     cnetsProtocol receivedProtocol = null;
     while(receivedProtocol == null) {
       receivedProtocol = (cnetsProtocol) receiver.writeNext(-1);
@@ -334,7 +335,7 @@ public class webSocket implements RunnableStoppable{
     receivedProtocol.setData(msg);
 
     receivedProtocol.deserialize();
-    System.out.println(".webSocket recv from "+receivedProtocol.getBufferIndex());
+//    System.out.println(".webSocket recv from "+receivedProtocol.getBufferIndex());
 //    System.out.printf("%d %d %d\n",receivedProtocol.getBufferIndex(), receivedProtocol.getBunchId(), receivedProtocol.getPacket());
     if(receivedProtocol.getNodeUniqueIds() == null){
       receivedProtocol.setNodeUniqueIds(new int[1]);
