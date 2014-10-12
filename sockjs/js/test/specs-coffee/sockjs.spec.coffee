@@ -23,37 +23,78 @@ if isNode
   s.sockjs = s.com_github_airutech_cnetsTransports_sockjs = require(__dirname + "/../../dist/com_github_airutech_cnetsTransports_sockjs/sockjs.js")
 #[[[end]]] (checksum: 9dc9f8550ed14cbc63258004076376b3)
 
+createClient = ->
+  publishedBuffersNames = []
+  maxNodesCount = 1
+  initialConnection = "ws://localhost:9911"
+  bindPort = 0
+  sslContext = undefined
+  nodesReceivers = []
+  w0statuses = undefined 
+  r0toSocket = undefined 
+  r1connections = undefined 
+  r2receiveRemoteRepository = undefined
+  sockKernel = new s.com_github_airutech_cnetsTransports_sockjs.create(
+    publishedBuffersNames,
+    maxNodesCount,
+    initialConnection,
+    bindPort,
+    sslContext,
+    nodesReceivers,
+    w0statuses,
+    r0toSocket,
+    r1connections,
+    r2receiveRemoteRepository
+  )
+  sockKernel.onStart()
+  return sockKernel
+
+createServer = ->
+  publishedBuffersNames = []
+  maxNodesCount = 1
+  initialConnection = undefined
+  bindPort = 9911
+  sslContext = undefined
+  nodesReceivers = []
+  w0statuses = undefined 
+  r0toSocket = undefined 
+  r1connections = undefined 
+  r2receiveRemoteRepository = undefined
+  sockKernel = new s.com_github_airutech_cnetsTransports_sockjs.create(
+    publishedBuffersNames,
+    maxNodesCount,
+    initialConnection,
+    bindPort,
+    sslContext,
+    nodesReceivers,
+    w0statuses,
+    r0toSocket,
+    r1connections,
+    r2receiveRemoteRepository
+  )
+  sockKernel.onStart()
+  return sockKernel
+
 describe "sockjs-send-receive", ->
   it "should send the given message", ->
     expect(s.mapBuffer.create).toEqual jasmine.any(Function)
     expect(s.com_github_airutech_cnets_types.Worker).toEqual jasmine.any(Function)
-
+    server = undefined
+    client = undefined
     done = false
     runs ->
-      publishedBuffersNames = []
-      maxNodesCount = 1
-      initialConnection = "ws://localhost:9911/ws"
-      bindPort = 0
-      sslContext = undefined
-      nodesReceivers = []
-      w0statuses = undefined 
-      r0toSocket = undefined 
-      r1connections = undefined 
-      r2receiveRemoteRepository = undefined
-      sockKernel = new s.com_github_airutech_cnetsTransports_sockjs.create(
-        publishedBuffersNames,
-        maxNodesCount,
-        initialConnection,
-        bindPort,
-        sslContext,
-        nodesReceivers,
-        w0statuses,
-        r0toSocket,
-        r1connections,
-        r2receiveRemoteRepository
-      )
-      sockKernel.onStart()
+      if isNode
+        server = createServer()
+      else
+        client = createClient()
+
+    setTimeout ->
+      done = true
+    , 1000
 
     waitsFor (->
       done
-    ), "should finish", 1000
+    ), "should finish", 2000
+
+    server = undefined
+    client = undefined
