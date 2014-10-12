@@ -34,6 +34,9 @@
   "path":"com.github.airutech.cnets.queue",
   "ver": "[0.0.0,)"
 },{
+  "path":"com.github.airutech.cnets.types",
+  "ver": "[0.0.0,)"
+},{
   "path":"com.github.airutech.cnets.mapBuffer",
   "ver": "[0.0.0,)"
 },{

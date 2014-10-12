@@ -1,0 +1,12 @@
+{
+  "author": "Airu Technologies Inc. <dev@airutech.com>",
+  "name": "com.github.airutech.cnetsTransports.sockjs",
+  "version": "0.0.0",
+  "repository": "https://github.com/airutech/cnetsTransports.git",
+  "homepage": "https://github.com/airutech/cnetsTransports",
+  "license": "MIT",
+  "devDependencies": {
+    "sockjs": "^0.3.9",
+    "sockjs-client": "^0.1.3"
+  }
+}
