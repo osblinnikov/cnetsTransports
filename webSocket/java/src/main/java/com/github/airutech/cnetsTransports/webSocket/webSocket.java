@@ -273,13 +273,16 @@ public class webSocket implements RunnableStoppable{
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     conManager.addConnection(hashKey,webSocket);
     int id = conManager.findUniqueConnectionId(hashKey);
-    if(id < 0 || publishedBuffersNames == null){
+    if(id < 0){
       try {
         if(webSocket.getServer() != null) webSocket.getServer().close();
         if(webSocket.getClient() != null) webSocket.getClient().close();
       }catch (Exception e){
         e.printStackTrace();
       }
+      return;
+    }
+    if(publishedBuffersNames == null){
       return;
     }
     for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
