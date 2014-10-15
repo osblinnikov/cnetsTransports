@@ -450,7 +450,7 @@ def initBufferToProtocolKernel(transportKernelId, countNodesProcessors, processo
             writeTo=[dict(
                 type="com.github.airutech.cnetsTransports.types.cnetsProtocol",
                 blockId=sendProtocolsBufferId,
-                pinId=0
+                pinId=processorId
             )],
             readFrom=[
                 dict(type="com.github.airutech.cnetsTransports.types.connectionStatus"),
