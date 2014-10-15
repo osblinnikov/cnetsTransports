@@ -269,11 +269,19 @@ public class webSocket implements RunnableStoppable{
     }
   }
 
+
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     conManager.addConnection(hashKey,webSocket);
     int id = conManager.findUniqueConnectionId(hashKey);
-    if(id < 0){return;}
-    if(publishedBuffersNames == null){return;}
+    if(id < 0 || publishedBuffersNames == null){
+      try {
+        if(webSocket.getServer() != null) webSocket.getServer().close();
+        if(webSocket.getClient() != null) webSocket.getClient().close();
+      }catch (Exception e){
+        e.printStackTrace();
+      }
+      return;
+    }
     for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
       nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length + bufferIndex];
       node.setNodeUniqueId(id);
