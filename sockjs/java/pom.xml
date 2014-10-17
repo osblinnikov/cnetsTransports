@@ -58,49 +58,55 @@
         ]]]-->
 
 
-<dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>types</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>selector</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>queue</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>nodeRepositoryProtocol</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>readerWriter</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>runnablesContainer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<!--[[[end]]] (checksum: 3cc2ee6d0759e7d7a43bfafda10ecc63)-->
+        <dependency>
+            <groupId>com.github.airutech.cnetsTransports</groupId>
+            <artifactId>types</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>selector</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>queue</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnetsTransports</groupId>
+            <artifactId>nodeRepositoryProtocol</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>readerWriter</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>runnablesContainer</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>types</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.airutech.cnets</groupId>
+            <artifactId>mapBuffer</artifactId>
+            <version>[0.0.0,)</version>
+            <scope>compile</scope>
+        </dependency>
+<!--[[[end]]] (checksum: 2c5ba7139732d59314d5c5f83bb973b5)-->
     </dependencies>
 
     <build>

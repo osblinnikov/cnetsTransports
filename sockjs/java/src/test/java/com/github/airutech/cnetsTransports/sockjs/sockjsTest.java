@@ -3,6 +3,8 @@ package com.github.airutech.cnetsTransports.sockjs;
 import com.github.airutech.cnets.types.bufferKernelParams;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
+import java.nio.ByteBuffer;
+
 /*[[[cog
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
@@ -15,11 +17,9 @@ import com.github.airutech.cnets.queue.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
+import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnets.mapBuffer.*;
-
-import java.nio.ByteBuffer;
-
-/*[[[end]]] (checksum: c7e257df165e4b8b959105ac4db9d1a7)*/
+/*[[[end]]] (checksum: 73b0f13afa19ad49cdb54b485e3c8b7d) */
 public class sockjsTest {
   @Test
   public void sockjsTest() throws Exception {
@@ -75,7 +75,7 @@ public class sockjsTest {
     writer w3 = mb3.getWriter(0);
     mapBuffer mb4 = new mapBuffer(new Object[]{new cnetsProtocol()}, 1000, 1);
     writer w4 = mb4.getWriter(0);
-    sockjs server = new sockjs(new String[]{"buf1"}, 1, null, 9911, null, new writer[]{w4}, w3, r0, r1, r2);
+    sockjs server = new sockjs(new String[]{"buf1"}, 1, null, 9911, null, w3, w4, r0, r1, r2);
     return server;
   }
   private sockjs createClient(mapBuffer mb0Clnt) {
@@ -89,7 +89,7 @@ public class sockjsTest {
     writer w3 = mb3.getWriter(0);
 //    mapBuffer mb4 = new mapBuffer(new Object[]{new cnetsProtocol()},1000,1);
     writer w4 = mb0Clnt.getWriter(0);
-    sockjs client = new sockjs(new String[]{"buf1"},1,"ws://localhost:9911",0,null,new writer[]{w4},w3,r0,r1,r2);
+    sockjs client = new sockjs(new String[]{"buf1"},1,"ws://localhost:9911",0,null, w3, w4, r0,r1,r2);
     return client;
   }
 }

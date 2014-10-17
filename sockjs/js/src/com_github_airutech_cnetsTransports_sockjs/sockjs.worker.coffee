@@ -178,9 +178,8 @@ onMessage = (hashKey, msg) ->
     getReceivedProtocol()
     receivedProtocol.obj.data = msg
 
-    receivedProtocol.obj.deserialize()
-    receivedProtocol.obj.nodeUniqueIds = new Array(1)
-    receivedProtocol.obj.nodeUniqueIds[0] = id
+    receivedProtocol.obj.nodeUniqueIds = [id]
+    # receivedProtocol.obj.nodeUniqueIds[0] = id
 
     w1fromSocket.writeFinished()
 
@@ -235,12 +234,12 @@ connect = ->
     onopen = ->
       console.log "open in client"
       onOpen("connString",client)
-      if client.write
-        client.write("test")
-      else if client.send
-        client.send("test")
-      else
-        console.error "sending function not found"
+      # if client.write
+      #   client.write("test")
+      # else if client.send
+      #   client.send("test")
+      # else
+      #   console.error "sending function not found"
       return
 
     onmessage = (e) ->
@@ -248,7 +247,8 @@ connect = ->
       msg = e
       if typeof e == 'object' && e.data
         msg = e.data
-      console.log msg
+      # console.log msg
+      onMessage("connString",msg)
       return
 
     onclose = (e)->

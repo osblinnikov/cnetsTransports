@@ -31,22 +31,26 @@ import java.util.concurrent.locks.ReentrantLock;
 import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
-import com.github.airutech.cnets.readerWriter.reader;
-import com.github.airutech.cnets.readerWriter.writer;
-import com.github.airutech.cnets.runnablesContainer.RunnableStoppable;
-import com.github.airutech.cnets.runnablesContainer.runnablesContainer;
-import com.github.airutech.cnets.selector.selector;
+
+import com.github.airutech.cnetsTransports.types.*;
+import com.github.airutech.cnets.selector.*;
+import com.github.airutech.cnets.queue.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
+import com.github.airutech.cnets.readerWriter.*;
+import com.github.airutech.cnets.runnablesContainer.*;
+import com.github.airutech.cnets.types.*;
+import com.github.airutech.cnets.mapBuffer.*;
 public class sockjs implements RunnableStoppable{
-  String[] publishedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer[] nodesReceivers;writer w0;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  String[] publishedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer w0;writer w1;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
   
-  public sockjs(String[] publishedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer[] nodesReceivers,writer w0,reader r0,reader r1,reader r2){
+  public sockjs(String[] publishedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer w0,writer w1,reader r0,reader r1,reader r2){
     this.publishedBuffersNames = publishedBuffersNames;
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
     this.bindPort = bindPort;
     this.sslContext = sslContext;
-    this.nodesReceivers = nodesReceivers;
     this.w0 = w0;
+    this.w1 = w1;
     this.r0 = r0;
     this.r1 = r1;
     this.r2 = r2;
@@ -71,7 +75,7 @@ public class sockjs implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] */
+/*[[[end]]] (checksum: a82c43d4a954bd6fe88c8a29f062b60e) */
 
   private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
@@ -85,11 +89,11 @@ public class sockjs implements RunnableStoppable{
     BasicConfigurator.configure(appender);
     conManager = new connectionsRegistry(maxNodesCount);
     if(publishedBuffersNames == null){return;}
-    if(nodesReceivers != null) {
-      if(maxNodesCount < nodesReceivers.length){
-        System.err.printf("sockjs: onCreate: maxNodesCount < nodesReceivers.length\n");
-      }
-    }
+    // if(nodesReceivers != null) {
+    //   if(maxNodesCount < nodesReceivers.length){
+    //     System.err.printf("sockjs: onCreate: maxNodesCount < nodesReceivers.length\n");
+    //   }
+    // }
     /*local storage for all nodes and all localBuffers*/
     nodes = new nodeBufIndex[maxNodesCount*publishedBuffersNames.length];
     for(int i=0; i<nodes.length; i++){
@@ -154,29 +158,29 @@ public class sockjs implements RunnableStoppable{
       System.err.println("sockjs: onMessage: connection for "+hashKey+" was not found");
       return;
     }
-    if(nodesReceivers == null) {return;}
-    double nodesStored = Math.floor((double)maxNodesCount/(double)nodesReceivers.length);
-    int processorId = (int)Math.floor((double)(id%maxNodesCount)/nodesStored);
-    if(processorId >= nodesReceivers.length){
-      processorId = nodesReceivers.length - 1;//for the last element it is required
-    }
-    writer receiver = nodesReceivers[processorId];
-    if(receiver == null){return;}
+    // if(nodesReceivers == null) {return;}
+    // double nodesStored = Math.floor((double)maxNodesCount/(double)nodesReceivers.length);
+    // int processorId = (int)Math.floor((double)(id%maxNodesCount)/nodesStored);
+    // if(processorId >= nodesReceivers.length){
+    //   processorId = nodesReceivers.length - 1;//for the last element it is required
+    // }
+    // writer receiver = nodesReceivers[processorId];
+    if(w1 == null){return;}
     cnetsProtocol receivedProtocol = null;
     while(receivedProtocol == null) {
-      receivedProtocol = (cnetsProtocol) receiver.writeNext(-1);
+      receivedProtocol = (cnetsProtocol) w1.writeNext(-1);
     }
     receivedProtocol.setData(msg);
 
-    receivedProtocol.deserialize();
+    // receivedProtocol.deserialize();
 //    System.out.println(".sockjs recv from "+receivedProtocol.getBufferIndex());
 //    System.out.printf("%d %d %d\n",receivedProtocol.getBufferIndex(), receivedProtocol.getBunchId(), receivedProtocol.getPacket());
-    if(receivedProtocol.getNodeUniqueIds() == null){
-      receivedProtocol.setNodeUniqueIds(new int[1]);
-    }
-    receivedProtocol.getNodeUniqueIds()[0] = id;
+    // if(receivedProtocol.getNodeUniqueIds() == null){
+    receivedProtocol.setNodeUniqueIds(new int[]{id});
+    // }
+    // receivedProtocol.getNodeUniqueIds()[0] = id;
 
-    receiver.writeFinished();
+    w1.writeFinished();
   }
 
   private void onKernels(){
