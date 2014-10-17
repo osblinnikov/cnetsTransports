@@ -29,8 +29,8 @@ createClient = ->
   initialConnection = "ws://localhost:9911"
   bindPort = 0
   sslContext = undefined
-  nodesReceivers = []
   w0statuses = undefined 
+  w1fromSocket = undefined
   r0toSocket = undefined 
   r1connections = undefined 
   r2receiveRemoteRepository = undefined
@@ -40,8 +40,8 @@ createClient = ->
     initialConnection,
     bindPort,
     sslContext,
-    nodesReceivers,
     w0statuses,
+    w1fromSocket,
     r0toSocket,
     r1connections,
     r2receiveRemoteRepository
@@ -55,8 +55,8 @@ createServer = ->
   initialConnection = undefined
   bindPort = 9911
   sslContext = undefined
-  nodesReceivers = []
-  w0statuses = undefined 
+  w0statuses = undefined
+  w1fromSocket = undefined
   r0toSocket = undefined 
   r1connections = undefined 
   r2receiveRemoteRepository = undefined
@@ -66,8 +66,8 @@ createServer = ->
     initialConnection,
     bindPort,
     sslContext,
-    nodesReceivers,
     w0statuses,
+    w1fromSocket,
     r0toSocket,
     r1connections,
     r2receiveRemoteRepository
@@ -85,16 +85,21 @@ describe "sockjs-send-receive", ->
     runs ->
       if isNode
         server = createServer()
-      else
-        client = createClient()
+      # else
+      console.log "createClient"
+      client = createClient()
 
     setTimeout ->
       done = true
+      if server
+        server.onStop()
+      if client
+        client.onStop()
+      server = undefined
+      client = undefined
     , 1000
 
     waitsFor (->
       done
     ), "should finish", 2000
 
-    server = undefined
-    client = undefined

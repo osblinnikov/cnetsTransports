@@ -24,13 +24,15 @@ if isNode
 customCallbacks = {}
 
 s.com_github_airutech_cnetsTransports_sockjs =
-  create: (publishedBuffersNames,maxNodesCount,initialConnection,bindPort,sslContext,nodesReceivers,w0statuses,r0toSocket,r1connections,r2receiveRemoteRepository)->
+  create: (publishedBuffersNames,maxNodesCount,initialConnection,bindPort,sslContext,w0statuses,w1fromSocket,r0toSocket,r1connections,r2receiveRemoteRepository)->
     self = this
     #constructor
     
     wrk = new s.com_github_airutech_cnets_types.Worker('/dist/com_github_airutech_cnetsTransports_sockjs/sockjs.worker.js')
     if w0statuses
       w0statuses.registerSrc(wrk,0)
+    if w1fromSocket
+      w1fromSocket.registerSrc(wrk,1)
     if r0toSocket
       r0toSocket.registerDst(wrk,0)
     if r1connections
@@ -38,7 +40,7 @@ s.com_github_airutech_cnetsTransports_sockjs =
     if r2receiveRemoteRepository
       r2receiveRemoteRepository.registerDst(wrk,2)
     
-    wrk.postMessage({type:'props',publishedBuffersNames:publishedBuffersNames,maxNodesCount:maxNodesCount,initialConnection:initialConnection,bindPort:bindPort,sslContext:sslContext,nodesReceivers:nodesReceivers})
+    wrk.postMessage({type:'props',publishedBuffersNames:publishedBuffersNames,maxNodesCount:maxNodesCount,initialConnection:initialConnection,bindPort:bindPort,sslContext:sslContext})
     
     self.onStart = ->
       if customCallbacks.onStart
@@ -52,7 +54,7 @@ s.com_github_airutech_cnetsTransports_sockjs =
       
       if customCallbacks.onStop
         customCallbacks.onStop()
-#[[[end]]] (checksum: b10096a1b0181b8e5f33aa786995f148)
+#[[[end]]] (checksum: 9940507f0480aacfbe9fd165ddb72e51)
     true
 
 #IMPLEMENTATION GOES HERE

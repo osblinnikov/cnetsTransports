@@ -17,9 +17,6 @@
 },{
   "name": "sslContext",
   "type": "SSLContext"
-},{
-  "name": "nodesReceivers",
-  "type": "writer[]"
 }],
 "depends":[{
   "path":"com.github.airutech.cnets.readerWriter",
@@ -51,6 +48,9 @@
   "writeTo": [{
     "name":"statuses",
     "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
+  },{
+    "name":"fromSocket",
+    "type":"com.github.airutech.cnetsTransports.types.cnetsProtocol"
   }],
   "readFrom": [{
     "name":"toSocket",
