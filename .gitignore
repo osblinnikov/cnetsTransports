@@ -36,3 +36,4 @@ bower_components/
 node_modules/
 dist
 /src/scripts/main.js
+sockjs/js/test/specs/
