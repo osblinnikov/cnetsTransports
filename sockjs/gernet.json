@@ -1,0 +1,66 @@
+{
+"path":"com.github.airutech.cnetsTransports.sockjs",
+"ver":"0.0.0",
+"type":"com.github.airutech.gernet.plugins.kernel",
+"args": [{
+  "name": "publishedBuffersNames",
+  "type": "string[]"
+},{
+  "name": "maxNodesCount",
+  "type": "int"
+},{
+  "name": "initialConnection",
+  "type": "String"
+},{
+  "name": "bindPort",
+  "type": "int"
+},{
+  "name": "sslContext",
+  "type": "SSLContext"
+}],
+"depends":[{
+  "path":"com.github.airutech.cnets.readerWriter",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.runnablesContainer",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.selector",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.queue",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.types",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnets.mapBuffer",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol",
+  "ver": "[0.0.0,)"
+},{
+  "path":"com.github.airutech.cnetsTransports.types",
+  "ver": "[0.0.0,)"
+}],
+"blocks":[],
+"connection":{
+  "writeTo": [{
+    "name":"statuses",
+    "type":"com.github.airutech.cnetsTransports.types.connectionStatus"
+  },{
+    "name":"fromSocket",
+    "type":"com.github.airutech.cnetsTransports.types.cnetsProtocol"
+  }],
+  "readFrom": [{
+    "name":"toSocket",
+    "type":"com.github.airutech.cnetsTransports.types.cnetsProtocol"
+  },{
+    "name":"connections",
+    "type":"com.github.airutech.cnetsTransports.types.cnetsConnections"
+  },{
+    "name":"receiveRemoteRepository",
+    "type":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"
+  }]
+}
+}

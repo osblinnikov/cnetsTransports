@@ -7,8 +7,16 @@ import org.java_websocket.framing.Framedata;
 import java.nio.ByteBuffer;
 
 public class webSocketConnection {
-  WebSocket server = null;
-  WebSocketClient client = null;
+  public WebSocket getServer() {
+    return server;
+  }
+
+  public WebSocketClient getClient() {
+    return client;
+  }
+
+  private WebSocket server = null;
+  private WebSocketClient client = null;
   public webSocketConnection(WebSocket server){
     this.server = server;
   }

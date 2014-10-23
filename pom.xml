@@ -10,6 +10,7 @@
   <url>http://maven.apache.org</url>
 
   <modules>
+    <module>sockjs/java</module>
     <module>nodeRepositoryProtocol/java</module>
     <module>nodeRepositoryProtocol/msgpack/java</module>
     <module>nodeRepositoryProtocol/source/java</module>
