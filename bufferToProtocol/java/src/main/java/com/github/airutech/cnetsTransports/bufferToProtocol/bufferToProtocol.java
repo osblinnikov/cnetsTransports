@@ -7,12 +7,12 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 import com.github.airutech.cnetsTransports.types.*;
-import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
-import com.github.airutech.cnets.types.*;
-import com.github.airutech.cnets.readerWriter.*;
-import com.github.airutech.cnets.queue.*;
-import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.selector.*;
+import com.github.airutech.cnets.queue.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
+import com.github.airutech.cnets.readerWriter.*;
+import com.github.airutech.cnets.runnablesContainer.*;
+import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class bufferToProtocol implements RunnableStoppable{
   String[] publishedBuffersNames;reader[] readers;serializeStreamCallback[] callbacks;int bufferIndexOffset;int maxNodesCount;writer w0;reader r0;reader r1;reader rSelect;selector readersSelector;
@@ -50,7 +50,7 @@ public class bufferToProtocol implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: cbcd253d29938a6880ec052c40d9d4e5)*/
+/*[[[end]]] (checksum: 607ed720df10e11a922a43ff2a087009)*/
 
   private long timeStart;
   private bufferIndexOfNode[] nodes = null;

@@ -54,14 +54,8 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 
 
 <dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>readerWriter</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>runnablesContainer</artifactId>
+    <groupId>com.github.airutech.cnetsTransports</groupId>
+    <artifactId>types</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
@@ -78,24 +72,30 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnets</groupId>
-    <artifactId>mapBuffer</artifactId>
-    <version>[0.0.0,)</version>
-    <scope>compile</scope>
-</dependency>
-<dependency>
     <groupId>com.github.airutech.cnetsTransports</groupId>
     <artifactId>nodeRepositoryProtocol</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
 <dependency>
-    <groupId>com.github.airutech.cnetsTransports</groupId>
-    <artifactId>types</artifactId>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>readerWriter</artifactId>
     <version>[0.0.0,)</version>
     <scope>compile</scope>
 </dependency>
-<!--[[[end]]] (checksum: 0baaace6ce8f4e7d3d56c426da1c7240)-->
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>runnablesContainer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>com.github.airutech.cnets</groupId>
+    <artifactId>mapBuffer</artifactId>
+    <version>[0.0.0,)</version>
+    <scope>compile</scope>
+</dependency>
+<!--[[[end]]] (checksum: 3cc2ee6d0759e7d7a43bfafda10ecc63)-->
     </dependencies>
 
     <build>
