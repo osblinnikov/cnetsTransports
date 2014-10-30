@@ -69,13 +69,13 @@ public class sockjsTest {
     reader r0 = mb0Srv.getReader(0);
     mapBuffer mb1 = new mapBuffer(new Object[]{new cnetsConnections()}, 1000, 1);
     reader r1 = mb1.getReader(0);
-    mapBuffer mb2 = new mapBuffer(new Object[]{new nodeRepositoryProtocol()}, 1000, 1);
-    reader r2 = mb2.getReader(0);
+//    mapBuffer mb2 = new mapBuffer(new Object[]{new nodeRepositoryProtocol()}, 1000, 1);
+//    reader r2 = mb2.getReader(0);
     mapBuffer mb3 = new mapBuffer(new Object[]{new connectionStatus()}, 1000, 1);
     writer w3 = mb3.getWriter(0);
     mapBuffer mb4 = new mapBuffer(new Object[]{new cnetsProtocol()}, 1000, 1);
     writer w4 = mb4.getWriter(0);
-    sockjs server = new sockjs(new String[]{"buf1"}, 1, null, 9911, null, w3, w4, r0, r1, r2);
+    sockjs server = new sockjs(new String[]{"buf1"}, 1, null, 9911, null, w3, w4, r0, r1);
     return server;
   }
   private sockjs createClient(mapBuffer mb0Clnt) {
@@ -83,13 +83,13 @@ public class sockjsTest {
     reader r0 = mb0.getReader(0);
     mapBuffer mb1 = new mapBuffer(new Object[]{new cnetsConnections()},1000,1);
     reader r1 = mb1.getReader(0);
-    mapBuffer mb2 = new mapBuffer(new Object[]{new nodeRepositoryProtocol()},1000,1);
-    reader r2 = mb2.getReader(0);
+//    mapBuffer mb2 = new mapBuffer(new Object[]{new nodeRepositoryProtocol()},1000,1);
+//    reader r2 = mb2.getReader(0);
     mapBuffer mb3 = new mapBuffer(new Object[]{new connectionStatus()},1000,1);
     writer w3 = mb3.getWriter(0);
 //    mapBuffer mb4 = new mapBuffer(new Object[]{new cnetsProtocol()},1000,1);
     writer w4 = mb0Clnt.getWriter(0);
-    sockjs client = new sockjs(new String[]{"buf1"},1,"ws://localhost:9911",0,null, w3, w4, r0,r1,r2);
+    sockjs client = new sockjs(new String[]{"buf1"},1,"ws://localhost:9911",0,null, w3, w4, r0,r1);
     return client;
   }
 }

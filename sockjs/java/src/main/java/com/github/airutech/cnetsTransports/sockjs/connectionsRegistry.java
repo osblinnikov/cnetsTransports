@@ -141,32 +141,38 @@ public class connectionsRegistry {
     return countOfCounnections;
   }
 
-  public void sendToNode(int nodeId, ByteBuffer bb){
+  public void sendToNode(int targetNodeId, ByteBuffer byteData){
     connectionsLock.lock();
-    if(nodeId>=0){
-      int nodeIndx = nodeId%arrContainers.length;
-      if(arrContainers[nodeIndx].uniqueId != nodeId){
-        System.err.printf("sendToNode: node unique %d id do not match %d\n",arrContainers[nodeIndx].uniqueId,nodeId);
+    int startNode = 0;
+    int endNode = arrContainers.length - 1;
+    if(targetNodeId >= 0){
+      endNode = startNode = targetNodeId;
+    }
+    for(int nodeId=startNode; nodeId<endNode+1; nodeId++) {
+      int nodeIndx = nodeId % arrContainers.length;
+      if (arrContainers[nodeIndx].uniqueId != nodeId && targetNodeId >= 0) {
+        System.err.printf("sendToNode: node unique %d id do not match %d\n", arrContainers[nodeIndx].uniqueId, nodeId);
         connectionsLock.unlock();
         return;
       }
+      ByteBuffer bb = byteData.duplicate();
       Buffer buf = new Buffer();
-      buf.appendBytes(bb.array(),0,bb.limit());
-      if(arrContainers[nodeIndx].sockJsConnection != null) {
+      buf.appendBytes(bb.array(), 0, bb.limit());
+      if (arrContainers[nodeIndx].sockJsConnection != null) {
         arrContainers[nodeIndx].sockJsConnection.write(buf);
         System.out.println("sockJsConnection");
         if (arrContainers[nodeIndx].sockJsConnection.writeQueueFull()) {
           arrContainers[nodeIndx].sockJsConnection.pause();
           System.out.println("pause");
         }
-      }else if(arrContainers[nodeIndx].webSocketConnection != null){
+      } else if (arrContainers[nodeIndx].webSocketConnection != null) {
         arrContainers[nodeIndx].webSocketConnection.write(buf);
         System.out.println("webSocketConnection");
         if (arrContainers[nodeIndx].webSocketConnection.writeQueueFull()) {
           arrContainers[nodeIndx].webSocketConnection.pause();
           System.out.println("pause");
         }
-      }else{
+      } else {
         System.err.println("sockjs: sendToNode: neither webSocketConnection nor sockJsConnection found\n");
       }
     }

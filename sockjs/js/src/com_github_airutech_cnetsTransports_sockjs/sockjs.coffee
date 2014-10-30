@@ -24,7 +24,7 @@ if isNode
 customCallbacks = {}
 
 s.com_github_airutech_cnetsTransports_sockjs =
-  create: (publishedBuffersNames,maxNodesCount,initialConnection,bindPort,sslContext,w0statuses,w1fromSocket,r0toSocket,r1connections,r2receiveRemoteRepository)->
+  create: (publishedBuffersNames,maxNodesCount,initialConnection,bindPort,sslContext,w0statuses,w1fromSocket,r0toSocket,r1connections)->
     self = this
     #constructor
     
@@ -37,8 +37,6 @@ s.com_github_airutech_cnetsTransports_sockjs =
       r0toSocket.registerDst(wrk,0)
     if r1connections
       r1connections.registerDst(wrk,1)
-    if r2receiveRemoteRepository
-      r2receiveRemoteRepository.registerDst(wrk,2)
     
     wrk.postMessage({type:'props',publishedBuffersNames:publishedBuffersNames,maxNodesCount:maxNodesCount,initialConnection:initialConnection,bindPort:bindPort,sslContext:sslContext})
     
@@ -54,7 +52,7 @@ s.com_github_airutech_cnetsTransports_sockjs =
       
       if customCallbacks.onStop
         customCallbacks.onStop()
-#[[[end]]] (checksum: 9940507f0480aacfbe9fd165ddb72e51)
+#[[[end]]] (checksum: 453f06c4d1f790b2217b8d9498043da1)
     true
 
 #IMPLEMENTATION GOES HERE

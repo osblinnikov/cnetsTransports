@@ -41,9 +41,9 @@ import com.github.airutech.cnets.runnablesContainer.*;
 import com.github.airutech.cnets.types.*;
 import com.github.airutech.cnets.mapBuffer.*;
 public class sockjs implements RunnableStoppable{
-  String[] publishedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer w0;writer w1;reader r0;reader r1;reader r2;reader rSelect;selector readersSelector;
+  String[] publishedBuffersNames;int maxNodesCount;String initialConnection;int bindPort;SSLContext sslContext;writer w0;writer w1;reader r0;reader r1;reader rSelect;selector readersSelector;
   
-  public sockjs(String[] publishedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer w0,writer w1,reader r0,reader r1,reader r2){
+  public sockjs(String[] publishedBuffersNames,int maxNodesCount,String initialConnection,int bindPort,SSLContext sslContext,writer w0,writer w1,reader r0,reader r1){
     this.publishedBuffersNames = publishedBuffersNames;
     this.maxNodesCount = maxNodesCount;
     this.initialConnection = initialConnection;
@@ -53,11 +53,9 @@ public class sockjs implements RunnableStoppable{
     this.w1 = w1;
     this.r0 = r0;
     this.r1 = r1;
-    this.r2 = r2;
-    reader[] arrReaders = new reader[3];
+    reader[] arrReaders = new reader[2];
     arrReaders[0] = r0;
     arrReaders[1] = r1;
-    arrReaders[2] = r2;
     this.readersSelector = new selector(arrReaders);
     this.rSelect = readersSelector.getReader(0,-1);
     onCreate();
@@ -75,9 +73,9 @@ public class sockjs implements RunnableStoppable{
     runnables.setCore(this);
     return runnables;
   }
-/*[[[end]]] (checksum: a82c43d4a954bd6fe88c8a29f062b60e) */
+/*[[[end]]] (checksum: a4e0c3a4b1f1aaa50c0dec444b85a9f9) */
 
-  private nodeBufIndex[] nodes;
+//  private nodeBufIndex[] nodes;
   private connectionsRegistry conManager = null;
   private AtomicBoolean makeReconnection = new AtomicBoolean(false);
 
@@ -95,18 +93,18 @@ public class sockjs implements RunnableStoppable{
     //   }
     // }
     /*local storage for all nodes and all localBuffers*/
-    nodes = new nodeBufIndex[maxNodesCount*publishedBuffersNames.length];
-    for(int i=0; i<nodes.length; i++){
-      nodes[i] = new nodeBufIndex();
-    }
-    for(int i=0; i<maxNodesCount; i++){
-      for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++){
-        nodeBufIndex node = nodes[i * publishedBuffersNames.length + bufferIndex];
-        node.setConnected(false);
-        node.setDstBufferIndex(-1);
-        node.setPublishedName(publishedBuffersNames[bufferIndex]);
-      }
-    }
+//    nodes = new nodeBufIndex[maxNodesCount*publishedBuffersNames.length];
+//    for(int i=0; i<nodes.length; i++){
+//      nodes[i] = new nodeBufIndex();
+//    }
+//    for(int i=0; i<maxNodesCount; i++){
+//      for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++){
+//        nodeBufIndex node = nodes[i * publishedBuffersNames.length + bufferIndex];
+//        node.setConnected(false);
+//        node.setDstBufferIndex(-1);
+//        node.setPublishedName(publishedBuffersNames[bufferIndex]);
+//      }
+//    }
   }
 
   public void onOpen(String hashKey, SockJSSocket sockJsConn, WebSocket wsConn) {
@@ -115,11 +113,11 @@ public class sockjs implements RunnableStoppable{
     int id = conManager.findUniqueConnectionId(hashKey);
     if(id < 0){return;}
     if(publishedBuffersNames == null){return;}
-    for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
-      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length + bufferIndex];
-      node.setNodeUniqueId(id);
-      node.setConnected(true);
-    }
+//    for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
+//      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length + bufferIndex];
+//      node.setNodeUniqueId(id);
+////      node.setConnected(true);
+//    }
     sendConnStatus(id, true, false);
   }
 
@@ -129,13 +127,13 @@ public class sockjs implements RunnableStoppable{
     if(id < 0){return;}
     conManager.removeConnection(hashKey);
     if(publishedBuffersNames == null){return;}
-    for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
-      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length+bufferIndex];
-      if(node.isConnected()) {
-        node.setDstBufferIndex(-1);
-      }
-      node.setConnected(false);
-    }
+//    for(int bufferIndex=0; bufferIndex<publishedBuffersNames.length; bufferIndex++) {
+//      nodeBufIndex node = nodes[(id%maxNodesCount) * publishedBuffersNames.length+bufferIndex];
+//      if(node.isConnected()) {
+//        node.setDstBufferIndex(-1);
+//      }
+//      node.setConnected(false);
+//    }
     sendConnStatus(id, false, false);
   }
 
@@ -211,9 +209,9 @@ public class sockjs implements RunnableStoppable{
       case 1:
         processConnectionsConfig((cnetsConnections) r.getData());
         break;
-      case 2:
-        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
-        break;
+//      case 2:
+//        processRepositoryUpdate((nodeRepositoryProtocol) r.getData());
+//        break;
     }
     rSelect.readFinished();
   }
@@ -225,29 +223,31 @@ public class sockjs implements RunnableStoppable{
 //    System.out.println(".sockjs send from "+writeProtocol.getBufferIndex()+" to "+writeProtocol.isPublished()+" "+ Arrays.toString(writeProtocol.getNodeUniqueIds()));
 
     if(writeProtocol.isPublished()) {
-      for (int i = 0; i < maxNodesCount; i++) {
-        nodeBufIndex node = nodes[i * publishedBuffersNames.length + (int)writeProtocol.getBufferIndex()];
-        if(writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex()>=0){
-          conManager.sendToNode(node.getNodeUniqueId(), writeProtocol.getData().duplicate());
-        }
-      }
+//      for (int i = 0; i < maxNodesCount; i++) {
+//        nodeBufIndex node = nodes[i * publishedBuffersNames.length + (int)writeProtocol.getBufferIndex()];
+//        if(writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex()>=0){
+//        if(node.getNodeUniqueId() >= 0) {
+      conManager.sendToNode(-1, writeProtocol.getData());
+//        }
+//        }
+//      }
     }else{
       for(int i=0; i<writeProtocol.getNodeUniqueIds().length; i++) {
         if(writeProtocol.getNodeUniqueIds()[i] < 0){break;}
-        int nodeIndex = writeProtocol.getNodeUniqueIds()[i] % maxNodesCount;
-        nodeBufIndex node = nodes[nodeIndex * publishedBuffersNames.length + (int) writeProtocol.getBufferIndex()];
-        if (writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex() >= 0) {
+//        int nodeIndex = writeProtocol.getNodeUniqueIds()[i] % maxNodesCount;
+//        nodeBufIndex node = nodes[nodeIndex * publishedBuffersNames.length + (int) writeProtocol.getBufferIndex()];
+//        if (writeProtocol.getBufferIndex() == 0 || node.getDstBufferIndex() >= 0) {
 //          System.out.println(".sockjs sending from  "+writeProtocol.isPublished());
-          conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData().duplicate());
-        } else {
-          System.err.printf("sockjs: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
-                  "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
-                  "bufferToProtocol module)\n",
-              writeProtocol.getNodeUniqueIds()[i],
-              maxNodesCount,
-              writeProtocol.getBufferIndex()
-          );
-        }
+        conManager.sendToNode(writeProtocol.getNodeUniqueIds()[i], writeProtocol.getData());
+//        } else {
+//          System.err.printf("sockjs: sendToNode: sending to node %d of %d nodes with buffer index %d FAILED, " +
+//                  "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
+//                  "bufferToProtocol module)\n",
+//              writeProtocol.getNodeUniqueIds()[i],
+//              maxNodesCount,
+//              writeProtocol.getBufferIndex()
+//          );
+//        }
       }
     }
   }
@@ -256,26 +256,26 @@ public class sockjs implements RunnableStoppable{
 
   }
 
-  private void processRepositoryUpdate(nodeRepositoryProtocol update) {
-//    System.out.printf("sockjs: processRepositoryUpdate\n");
-    String[] names = update.subscribedNames;
-    /*searching locally names equal to remote buffer names*/
-    if(names == null){System.err.println("sockjs: bufferNames are null"); return;}
-    boolean isNotLateRepoUpdate = false;
-    for(int i=0; i<names.length; i++){
-      for(int bufferIndx=0; bufferIndx<publishedBuffersNames.length; bufferIndx++){
-        nodeBufIndex node = nodes[(update.nodeId%maxNodesCount) * publishedBuffersNames.length + bufferIndx];
-        if(node.isConnected() && node.getNodeUniqueId() == update.nodeId && node.getPublishedName().equals(names[i])){
-          node.setDstBufferIndex(i);
-          isNotLateRepoUpdate = true;
-          break;
-        }
-      }
-    }
-    if(isNotLateRepoUpdate){
-      sendConnStatus(update.nodeId, true, true);
-    }
-  }
+//  private void processRepositoryUpdate(nodeRepositoryProtocol update) {
+////    System.out.printf("sockjs: processRepositoryUpdate\n");
+//    String[] names = update.subscribedNames;
+//    /*searching locally names equal to remote buffer names*/
+//    if(names == null){System.err.println("sockjs: bufferNames are null"); return;}
+//    boolean isNotLateRepoUpdate = false;
+//    for(int i=0; i<names.length; i++){
+//      for(int bufferIndx=0; bufferIndx<publishedBuffersNames.length; bufferIndx++){
+//        nodeBufIndex node = nodes[(update.nodeId%maxNodesCount) * publishedBuffersNames.length + bufferIndx];
+//        if(node.isConnected() && node.getNodeUniqueId() == update.nodeId && node.getPublishedName().equals(names[i])){
+//          node.setDstBufferIndex(i);
+//          isNotLateRepoUpdate = true;
+//          break;
+//        }
+//      }
+//    }
+//    if(isNotLateRepoUpdate){
+//      sendConnStatus(update.nodeId, true, true);
+//    }
+//  }
 
   @Override
   public void onStop(){

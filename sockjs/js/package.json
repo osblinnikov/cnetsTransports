@@ -2,6 +2,7 @@
   "author": "Airu Technologies Inc. <dev@airutech.com>",
   "name": "com.github.airutech.cnetsTransports.sockjs",
   "version": "0.0.0",
+  "description": "sockjs transport",
   "repository": "https://github.com/airutech/cnetsTransports.git",
   "homepage": "https://github.com/airutech/cnetsTransports",
   "license": "MIT",

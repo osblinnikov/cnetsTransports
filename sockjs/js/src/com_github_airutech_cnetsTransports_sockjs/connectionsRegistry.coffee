@@ -24,9 +24,15 @@ connectionsRegistry.create = s.connectionsRegistry.create = (capacity)->
   
 
   this.sendToNode = (nodeId, bb)->
+    startNode = 0
+    endNode = arrContainers.length - 1
     if nodeId >= 0
+      startNode = endNode = nodeId
+    if startNode > endNode
+      return
+    for i in [startNode..endNode]
       nodeIndx = nodeId%arrContainers.length
-      if arrContainers[nodeIndx].uniqueId != nodeId
+      if arrContainers[nodeIndx].uniqueId != nodeId && nodeId >= 0
         return
       if arrContainers[nodeIndx].connection != null
         if arrContainers[nodeIndx].connection.send

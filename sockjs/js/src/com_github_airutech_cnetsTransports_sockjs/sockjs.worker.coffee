@@ -83,14 +83,11 @@ r0toSocket = bufR0toSocket.getReader(onRun)
 bufR1connections = new mapBuffer.create()
 bufR1connections.setDispatcher(2, _this)
 r1connections = bufR1connections.getReader(onRun)
-bufR2receiveRemoteRepository = new mapBuffer.create()
-bufR2receiveRemoteRepository.setDispatcher(3, _this)
-r2receiveRemoteRepository = bufR2receiveRemoteRepository.getReader(onRun)
 
-#[[[end]]] (checksum: 4c38dd6121a9fa1af4837b28a7746d07) 
+#[[[end]]] (checksum: d043348271aa84c8138d733e99f25662) 
 
 importScripts(
-  '/dist/com_github_airutech_cnetsTransports_sockjs/nodeBufIndex.js',
+#  '/dist/com_github_airutech_cnetsTransports_sockjs/nodeBufIndex.js',
   '/dist/com_github_airutech_cnetsTransports_sockjs/connectionsRegistry.js'
 )
 
@@ -98,14 +95,14 @@ client = undefined
 httpSrv = undefined
 server = undefined
 
-nodeBufIndex = ->
-  this.dstBufferIndex = 0
-  this.publishedName = null
-  this.nodeUniqueId = 0
-  this.isConnected = false
-  true
+#nodeBufIndex = ->
+#  this.dstBufferIndex = 0
+#  this.publishedName = null
+#  this.nodeUniqueId = 0
+#  this.isConnected = false
+#  true
 
-nodes = undefined
+#nodes = undefined
 conManager = undefined
 
 makeReconnection = false
@@ -116,17 +113,17 @@ initOnCreate = (p)->
   #local storage for all nodes and all localBuffers
   if p.publishedBuffersNames == null
     return
-  nodes = []
-  nodes.length = p.maxNodesCount*p.publishedBuffersNames.length
-  for i in [0...nodes.length]
-    nodes[i] = new s.com_github_airutech_cnetsTransports_sockjs.nodeBufIndex()
+  #nodes = []
+  #nodes.length = p.maxNodesCount*p.publishedBuffersNames.length
+  #for i in [0...nodes.length]
+    #nodes[i] = new s.com_github_airutech_cnetsTransports_sockjs.nodeBufIndex()
 
-  for i in [0...p.maxNodesCount]
-    for  bufferIndex in [0...p.publishedBuffersNames.length]
-      node = nodes[i * p.publishedBuffersNames.length + bufferIndex]
-      node.connected = false
-      node.dstBufferIndex = -1
-      node.publishedName = p.publishedBuffersNames[bufferIndex]
+#  for i in [0...p.maxNodesCount]
+#    for  bufferIndex in [0...p.publishedBuffersNames.length]
+#      node = nodes[i * p.publishedBuffersNames.length + bufferIndex]
+#      node.connected = false
+#      node.dstBufferIndex = -1
+#      node.publishedName = p.publishedBuffersNames[bufferIndex]
 
 onOpen = (hashKey, webSocket)->
   console.log "onOpen"
@@ -139,10 +136,10 @@ onOpen = (hashKey, webSocket)->
   if props.publishedBuffersNames == null
     return
 
-  for bufferIndex in [0...props.publishedBuffersNames.length]
-    node = nodes[(id%props.maxNodesCount) * props.publishedBuffersNames.length + bufferIndex]
-    node.nodeUniqueId = id 
-    node.connected = true
+  #for bufferIndex in [0...props.publishedBuffersNames.length]
+  #  node = nodes[(id%props.maxNodesCount) * props.publishedBuffersNames.length + bufferIndex]
+  #  node.nodeUniqueId = id
+  #  node.connected = true
 
   sendConnStatus(id, true, false)
 
@@ -154,11 +151,11 @@ onClose = (hashKey)->
   conManager.removeConnection(hashKey)
   if props.publishedBuffersNames == null
     return
-  for bufferIndex in [0...props.publishedBuffersNames.length]
-    node = nodes[(id%props.maxNodesCount) * props.publishedBuffersNames.length+bufferIndex]
-    if node.connected
-      node.dstBufferIndex = -1
-    node.connected = false
+#  for bufferIndex in [0...props.publishedBuffersNames.length]
+#    node = nodes[(id%props.maxNodesCount) * props.publishedBuffersNames.length+bufferIndex]
+#    if node.connected
+#      node.dstBufferIndex = -1
+#    node.connected = false
   sendConnStatus(id, false, false)
 
 onMessage = (hashKey, msg) ->
@@ -295,44 +292,44 @@ sendToNodes = (writeProtocol)->
   console.log writeProtocol.nodeUniqueIds
 
   if writeProtocol.published
-    for i in [0...props.maxNodesCount]
-      node = nodes[i * props.publishedBuffersNames.length + writeProtocol.bufferIndex]
-      if writeProtocol.bufferIndex == 0 || node.dstBufferIndex>=0
-        conManager.sendToNode(node.nodeUniqueId, writeProtocol.data)
+    #for i in [0...props.maxNodesCount]
+      #node = nodes[i * props.publishedBuffersNames.length + writeProtocol.bufferIndex]
+      #if writeProtocol.bufferIndex == 0 || node.dstBufferIndex>=0
+    conManager.sendToNode(-1, writeProtocol.data)
   else
     for i in [0...writeProtocol.nodeUniqueIds.length]
       if writeProtocol.nodeUniqueIds[i] < 0
         break
-      nodeIndex = writeProtocol.nodeUniqueIds[i] % props.maxNodesCount
-      node = nodes[nodeIndex * props.publishedBuffersNames.length + writeProtocol.bufferIndex]
-      if writeProtocol.bufferIndex == 0 || node.dstBufferIndex >= 0
-        conManager.sendToNode(writeProtocol.nodeUniqueIds[i], writeProtocol.data)
-      else
-        console.warn ("sockjs: sendToNode: sending to node "+writeProtocol.nodeUniqueIds[i]+" of "+props.maxNodesCount+" nodes with buffer index "+writeProtocol.bufferIndex+" FAILED, " +
-                "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
-                "bufferToProtocol module)\n")
+      #nodeIndex = writeProtocol.nodeUniqueIds[i] % props.maxNodesCount
+      #node = nodes[nodeIndex * props.publishedBuffersNames.length + writeProtocol.bufferIndex]
+      #if writeProtocol.bufferIndex == 0 || node.dstBufferIndex >= 0
+      conManager.sendToNode(writeProtocol.nodeUniqueIds[i], writeProtocol.data)
+      #else
+      #  console.warn ("sockjs: sendToNode: sending to node "+writeProtocol.nodeUniqueIds[i]+" of "+props.maxNodesCount+" nodes with buffer index "+writeProtocol.bufferIndex+" FAILED, " +
+      #          "because destination doesn't have this buffer entry (strange error, packet should be filtered out in " +
+      #          "bufferToProtocol module)\n")
 
 processConnectionsConfig = ->
 
 
-processRepositoryUpdate = (update)->
-  if typeof update != 'object'
-    console.error "socksjs: processRepositoryUpdate: update is not an object"
-    return
-  console.log "sockjs: processRepositoryUpdate"
-  if update.subscribedNames == null 
-    console.error "socksjs: processRepositoryUpdate: bufferNames are null"
-    return
-  isNotLateRepoUpdate = false
-  for i in [0...update.subscribedNames.length]
-    for bufferIndx in [0...publishedBuffersNames.length]
-      nodeBufIndex node = nodes[(update.nodeId%props.maxNodesCount) * props.publishedBuffersNames.length + bufferIndx]
-      if node.connected && node.nodeUniqueId == update.nodeId && node.publishedName = update.subscribedNames[i]
-        node.dstBufferIndex = i
-        isNotLateRepoUpdate = true
-        break
-  if isNotLateRepoUpdate
-    sendConnStatus(update.nodeId, true, true)
+#processRepositoryUpdate = (update)->
+#  if typeof update != 'object'
+#    console.error "socksjs: processRepositoryUpdate: update is not an object"
+#    return
+#  console.log "sockjs: processRepositoryUpdate"
+#  if update.subscribedNames == null
+#    console.error "socksjs: processRepositoryUpdate: bufferNames are null"
+#    return
+#  isNotLateRepoUpdate = false
+#  for i in [0...update.subscribedNames.length]
+#    for bufferIndx in [0...publishedBuffersNames.length]
+#      nodeBufIndex node = nodes[(update.nodeId%props.maxNodesCount) * props.publishedBuffersNames.length + bufferIndx]
+#      if node.connected && node.nodeUniqueId == update.nodeId && node.publishedName = update.subscribedNames[i]
+#        node.dstBufferIndex = i
+#        isNotLateRepoUpdate = true
+#        break
+#  if isNotLateRepoUpdate
+#    sendConnStatus(update.nodeId, true, true)
 
 sendConnStatus = (id, status, receivedRepo)->
     if w0statuses != null
@@ -366,8 +363,8 @@ onRun.callback = (mapBufferId, mapBufferObj) ->
       sendToNodes(r.obj)
     when 1
       processConnectionsConfig(r.obj)
-    when 2
-      processRepositoryUpdate(r.obj)
+    #when 2
+    #  processRepositoryUpdate(r.obj)
     else
       console.error "onRun, unknown buffer"
 
