@@ -445,28 +445,43 @@ def getRunnables(a):
 
 
 def fillConnectorsNames(a):
+    if a.read_data.has_key("serializatorPath"):
+      serializatorPath = a.read_data["serializatorPath"]
+    else:
+      serializatorPath = "com.github.airutech.cnetsTransports.msgpack.msgPackSerializer"
+
+    if a.read_data.has_key("deserializatorPath"):
+      deserializatorPath = a.read_data["deserializatorPath"]
+    else:
+      deserializatorPath = "com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer"
+
+    if a.read_data.has_key("serializePackagePostfix"):
+      serializePackagePostfix = a.read_data["serializePackagePostfix"]
+    else:
+      serializePackagePostfix = ".msgpack.msgpack"
+
     out = ["/* +1 everywhere for repo receivers and senders*/"]
     if len(a.read_data["connection"]["writeTo"]) - 1 > 0:
         out.append("subscribedBuffersNames = new String["+str(len(a.read_data["connection"]["writeTo"]) - 1 + 1)+"]"+";")
         out.append("allWriters = new writer["+str(len(a.read_data["connection"]["writeTo"]) - 1 + 1)+"]"+";")
         out.append("allWriters_callbacks = new deserializeStreamCallback["+str(len(a.read_data["connection"]["writeTo"]) - 1 + 1)+"]"+";")
         out.append("subscribedBuffersNames[0] = \"nodeRepository\";")
-        out.append("allWriters_callbacks[0] = new com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer(new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack.msgpack());")
+        out.append("allWriters_callbacks[0] = new "+deserializatorPath+"(new com.github.airutech.cnetsTransports.nodeRepositoryProtocol"+serializePackagePostfix+"());")
         for i, v in enumerate(a.read_data["connection"]["writeTo"][1:]):
             out.append("subscribedBuffersNames["+str(i + 1)+"] = \""+v["name"]+"\";")
             out.append("allWriters["+str(i+1)+"] = w"+str(i+1)+";")
-            out.append("allWriters_callbacks["+str(i+1)+"] = new com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
+            out.append("allWriters_callbacks["+str(i+1)+"] = new "+deserializatorPath+"(new "+".".join(v["type"].split(".")[:-1])+serializePackagePostfix+"());")
 
     if len(a.read_data["connection"]["readFrom"]) - 1 > 0:
         out.append("publishedBuffersNames = new String["+str(len(a.read_data["connection"]["readFrom"]) - 1 + 1)+"]"+";")
         out.append("allReaders = new reader["+str(len(a.read_data["connection"]["readFrom"]) - 1 + 1)+"]"+";")
         out.append("allReaders_callbacks = new serializeStreamCallback["+str(len(a.read_data["connection"]["readFrom"]) - 1 + 1)+"]"+";")
         out.append("publishedBuffersNames[0] = \"nodeRepository\";")
-        out.append("allReaders_callbacks[0] = new com.github.airutech.cnetsTransports.msgpack.msgPackSerializer(new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack.msgpack());")
+        out.append("allReaders_callbacks[0] = new "+serializatorPath+"(new com.github.airutech.cnetsTransports.nodeRepositoryProtocol"+serializePackagePostfix+"());")
         for i, v in enumerate(a.read_data["connection"]["readFrom"][1:]):
             out.append("publishedBuffersNames["+str(i + 1)+"] = \""+v["name"]+"\";")
             out.append("allReaders["+str(i+1)+"] = r"+str(i+1)+";")
-            out.append("allReaders_callbacks["+str(i+1)+"] = new com.github.airutech.cnetsTransports.msgpack.msgPackSerializer(new "+".".join(v["type"].split(".")[:-1])+".msgpack.msgpack());")
+            out.append("allReaders_callbacks["+str(i+1)+"] = new "+serializatorPath+"(new "+".".join(v["type"].split(".")[:-1])+serializePackagePostfix+"());")
 
 
     return "\n    ".join(out)

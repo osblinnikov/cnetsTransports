@@ -2,6 +2,9 @@
 "path":"${_JAVA_PATH_}.${_NAME_}",
 "ver":"0.0.0",
 "type":"com.github.airutech.cnetsTransports.webSocketConnectorTpl",
+"serializatorPath": "com.github.airutech.cnetsTransports.msgpack.msgPackSerializer",
+"deserializatorPath": "com.github.airutech.cnetsTransports.msgpack.msgPackDeserializer",
+"serializePackagePostfix": ".msgpack.msgpack",
 "args": [{
   "name": "serverUrl",
   "type": "String"
