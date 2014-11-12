@@ -58,9 +58,6 @@
   },{
     "name":"connections",
     "type":"com.github.airutech.cnetsTransports.types.cnetsConnections"
-  },{
-    "name":"receiveRemoteRepository",
-    "type":"com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol"
   }]
 }
 }

@@ -32,8 +32,7 @@ createClient = ->
   w0statuses = undefined 
   w1fromSocket = undefined
   r0toSocket = undefined 
-  r1connections = undefined 
-  r2receiveRemoteRepository = undefined
+  r1connections = undefined
   sockKernel = new s.com_github_airutech_cnetsTransports_sockjs.create(
     publishedBuffersNames,
     maxNodesCount,
@@ -43,8 +42,7 @@ createClient = ->
     w0statuses,
     w1fromSocket,
     r0toSocket,
-    r1connections,
-    r2receiveRemoteRepository
+    r1connections
   )
   sockKernel.onStart()
   return sockKernel
@@ -58,8 +56,7 @@ createServer = ->
   w0statuses = undefined
   w1fromSocket = undefined
   r0toSocket = undefined 
-  r1connections = undefined 
-  r2receiveRemoteRepository = undefined
+  r1connections = undefined
   sockKernel = new s.com_github_airutech_cnetsTransports_sockjs.create(
     publishedBuffersNames,
     maxNodesCount,
@@ -69,8 +66,7 @@ createServer = ->
     w0statuses,
     w1fromSocket,
     r0toSocket,
-    r1connections,
-    r2receiveRemoteRepository
+    r1connections
   )
   sockKernel.onStart()
   return sockKernel

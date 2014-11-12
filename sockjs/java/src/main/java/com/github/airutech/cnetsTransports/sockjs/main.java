@@ -18,6 +18,6 @@ import com.github.airutech.cnets.mapBuffer.*;
 /*[[[end]]] (checksum: 73b0f13afa19ad49cdb54b485e3c8b7d)*/
 public class main{
   public static void main(String[] args){
-    sockjs classObj = new sockjs(new String[1],0,null,0,null,null,null,null,null,null);
+    sockjs classObj = new sockjs(new String[1],0,null,0,null,null,null,null,null);
   }
 }
