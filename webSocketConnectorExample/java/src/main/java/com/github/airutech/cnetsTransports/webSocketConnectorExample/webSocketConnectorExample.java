@@ -6,15 +6,15 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
-import com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.*;
+import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack.*;
+import com.github.airutech.cnetsTransports.types.*;
+import com.github.airutech.cnets.selector.*;
+import com.github.airutech.cnetsTransports.msgpackExample.msgpack.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
-import com.github.airutech.cnets.selector.*;
-import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
-import com.github.airutech.cnetsTransports.msgpackExample.msgpack.*;
+import com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
-import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.msgpack.*;
 public class webSocketConnectorExample implements RunnableStoppable{
   int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;long timeoutInterval = 1000L;String serverUrl;int bindPort;writer w0;writer w1;writer w2;writer w3;reader r0;reader r1;reader r2;reader r3;
 
@@ -89,7 +89,7 @@ com.github.airutech.cnetsTransports.webSocketConnectorExample.connector.connecto
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: a9a974c5299e6f3317e430a126a189a3)*/
+/*[[[end]]] (checksum: 1fd7d13ddb7f5163a58ee8006a6d9592)*/
 
   private void onCreate(){
 

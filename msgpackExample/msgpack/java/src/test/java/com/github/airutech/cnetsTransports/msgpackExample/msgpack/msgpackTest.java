@@ -7,10 +7,10 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 
+import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnetsTransports.msgpackExample.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
-import com.github.airutech.cnetsTransports.types.*;
-/*[[[end]]] (checksum: 5be77d6c1889650514909bc28b45ebeb)*/
+/*[[[end]]] (checksum: fc06e4b4af2786e66f63be3c3a9c8a5a)*/
 public class msgpackTest {
   @Test
   public void msgpackTest(){

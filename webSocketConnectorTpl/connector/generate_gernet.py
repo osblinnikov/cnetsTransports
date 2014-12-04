@@ -60,7 +60,8 @@ def getGernetProps(a):
             out.append(dict(
                 name="_bufferToProtocol_"+str(processorId)+"_readers_callbacks",
                 type="com.github.airutech.cnetsTransports.types.serializeStreamCallback[]",
-                size=PerProcessorFloor
+                size=PerProcessorFloor,
+                init=False
             ))
 
 

@@ -10,27 +10,17 @@ import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepository
 import com.github.airutech.cnetsTransports.types.connectionStatus;
 import java.nio.ByteBuffer;
 
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnets.mapBuffer.*;
-import com.github.airutech.cnetsTransports.connectionStatusDispatcher.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.source.*;
+import com.github.airutech.cnetsTransports.types.*;
+import com.github.airutech.cnets.selector.*;
+import com.github.airutech.cnetsTransports.protocolToBuffer.*;
+import com.github.airutech.cnetsTransports.bufferToProtocol.*;
 import com.github.airutech.cnetsTransports.webSocket.*;
-import com.github.airutech.cnetsTransports.protocolToBuffer.*;
-import com.github.airutech.cnetsTransports.protocolToBuffer.*;
-import com.github.airutech.cnetsTransports.bufferToProtocol.*;
-import com.github.airutech.cnetsTransports.bufferToProtocol.*;
 import com.github.airutech.cnets.readerWriter.*;
 import com.github.airutech.cnets.runnablesContainer.*;
-import com.github.airutech.cnets.selector.*;
-import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnets.types.*;
+import com.github.airutech.cnetsTransports.connectionStatusDispatcher.*;
+import com.github.airutech.cnets.mapBuffer.*;
 public class connector implements RunnableStoppable{
   int countNodesProcessors = 2;int countBuffersProcessors = 2;int maxNodesCount = 5;int buffersLengths = 8;int binBuffersSize = 128;int readersCount = 4;int writersCount = 4;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_0_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_0_Arr;byte[] _inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_forNodes_1_Arr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _inputProtocolBuffer_forNodes_1_Arr;byte[] _inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers;reader[] _bufferToProtocol_0_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_0_readers_callbacks;reader[] _bufferToProtocol_1_readers;com.github.airutech.cnetsTransports.types.serializeStreamCallback[] _bufferToProtocol_1_readers_callbacks;writer[] _nodesReceivers_writers;writer[] _connectionStatusReceivers_writers;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _localNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[] _dstNodeRepositoryProtocolBufferArr;com.github.airutech.cnetsTransports.types.cnetsProtocol[] _outputProtocolBuffer_Arr;byte[] _outputProtocolBuffer_Arr_BinaryBuffers;com.github.airutech.cnetsTransports.types.connectionStatus[] _connectionStatusBuffer_publish_Arr;com.github.airutech.cnetsTransports.types.connectionStatus[] _dispatchConnStatusBuffer_Arr;String[] publishedBuffersNames;String[] subscribedBuffersNames;writer[] allWriters;reader[] allReaders;deserializeStreamCallback[] allWriters_callbacks;serializeStreamCallback[] allReaders_callbacks;String serverUrl;int bindPort;writer w0;reader r0;
   
@@ -53,23 +43,62 @@ public class connector implements RunnableStoppable{
     this.readersCount = 4;
     this.writersCount = 4;
     this._connectionStatusBuffer_forNodes_0_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
+    for(int j=0;j<this._connectionStatusBuffer_forNodes_0_Arr.length;j++){
+      this._connectionStatusBuffer_forNodes_0_Arr[j] = new com.github.airutech.cnetsTransports.types.connectionStatus();
+    }
     this._inputProtocolBuffer_forNodes_0_Arr = new com.github.airutech.cnetsTransports.types.cnetsProtocol[8];
+    for(int j=0;j<this._inputProtocolBuffer_forNodes_0_Arr.length;j++){
+      this._inputProtocolBuffer_forNodes_0_Arr[j] = new com.github.airutech.cnetsTransports.types.cnetsProtocol();
+    }
     this._inputProtocolBuffer_forNodes_0_Arr_BinaryBuffers = new byte[1024];
     this._connectionStatusBuffer_forNodes_1_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
+    for(int j=0;j<this._connectionStatusBuffer_forNodes_1_Arr.length;j++){
+      this._connectionStatusBuffer_forNodes_1_Arr[j] = new com.github.airutech.cnetsTransports.types.connectionStatus();
+    }
     this._inputProtocolBuffer_forNodes_1_Arr = new com.github.airutech.cnetsTransports.types.cnetsProtocol[8];
+    for(int j=0;j<this._inputProtocolBuffer_forNodes_1_Arr.length;j++){
+      this._inputProtocolBuffer_forNodes_1_Arr[j] = new com.github.airutech.cnetsTransports.types.cnetsProtocol();
+    }
     this._inputProtocolBuffer_forNodes_1_Arr_BinaryBuffers = new byte[1024];
     this._bufferToProtocol_0_readers = new reader[2];
+    for(int j=0;j<this._bufferToProtocol_0_readers.length;j++){
+      this._bufferToProtocol_0_readers[j] = new reader();
+    }
     this._bufferToProtocol_0_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[2];
     this._bufferToProtocol_1_readers = new reader[2];
+    for(int j=0;j<this._bufferToProtocol_1_readers.length;j++){
+      this._bufferToProtocol_1_readers[j] = new reader();
+    }
     this._bufferToProtocol_1_readers_callbacks = new com.github.airutech.cnetsTransports.types.serializeStreamCallback[2];
     this._nodesReceivers_writers = new writer[2];
+    for(int j=0;j<this._nodesReceivers_writers.length;j++){
+      this._nodesReceivers_writers[j] = new writer();
+    }
     this._connectionStatusReceivers_writers = new writer[2];
+    for(int j=0;j<this._connectionStatusReceivers_writers.length;j++){
+      this._connectionStatusReceivers_writers[j] = new writer();
+    }
     this._localNodeRepositoryProtocolBufferArr = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[2];
+    for(int j=0;j<this._localNodeRepositoryProtocolBufferArr.length;j++){
+      this._localNodeRepositoryProtocolBufferArr[j] = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol();
+    }
     this._dstNodeRepositoryProtocolBufferArr = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol[2];
+    for(int j=0;j<this._dstNodeRepositoryProtocolBufferArr.length;j++){
+      this._dstNodeRepositoryProtocolBufferArr[j] = new com.github.airutech.cnetsTransports.nodeRepositoryProtocol.nodeRepositoryProtocol();
+    }
     this._outputProtocolBuffer_Arr = new com.github.airutech.cnetsTransports.types.cnetsProtocol[8];
+    for(int j=0;j<this._outputProtocolBuffer_Arr.length;j++){
+      this._outputProtocolBuffer_Arr[j] = new com.github.airutech.cnetsTransports.types.cnetsProtocol();
+    }
     this._outputProtocolBuffer_Arr_BinaryBuffers = new byte[1024];
     this._connectionStatusBuffer_publish_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
+    for(int j=0;j<this._connectionStatusBuffer_publish_Arr.length;j++){
+      this._connectionStatusBuffer_publish_Arr[j] = new com.github.airutech.cnetsTransports.types.connectionStatus();
+    }
     this._dispatchConnStatusBuffer_Arr = new com.github.airutech.cnetsTransports.types.connectionStatus[8];
+    for(int j=0;j<this._dispatchConnStatusBuffer_Arr.length;j++){
+      this._dispatchConnStatusBuffer_Arr[j] = new com.github.airutech.cnetsTransports.types.connectionStatus();
+    }
     onCreate();
     initialize();
   }
@@ -183,7 +212,7 @@ com.github.airutech.cnets.mapBuffer.mapBuffer _localNodeRepositoryProtocolBuffer
     runnables.setContainers(arrContainers);
     return runnables;
   }
-/*[[[end]]] (checksum: 2632451b635f9295b77472434c337a02)*/
+/*[[[end]]] (checksum: 822106962e290e4b279555f299ae9605)*/
 
   private void onCreate(){
 

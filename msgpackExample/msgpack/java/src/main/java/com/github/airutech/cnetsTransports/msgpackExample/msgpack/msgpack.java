@@ -6,9 +6,9 @@ import cogging as c
 c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
+import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnetsTransports.msgpackExample.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
-import com.github.airutech.cnetsTransports.types.*;
 import java.io.IOException;
 public class msgpack  implements cnetsMessagePackable {
   @Override
@@ -57,7 +57,7 @@ public class msgpack  implements cnetsMessagePackable {
     } catch (Exception e) {e.printStackTrace();return false;}
     return true;
   }
-/*[[[end]]] (checksum: 3c0ed53e5e4e0d738dd972e40bd2cdc7)*/
+/*[[[end]]] (checksum: 7847490e9c1cf97a58ece59312cf851f)*/
 
   @Override
   public void fillNodeIds(cnetsProtocol outputMetaData, Object target) {

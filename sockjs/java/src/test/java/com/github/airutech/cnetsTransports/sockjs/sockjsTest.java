@@ -33,10 +33,12 @@ public class sockjsTest {
     sockjs server = createServer(mb0Srv);
     sockjs client = createClient(mb0Clnt);
 
-    runnablesContainer r2 = client.getRunnables();
-    r2.launch(false);
     runnablesContainer r1 = server.getRunnables();
     r1.launch(false);
+    Thread.sleep(1000);
+
+    runnablesContainer r2 = client.getRunnables();
+    r2.launch(false);
     Thread.sleep(1000);
 
     cnetsProtocol res = (cnetsProtocol) w0.writeNext(-1);

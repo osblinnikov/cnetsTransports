@@ -7,7 +7,7 @@ public class ${a.className}  implements cnetsMessagePackable {
   public boolean serializeWith(cnetsSerializeValue s, Object target){
     ${a.targetClassName} that = (${a.targetClassName})target;
     try {
-${p.serializeWith(a)}
+${p.serializeWith(a,'.msgpack.msgpack')}
     } catch (Exception e) {e.printStackTrace();return false;}
     return true;
   }
@@ -16,7 +16,7 @@ ${p.serializeWith(a)}
   public boolean deserializeWith(cnetsDeserializeValue d, Object target) {
     ${a.targetClassName} that = (${a.targetClassName})target;
     try {
-${p.deserializeWith(a)}
+${p.deserializeWith(a,'.msgpack.msgpack')}
     } catch (Exception e) {e.printStackTrace();return false;}
     return true;
   }

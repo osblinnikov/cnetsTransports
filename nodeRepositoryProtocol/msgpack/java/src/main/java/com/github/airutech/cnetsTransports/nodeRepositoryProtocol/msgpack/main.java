@@ -7,10 +7,10 @@ c.tpl(cog,templateFile,c.a(prefix=configFile))
 ]]]*/
 
 
+import com.github.airutech.cnetsTransports.types.*;
 import com.github.airutech.cnetsTransports.nodeRepositoryProtocol.*;
 import com.github.airutech.cnetsTransports.msgpack.*;
-import com.github.airutech.cnetsTransports.types.*;
-/*[[[end]]] (checksum: 9f440068b3ea04a0e1e185a817488d4f)*/
+/*[[[end]]] (checksum: aa5eb5255254378a7fde086ef078759d)*/
 public class main{
   public static void main(String[] args){
 
