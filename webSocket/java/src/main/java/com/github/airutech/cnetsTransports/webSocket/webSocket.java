@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
+import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 
 /*[[[cog
@@ -99,6 +100,8 @@ public class webSocket implements RunnableStoppable{
 
   @Override
   public synchronized void onStart(){
+//    System.out.println("onStart "+((bindPort>0)?"server":"client"));
+    makeReconnection.set(false);
     connect();
   }
 
@@ -198,6 +201,7 @@ public class webSocket implements RunnableStoppable{
 
   @Override
   public  void onStop(){
+//    System.out.println("onStop "+((bindPort>0)?"server":"client"));
     disconnect();
   }
 
@@ -206,6 +210,7 @@ public class webSocket implements RunnableStoppable{
   }
 
   private void disconnect() {
+//    System.out.println("disconnect in "+((bindPort>0)?"server":"client"));
     if (server != null) {
       try {
         server.stop();
@@ -230,6 +235,7 @@ public class webSocket implements RunnableStoppable{
   }
 
   private void connect() {
+//    System.out.println("connect in "+((bindPort>0)?"server":"client"));
     if(bindPort>0) {
       try {
         server = new WSServer(bindPort, this);
@@ -273,11 +279,13 @@ public class webSocket implements RunnableStoppable{
   public void onOpen(String hashKey, webSocketConnection webSocket) {
     conManager.addConnection(hashKey,webSocket);
     int id = conManager.findUniqueConnectionId(hashKey);
+//    System.out.println("onOpen "+((bindPort>0)?"server":"client")+" " + id);
     if(id < 0){
       try {
-        if(webSocket.getServer() != null) webSocket.getServer().close();
-        if(webSocket.getClient() != null) webSocket.getClient().close();
+        if(webSocket.getServer() != null) webSocket.getServer().closeConnection(CloseFrame.NEVER_CONNECTED, "maximal number of connections");
+        if(webSocket.getClient() != null) webSocket.getClient().closeConnection(CloseFrame.NEVER_CONNECTED, "maximal number of connections");
       }catch (Exception e){
+        System.out.println("Exception on Close()");
         e.printStackTrace();
       }
       return;
@@ -295,6 +303,7 @@ public class webSocket implements RunnableStoppable{
 
   public void onClose(String hashKey) {
     int id = conManager.findUniqueConnectionId(hashKey);
+//    System.out.println("onClose "+((bindPort>0)?"server":"client")+" "+id);
     if(id < 0){return;}
     conManager.removeConnection(hashKey);
     if(publishedBuffersNames == null){return;}

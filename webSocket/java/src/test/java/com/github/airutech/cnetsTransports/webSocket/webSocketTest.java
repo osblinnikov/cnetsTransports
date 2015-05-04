@@ -117,20 +117,39 @@ public class webSocketTest {
     Long[] clientInBufferIds = new Long[]{5L};
 
 //    WebSocketImpl.DEBUG = true;
-    webSocket serverObj = new webSocket(null,100, null, 10001, sslContext, null, null, null, outpr0, cr0);
+    webSocket serverObj = new webSocket(null,1, null, 10001, sslContext, null, null, null, outpr0, cr0);
     webSocket clientObj = new webSocket(null,1, "ws://127.0.0.1:10001", -1, sslContext, null, null,null,clientoutpr0, clientcr0);
+    webSocket clientObj2 = new webSocket(null,1, "ws://127.0.0.1:10001", -1, sslContext, null, null,null,clientoutpr0, clientcr0);
 
 /*running kernels*/
     runnablesContainer runnables = new runnablesContainer();
-    runnablesContainer[] arrContainers = new runnablesContainer[2];
+    runnablesContainer[] arrContainers = new runnablesContainer[3];
     arrContainers[0] = serverObj.getRunnables();
     arrContainers[1] = clientObj.getRunnables();
+    arrContainers[2] = clientObj2.getRunnables();
     runnables.setContainers(arrContainers);
     runnables.launch(false);
 
 /*waiting*/
     try {
       Thread.sleep(3000);
+      System.out.println("Stop clients");
+      arrContainers[1].stop();
+      arrContainers[2].stop();
+      Thread.sleep(3000);
+      System.out.println("Start client 1");
+      arrContainers[1].launch(false);
+      Thread.sleep(3000);
+      System.out.println("Start client 2");
+      arrContainers[2].launch(false);
+      Thread.sleep(3000);
+      System.out.println("Stop server");
+      arrContainers[0].stop();
+      Thread.sleep(3000);
+      System.out.println("Start server");
+      arrContainers[0].launch(false);
+      Thread.sleep(3000);
+      System.out.println("Stop all");
       runnables.stop();
     } catch (InterruptedException e) {
       e.printStackTrace();

@@ -50,7 +50,8 @@ public class connectionsRegistry {
       try {
         id = (int) connectionsIdsQueue.dequeue();
       } catch (QueueEmptyException e) {
-        e.printStackTrace();
+//        e.printStackTrace();
+        System.out.println("webSocket: connectionsRegistry: Reached maximal number of connections "+arrContainers.length);
         connectionsLock.unlock();
         return res;
       }
